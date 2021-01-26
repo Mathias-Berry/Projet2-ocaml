@@ -65,19 +65,43 @@ let show_sheet () =
 (* on marque qu'on doit tout recalculer en remplissant le tableau de "None" *)
 (*    à faire : mettre tout le monde à None *)
 let invalidate_sheet () = 
-  print_string "invalidate_sheet : la fonction doit encore etre implementee\n"
+  let g i j =
+    begin
+    thesheet.(i).(j).value <- None
+    end
+  in
+  sheet_iter g
 
 
 (*    à faire : le cœur du programme *)    
+let rec sum_list l =
+  match l with
+    | []-> 0.
+    | t::q-> t +. (sum_list q)
+
+let rec mul_list l =
+  match l with
+    | []-> 1.
+    | t::q-> t *. (sum_list q)
+
 let rec eval_form fo = match fo with
-  | Cst n -> 27.19
-  | Cell (p,q) -> 27.19
-  | Op(o,fs) -> 27.19
+  | Cst n -> n
+  | Cell (p,q) -> eval_cell p q
+  | Op(o,fs) -> match o with
+  		| S -> sum_list (List.map eval_form fs)
+  		| M -> mul_list (List.map eval_form fs)
+  		| A -> sum_list (List.map eval_form fs)/. (float_of_int(List.length fs))
+  		       
 
 (* ici un "and", car eval_formula et eval_cell sont a priori 
    deux fonctions mutuellement récursives *)
 and eval_cell i j =
-  19.27
+  match thesheet.(i).(j).value with
+    | None -> let f = eval_form (thesheet.(i).(j).formula) in
+              thesheet.(i).(j).value <- Some f;
+              f
+    | Some f -> f
+  
 
 (* on recalcule le tableau, en deux étapes *)
 let recompute_sheet () =

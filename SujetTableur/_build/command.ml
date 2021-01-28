@@ -2,6 +2,7 @@ open Debug
 open Cell
 open Sheet
 
+exception PAF
 (* commandes: ce que l'utilisateur peut saisir dans un fichier.
  - La modification d'une cellule avec une nouvelle formule,
  - l'affichage d'une cellule, 
@@ -57,7 +58,7 @@ let run_command c = match c with
 	suppr_dep co;
 	rajoute_dep co f;
     if liste_dep co co (* c'est dommage qu'on l'ait pas appelé ca ça aurait fait ca ca *)
-    then if !paf then failwith "\nPAF\n" else begin
+    then if !paf then raise PAF else begin
     	update_cell_formula co fsecours;
 	    suppr_dep co;
 	    rajoute_dep co fsecours

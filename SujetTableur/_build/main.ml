@@ -14,6 +14,7 @@ let parse () = Parser.debut Lexer.token lexbuf
 (*** fin de la partie "incantatoire" ***)
 
 let spreadsheet () =
+		  try
 			let usage = "Test" in
 			let optlist = [("-paf", Arg.Set paf, "Et paf ! Présent ! Non on ne t'appelle pas Epaf.")] in
 			Arg.parse optlist (fun s -> ()) usage;
@@ -25,6 +26,7 @@ let spreadsheet () =
         run_script result;
         flush stdout;
       end
+      with PAF -> begin print_string "PAF"; print_newline() end
 ;;
 
 

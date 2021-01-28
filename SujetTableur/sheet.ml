@@ -164,5 +164,5 @@ let rec liste_dep co ci = let valeur = thesheet.(fst ci).(snd ci).value in
 
 
 (* on recalcule le tableau, en deux étapes *)
-let rec recompute_sheet co =
+let recompute_sheet () =
 	sheet_iter eval_cell

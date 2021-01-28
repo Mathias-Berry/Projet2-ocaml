@@ -31,30 +31,36 @@ let show_comm c =
 (* exécuter une commande *)
 let run_command c = match c with
   | Show cn ->
-     begin
-       let co = cellname_to_coord cn in
-       eval_p_debug (fun () ->
-           "Showing cell "
-           ^ cell_name2string cn
-         );
-       ps (cell_val2string (read_cell co)); (* <- ici ps, et pas p_debug, car on veut afficher au moins cela *)
-       print_newline()
-     end
+    begin
+      let co = cellname_to_coord cn in
+      eval_p_debug (fun () ->
+          "Showing cell "
+          ^ cell_name2string cn
+        );
+      ps (cell_val2string (read_cell co)); (* <- ici ps, et pas p_debug, car on veut afficher au moins cela *)
+      print_newline()
+    end
   | ShowAll ->
-     begin
-       eval_p_debug (fun () -> "Show All\n");
-       show_sheet ()
-     end
+    begin
+      eval_p_debug (fun () -> "Show All\n");
+      show_sheet ()
+    end
   | Upd(cn,f) ->
-     let co = cellname_to_coord cn in
-     eval_p_debug (fun () -> "Update cell " ^ cell_name2string cn ^ "\n");
-     if liste_dep co co (* c'est dommage qu'on l'ait pas appelé ca ça aurait fait ca ca *)
-     then begin
-     update_cell_formula co f;
-     suppr_dep co;
-     rajoute_dep co f
-     end;
-     recompute_sheet()
-
+    begin
+    let co = cellname_to_coord cn in
+    eval_p_debug (fun () -> "Update cell " ^ cell_name2string cn ^ "\n");
+    let fsecours = thesheet.(fst co).(snd co).formula in
+    update_cell_formula co f;
+	suppr_dep co;
+	rajoute_dep co f;
+	let _ = liste_dep co co in
+(*    if liste_dep co co (* c'est dommage qu'on l'ait pas appelé ca ça aurait fait ca ca *)
+    then begin
+    	update_cell_formula co fsecours;
+	    suppr_dep co;
+	    rajoute_dep co fsecours
+    end;*)
+    recompute_sheet ()
+	end
 (* exécuter une liste de commandes *)
 let run_script cs = List.iter run_command cs

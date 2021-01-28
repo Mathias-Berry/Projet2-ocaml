@@ -8,9 +8,7 @@ open Sheet
  - l'affichage de toute la feuille *)
 type comm = Upd of cellname * form | Show of cellname | ShowAll
 
-(*** Commande à supprimer ***)
-let afficheco (p, q) = ps "("; print_int p; ps ", "; print_int q; ps ")"
-	
+let paf = ref false
 
 
 
@@ -59,7 +57,7 @@ let run_command c = match c with
 	suppr_dep co;
 	rajoute_dep co f;
     if liste_dep co co (* c'est dommage qu'on l'ait pas appelé ca ça aurait fait ca ca *)
-    then begin
+    then if !paf then failwith "\nPAF\n" else begin
     	update_cell_formula co fsecours;
 	    suppr_dep co;
 	    rajoute_dep co fsecours

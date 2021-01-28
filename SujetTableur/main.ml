@@ -14,6 +14,10 @@ let parse () = Parser.debut Lexer.token lexbuf
 (*** fin de la partie "incantatoire" ***)
 
 let spreadsheet () =
+			let usage = "Test" in
+			let optlist = [("-paf", Arg.Set paf, "Et paf ! Présent ! Non on ne t'appelle pas Epaf.")] in
+			Arg.parse optlist (fun s -> ()) usage;
+			
       let result = parse () in
       begin
         (* le seul endroit a comprendre (dans un premier temps) :

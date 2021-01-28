@@ -84,6 +84,14 @@ let rec mul_list l =
     | []-> 1.
     | t::q-> t *. (sum_list q)
 
+let maxi t f = if t < f then f else t
+
+let rec max_list l = match l with
+	| [] -> failwith "La liste est vide donc il n'y a pas de maximum."
+	| [t] -> t
+	| t::q -> maxi t (max_list q)
+
+
 let rec eval_form fo = match fo with
   | Cst n -> n
   | Cell (p,q) -> eval_cell p q
@@ -91,6 +99,7 @@ let rec eval_form fo = match fo with
   		| S -> sum_list (List.map eval_form fs)
   		| M -> mul_list (List.map eval_form fs)
   		| A -> sum_list (List.map eval_form fs)/. (float_of_int(List.length fs))
+  		| Max -> max_list (List.map eval_form fs)
   		       
 
 (* ici un "and", car eval_formula et eval_cell sont a priori 

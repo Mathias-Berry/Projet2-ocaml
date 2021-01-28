@@ -10,8 +10,16 @@ let thesheet = Array.make_matrix (fst size) (snd size) default_cell
 
 let read_cell co = thesheet.(fst co).(snd co)
 
+(* fonction qui supprime un élément d'une liste. *)
+let rec suppr l x = match l with
+	| [] -> []
+	| t::q when t = x -> q
+	| t::q -> t::(suppr q x)
+
 let update_cell_formula co f = thesheet.(fst co).(snd co).formula <- f
 let update_cell_value co v = thesheet.(fst co).(snd co).value <- v
+let add_cell_predependance co d = thesheet.(fst co).(snd co).predependance <- d::(thesheet.(fst co).(snd co).predependance)
+let remove_cell_predependance co d = thesheet.(fst co).(snd co).predependance <- suppr (thesheet.(fst co).(snd co).predependance) d
 
 
 (* exécuter une fonction, f, sur tout le tableau *)
@@ -33,7 +41,7 @@ let sheet_iter f =
  * une piste *)
 let init_sheet () =
   let init_cell i j =
-    let c = { value = None; formula = Cst 0. } in
+    let c = { value = None; formula = Cst 0.; predependance = [] } in
     thesheet.(i).(j) <- c
   in
   sheet_iter init_cell
@@ -61,6 +69,38 @@ let show_sheet () =
 
 
 (********** calculer les valeurs à partir des formules *************)
+
+(* Fonction qui supprime tous les co déjà présents dans des prédépendances *)
+let suppr_dep co = 
+	let g i j = remove_cell_predependance (i, j) co in
+	sheet_iter g
+
+
+(* Fonctions qui fusionne des listes sans doublons *)
+let rec fusion l m = match l with
+	| [] -> m
+	| t::q -> if List.mem t m then fusion q m else fusion q (t::m)
+
+let rec fusionliste = function
+	| [] -> []
+	| t::q -> fusion t (fusionliste q)
+	
+(* Fonctions qui calcule les dépendances d'une formule *)
+let rec find_dep fo = match fo with
+  | Cst n -> []
+  | Cell co -> [co]
+  | Op(o, fs) -> let ft = List.map find_dep fs in fusionliste ft
+
+
+
+
+(* Fonctions qui ajoute co à la prédépendances des cellules qui «prédépendent» de co *)
+let rajoute_dep co fo = let dependance = find_dep fo in
+	let rec aux liste = match liste with
+		| [] -> ()
+    | t::q -> add_cell_predependance t co; aux q
+	in aux dependance
+
 
 (* on marque qu'on doit tout recalculer en remplissant le tableau de "None" *)
 (*    à faire : mettre tout le monde à None *)
@@ -100,7 +140,7 @@ let rec eval_form fo = match fo with
   		| M -> mul_list (List.map eval_form fs)
   		| A -> sum_list (List.map eval_form fs)/. (float_of_int(List.length fs))
   		| Max -> max_list (List.map eval_form fs)
-  		       
+
 
 (* ici un "and", car eval_formula et eval_cell sont a priori 
    deux fonctions mutuellement récursives *)
@@ -111,8 +151,18 @@ and eval_cell i j =
               f
     | Some f -> f
   
+(* Fonction qui met à None tous les cases qui dépendent de co, 
+	 et qui renvoie true si on retombe sur co (après l'avoir mis une première fois à None,
+	 ce qui signifiera qu'il y a une boucle, donc qu'on doit passer l'instruction ) *)
+let rec liste_dep co ci = let valeur = thesheet.(fst ci).(snd ci).value in
+	if valeur = None then (ci == co) else
+		let predep = thesheet.(fst ci).(snd ci).predependance in
+		let rec aux = function
+			| [] -> false
+			| t::q -> (liste_dep co t ) || (aux q)
+		in aux predep
+
 
 (* on recalcule le tableau, en deux étapes *)
-let recompute_sheet () =
-  invalidate_sheet ();
-  sheet_iter eval_cell
+let rec recompute_sheet co =
+	sheet_iter eval_cell

@@ -1,4 +1,6 @@
 A1 = 65.
+ShowAll
 A2 = 34.
+ShowAll
 B1 = MAX(A1; A2)
-Show B1
+ShowAll

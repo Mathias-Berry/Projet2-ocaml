@@ -48,7 +48,12 @@ let run_command c = match c with
   | Upd(cn,f) ->
      let co = cellname_to_coord cn in
      eval_p_debug (fun () -> "Update cell " ^ cell_name2string cn ^ "\n");
+     if liste_dep co co (* c'est dommage qu'on l'ait pas appelé ca ça aurait fait ca ca *)
+     then begin
      update_cell_formula co f;
+     suppr_dep co;
+     rajoute_dep co f
+     end;
      recompute_sheet()
 
 (* exécuter une liste de commandes *)

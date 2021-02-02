@@ -22,6 +22,7 @@ open Command
 %start debut
 %type <Command.comm list> debut
 
+
 %%
 debut:
    | clist EOF { $1 }
@@ -51,7 +52,7 @@ clist:
   
   formula:
    | NBR { Cst $1 } 
-   | INT { Cst (float $1) } 
+   | INT { Cst (nombre $1) } 
    | cell { Cell (Cell.cellname_to_coord $1) }
    | operand LPAREN forlist RPAREN { Op($1,$3) }
   ;

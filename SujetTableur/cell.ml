@@ -1,6 +1,13 @@
 (* les nombres avec lesquels on calcule *)
-type number = float
-let print_number = print_float
+type number = I of int |F of float
+let print_number n = match n with 
+  |I i -> print_int i
+  |F f -> print_float f
+
+let string_of_number n =
+  match n with 
+    |I i -> string_of_int i
+    |F f -> string_of_float f 
 
 (* deux coordonnées, p.ex. ("B",7) *)
 type cellname = string*int
@@ -38,7 +45,7 @@ type form = Cst of number | Cell of (int*int) | Op of oper * form list
 type cell = { mutable formula : form; mutable value : number option; mutable predependance : (int*int) list }
 
 (* cellule par défait : pas de valeur, et la formule correspondante est la constante 0. *)
-let default_cell = { formula = Cst 0.; value = None; predependance = [] }
+let default_cell = { formula = Cst (I 0); value = None; predependance = [] }
 
 
 
@@ -47,7 +54,7 @@ let cell_name2string cn = (fst cn)^(string_of_int (snd cn))
 
 let cell_val2string c = match c.value with
   | None -> "_"
-  | Some n -> string_of_float n
+  | Some n -> string_of_number n
 
 let oper2string = function
   | S -> "SUM"
@@ -78,7 +85,7 @@ let rec show_list f = function
 (* convertir une formule en une chaîne de caractères *)
 let rec form2string = function
   | Cell c -> cell_name2string (coord_to_cellname c)
-  | Cst n -> string_of_float n
+  | Cst n -> string_of_number n
   | Op(o,fl) ->
      begin
        (oper2string o) ^ "(" ^ list2string form2string fl ^ ")"

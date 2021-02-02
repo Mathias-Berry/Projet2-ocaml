@@ -41,7 +41,7 @@ let sheet_iter f =
  * une piste *)
 let init_sheet () =
   let init_cell i j =
-    let c = { value = Some 0.; formula = Cst 0.; predependance = [] } in
+    let c = { value = Some (I 0); formula = Cst (I 0); predependance = [] } in
     thesheet.(i).(j) <- c
   in
   sheet_iter init_cell
@@ -113,23 +113,50 @@ let invalidate_sheet () =
   sheet_iter g
 
 
-(*    à faire : le cœur du programme *)    
+(*    à faire : le cœur du programme *)  
+let add n1 n2 =
+  match n1,n2 with
+    |(I i1,I i2)-> I (i1+i2)
+    |(I i, F f)-> F (float_of_int i +. f)
+    |(F f, I i)-> F (float_of_int i +. f)
+    |(F f1,F f2)-> F (f1+.f2)
+
 let rec sum_list l =
   match l with
-    | []-> 0.
-    | t::q-> t +. (sum_list q)
+    | []-> I 0
+    | t::q-> add t (sum_list q)
+
+
+let mul n1 n2 =
+  match n1,n2 with
+    |(I i1,I i2)-> I (i1*i2)
+    |(I i, F f)-> F (float_of_int i *. f)
+    |(F f, I i)-> F (float_of_int i *. f)
+    |(F f1,F f2)-> F (f1*.f2)
 
 let rec mul_list l =
   match l with
-    | []-> 1.
-    | t::q-> t *. (sum_list q)
+    | []-> I 1
+    | t::q-> mul t  (sum_list q)
 
-let maxi t f = if t < f then f else t
+
+let maxi n1 n2 =
+    match n1,n2 with
+    |(I i1,I i2)-> I (max i1 i2)
+    |(I i, F f)-> F (max (float_of_int i) f)
+    |(F f, I i)-> F (max (float_of_int i) f)
+    |(F f1,F f2)-> F (max f1 f2)
 
 let rec max_list l = match l with
 	| [] -> failwith "La liste est vide donc il n'y a pas de maximum."
 	| [t] -> t
 	| t::q -> maxi t (max_list q)
+
+let average l =
+  let n = sum_list l in
+  match n with
+    |I i -> F ((float_of_int i)/.(float_of_int(List.length l)))
+    |F f -> F (f/.(float_of_int(List.length l)))
 
 
 let rec eval_form fo = match fo with
@@ -138,7 +165,7 @@ let rec eval_form fo = match fo with
   | Op(o,fs) -> match o with
   		| S -> sum_list (List.map eval_form fs)
   		| M -> mul_list (List.map eval_form fs)
-  		| A -> sum_list (List.map eval_form fs)/. (float_of_int(List.length fs))
+  		| A -> average (List.map eval_form fs)
   		| Max -> max_list (List.map eval_form fs)
 
 

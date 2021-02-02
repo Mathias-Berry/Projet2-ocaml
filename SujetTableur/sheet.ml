@@ -94,7 +94,7 @@ let rec find_dep fo = match fo with
 
 
 
-(* Fonctions qui ajoute co à la prédépendances des cellules qui «prédépendent» de co *)
+(* Fonctions qui ajoute co à la liste des prédépendances des cellules qui «prédépendent» de co *)
 let rajoute_dep co fo = let dependance = find_dep fo in
 	let rec aux liste = match liste with
 		| [] -> ()

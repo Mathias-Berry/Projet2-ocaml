@@ -1,0 +1,14 @@
+A1 = 5
+A2 = 5.
+A3 = MULT(A1; A2)
+Show A3
+A3 = MULT(A1; A1)
+Show A3
+A3 = SUM(A1; A2)
+Show A3
+A3 = SUM(A1; A1)
+Show A3
+A3 = AVERAGE(A1; A2)
+Show A3
+A3 = AVERAGE(A1; A1)
+Show A3

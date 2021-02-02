@@ -1,0 +1,7 @@
+A1 = 65
+A2 = 34.
+B1 = MAX(A1; A2)
+Show B1
+B1 = MAX(A1; A1)
+Show B1
+

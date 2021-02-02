@@ -8,3 +8,5 @@ Pour savoir si il y a une boucle, il suffit de regarder si quand on change la fo
 Si il n'y a pas de boucle, il n'y a qu'à recalculer la grille comme dans la partie 1, si il y en a, si on avait mis l'option paf, il faut soulève une exception, sinon on remet l'ancienne formule, on rechange les prédépedances, puis on recalcule la grille ( on recalculera des choses en trop car il y avait pas besoin de les recalculer mais bon, ce cas n'est pas censé arriver trop souvent donc c'est pas grave.
 
 Enfin pour implémenter l'option -paf sur l'exécutable, on y ait allé un peu au hasard et c'est passé.
+
+Pour la partie 3, on a modifé le type number pour qu'il soit un type somme contenant soit un entier ou soit un float. Et on a aussi modifé les fonctions pour qu'elles manipulent des numbers et non des floats. (On a aussi du modifié le fichier parser.mly pour qu'il transforme les constantes en numbers)

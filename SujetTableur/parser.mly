@@ -51,8 +51,8 @@ clist:
   ;
   
   formula:
-   | NBR { Cst $1 } 
-   | INT { Cst (number $1) } 
+   | NBR { Cst (F $1) } 
+   | INT { Cst (I $1) } 
    | cell { Cell (Cell.cellname_to_coord $1) }
    | operand LPAREN forlist RPAREN { Op($1,$3) }
   ;

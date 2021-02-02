@@ -1,52 +1,10 @@
+Bon en ce qui concerne le rendu de la partie 1 il n'y a pas grand chose à dire, à ceci près que il n'y a pas les fichiers qui correspondent parfaitement puisque on les a modifié pour faire le rendu de la partie 2.
 
-pour compiler, lancer la commande
-  make 
-dans un terminal (il faut pour cela avoir fait des "cd" pour aller
-dans le répertoire où se trouvent ces fichiers).
+En ce qui concerne la partie 2, on a rajouté au type cellules, la liste des prédépendances de la cellule, c'est-à-dire, la liste de toutes les autres cellules qui dépendent au premier ordre de la première. ( Autrement dit, la liste des prédépendances d'une cellule A1 est la liste des cellules dont A1 apparaissent dans leur formule ).
+Ainsi, quand on change la formule de A1 par exemple, il suffit de supprimer A1 de toutes les listes de prédépendances de toutes les cellules ( puisque on ne devra plus forcément changer A1 quand on aura changer une autre cellule ), puis ensuite on parcourt la nouvelle formule de A1, pour ajouter A1 à la liste des prédépendances. Pour cela, on parcourt la formule, et on crée une ste ou on ajoute que les cases que l'on a pas encore mis ( pour éviter des doublons ), puis on ajoute A1 à la liste des prédépendances de tous les éléments de la liste des dépendances de A1.
+Ensuite il reste à recalculer la grille. Pour cela, on fait l'équivalent d'un parcours de graphe, où la liste des sommets adjacents serait la liste des prédépendances, et où chaque fois qu'on passe sur un sommet on le met à None. Ainsi, tous les sommets qui doivent être recalculés sont passés à None et il suffit après de faire le calcul comme à la partie 1 ( on remarque que une cellule pas à None ne sera pas recalculé, ce qui était ce qu'on voulait ).
+Pour savoir si il y a une boucle, il suffit de regarder si quand on change la formule de la case x, quand on veut mettre à None tous les éléments que l'on doit recalculer, si à un moment on retombe sur x. En effet, si il n'y avait pas de boucles avant, si on a rajouter une boucle, elle contient forcément x, et donc par notre parcours, si on a rajouter une boucle on va forcément retomber sur x. Si on ne retombe pas sur x c'est qu'on a pas rajouter de boucle.
 
-pour executer le programme, lancer (par exemple -- regardez le contenu du fichier tests/t1.txt)
-./main.native < tests/t1.txt
+Si il n'y a pas de boucle, il n'y a qu'à recalculer la grille comme dans la partie 1, si il y en a, si on avait mis l'option paf, il faut soulève une exception, sinon on remet l'ancienne formule, on rechange les prédépedances, puis on recalcule la grille ( on recalculera des choses en trop car il y avait pas besoin de les recalculer mais bon, ce cas n'est pas censé arriver trop souvent donc c'est pas grave.
 
-
-
---- Petit guide au code ---
-
-Si vous êtes débutant (ou intermédiaire), vous n'avez pas, dans un
-premier temps, à regarder les fichiers lexer.mll et parser.mly.
-Lisez en revanche les autres fichiers, en vous servant des indications
-suivantes.
-
-1] cell.ml : le fichier fixant la représentation d'une cellule.
-
-2] debug.ml : petites fonctions d'affichage pour debugger
-
-3] sheet.ml : le fichier fixant la représentation d'une feuille de
-calcul, que l'on appellera tableau.
-Ici se trouve le "coeur" du programme, dans la mesure où l'on trouve,
-outre des fonctions pour manipuler le tableau, les fonctions pour
-recalculer le tableau lorsqu'une cellule est mise à jour. C'est là que
-vous devrez coder dans un premier temps.
-
-4] command.ml : le fichier définissant un petit langage pour interagir
-avec le tableau. le type "comm" correspond à ce qui peut être saisi
-par l'utilisateur (cf. les deux exemples dans le repertoire tests/).
-
-5] main.ml : le fichier principal. Une partie de ce fichier consiste en
-des incantations que vous n'avez pas trop à comprendre, l'essentiel est
-de voir qu'on y appelle les fonctions définies dans les autres
-fichiers.
-
-
-Vous remarquerez que l'énumération de fichiers ci-dessus suit
-l'architecture du programme : on fait "open Cell" dans sheet.ml car on
-a besoin de faire référence à ce qui est défini dans cell.ml (la
-convention impose de majusculer la première lettre), on fait
-similairement "open Cell" et "open Sheet" dans command.ml, etc.
-
-
---- Comment coder ---
-
-Éditez les fichiers .ml, et recompilez régulièrement pour vérifier que
-vos modifications sont cohérentes. Faites aussi régulièrement des
-tests (notez le pluriel !) afin de voir que le programme que vous
-écrivez est correct.
+Enfin pour implémenter l'option -paf sur l'exécutable, on y ait allé un peu au hasard et c'est passé.

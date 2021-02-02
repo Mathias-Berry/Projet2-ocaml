@@ -1,0 +1,14 @@
+A1 = 500.
+A2 = SUM(A1; A1)
+A3 = SUM(MULT(MULT(A2; A2); 0.0001); A2)
+Show A2
+Show A3
+A1 = A2
+Show A1
+A1 = A3
+Show A1
+A2 = 1000.
+Show A3
+A1 = A3
+Show A1
+

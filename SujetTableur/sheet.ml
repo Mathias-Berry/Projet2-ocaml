@@ -144,7 +144,7 @@ let maxi n1 n2 =
     match n1,n2 with
     |(I i1,I i2)-> I (max i1 i2)
     |(I i, F f)-> if (max (float_of_int i) f) = f then n2 else n1
-    |(F f, I i)-> F (max (float_of_int i) f) = f then n1 else n2
+    |(F f, I i)-> if (max (float_of_int i) f) = f then n1 else n2
     |(F f1,F f2)-> F (max f1 f2)
 
 let rec max_list l = match l with

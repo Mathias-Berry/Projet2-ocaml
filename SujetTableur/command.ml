@@ -29,6 +29,8 @@ let show_comm c =
        ps ")"
      end
   | ShowAll -> ps "ShowAll"
+  | SwitchTo n -> ps "Switchto s";
+                  print_int(n)
 
 (************ faire tourner les commandes **************)
 

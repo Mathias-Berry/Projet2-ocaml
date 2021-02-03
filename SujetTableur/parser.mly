@@ -58,7 +58,7 @@ clist:
   ;
 
   forlist:
-   | cell DP cell { Inter (Cell.cellname_to_coord $1,Cell.cellname_to_coord $3) }
+   | cell DP cell { [Inter (Cell.cellname_to_coord $1,Cell.cellname_to_coord $3)] }
    | formula { [$1] }
    | formula SEMICOL forlist { $1::$3 }
    | cell DP cell SEMICOL forlist { (Inter (Cell.cellname_to_coord $1,Cell.cellname_to_coord $3))::$5 }

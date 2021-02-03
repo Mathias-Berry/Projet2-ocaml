@@ -95,6 +95,7 @@ let rec find_dep fo = match fo with
   | Cst n -> []
   | Cell co -> [co]
   | Op(o, fs) -> let ft = List.map find_dep fs in fusionliste ft
+  | Inter _ -> [] (* On s'en fout ce cas n'est pas censé arriver, c'est juste pour pas qu'il y ait de warning *)
 
 
 
@@ -167,6 +168,7 @@ let average l =
 let rec eval_form fo = match fo with
   | Cst n -> n
   | Cell (p,q) -> eval_cell p q
+  | Inter _ -> I 0 (* On s'en fout ce cas n'est pas censé arriver *)
   | Op(o,fs) -> match o with
   		| S -> sum_list (List.map eval_form fs)
   		| M -> mul_list (List.map eval_form fs)

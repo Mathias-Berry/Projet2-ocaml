@@ -29,7 +29,7 @@ let show_comm c =
        ps ")"
      end
   | ShowAll -> ps "ShowAll"
-  | SwitchTo n -> ps "Switchto s";
+  | SwitchTo n -> ps "SwitchTo s";
                   print_int(n)
 
 (************ faire tourner les commandes **************)
@@ -40,7 +40,7 @@ let rec fusion_avec_doublons l =
     | [] -> []
     | t::q -> t@(fusion_avec_doublons q)
 
-(*Permet de supprimer les intervalles de la formule f*)
+(*Permet de supprimer les intervalles de la formule f et renvoit un liste contenant la formule modifiée*)
 let rec enleve_inter f = 
   match f with
   | Inter ((a,b),(c,d)) -> let l = ref [] in 

@@ -119,7 +119,7 @@ let invalidate_sheet () =
   sheet_iter g
 
 
-(*    à faire : le cœur du programme *)  
+(*   addition, multiplication,moyenne et max souple de liste de numbers*)  
 let add n1 n2 =
   match n1,n2 with
     |(I i1,I i2)-> I (i1+i2)

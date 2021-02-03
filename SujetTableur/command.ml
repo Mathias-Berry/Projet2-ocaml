@@ -7,7 +7,7 @@ exception PAF
  - La modification d'une cellule avec une nouvelle formule,
  - l'affichage d'une cellule, 
  - l'affichage de toute la feuille *)
-type comm = Upd of cellname * form | Show of cellname | ShowAll
+type comm = Upd of cellname * form | Show of cellname | ShowAll | SwitchTo of int
 
 let paf = ref false
 
@@ -38,7 +38,8 @@ let rec fusion_avec_doublons l =
     | [] -> []
     | t::q -> t@(fusion_avec_doublons q)
 
-let rec enleve_inter f = (*Permet de supprimer les intervalles de la formule f*)
+(*Permet de supprimer les intervalles de la formule f*)
+let rec enleve_inter f = 
   match f with
   | Inter ((a,b),(c,d)) -> let l = ref [] in 
                            for i=a to c do
@@ -68,11 +69,12 @@ let run_command c = match c with
       eval_p_debug (fun () -> "Show All\n");
       show_sheet ()
     end
+  | SwitchTo n -> tab_act := n-1
   | Upd(cn,f) ->
     begin
     let co = cellname_to_coord cn in
     eval_p_debug (fun () -> "Update cell " ^ cell_name2string cn ^ "\n");
-    let fsecours = thesheet.(fst co).(snd co).formula in
+    let fsecours = thesheet.(!tab_act).(fst co).(snd co).formula in
     let f = List.hd(enleve_inter f) in
     update_cell_formula co f;
 	suppr_dep co;

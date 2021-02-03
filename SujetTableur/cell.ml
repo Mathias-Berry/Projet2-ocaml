@@ -12,7 +12,6 @@ let string_of_number n =
 (* deux coordonnées, p.ex. ("B",7) *)
 type cellname = string*int
 
-
 (* les deux fonctions ci-dessous sont a reprendre, un jour ou l'autre :
  * elles ne marchent que pour des noms de colonnes ne comportant qu'un
  * caractère *)

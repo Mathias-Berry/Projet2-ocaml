@@ -11,7 +11,7 @@ open Command
 %token <float> NBR       /* le lexème NBR a un attribut flottant */
 %token <string> CELLROW       /* le lexème CELLROW a un attribut, de type string */
 %token LPAREN RPAREN EQUAL DP SEMICOL DOT
-%token SUM MULT AVERAGE SHOW SHOWALL MAX
+%token SUM MULT AVERAGE SHOW SHOWALL MAX SWITCHTO
 %token EOF
 
   /*
@@ -37,6 +37,7 @@ clist:
    | cell EQUAL formula { Upd($1,$3) }
    | SHOW cell { Show($2) }
    | SHOWALL { ShowAll }
+   | SWITCHTO INT { SwitchTo($2) }
   ;
 
   cell:

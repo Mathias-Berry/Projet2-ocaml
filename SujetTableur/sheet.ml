@@ -1,14 +1,16 @@
 (* tableau de cellules *)
 open Cell
 
+let tab_act = ref 0
+let nbtable = 10 (*Nombre de tableau*)
 let size = (20,10) (* lignes, colonnes *)
 
 (* le tableau que l'on manipule dans le programme ; *)
 (* si nécessaire, tapez "fst" et "snd" dans un interprete Caml pour connaître leur type *) 
 (* default_cell est défini dans cell.ml (module Cell) *)
-let thesheet = Array.make_matrix (fst size) (snd size) default_cell
+let thesheet = Array.make nbtable (Array.make_matrix (fst size) (snd size) default_cell)
 
-let read_cell co = thesheet.(fst co).(snd co)
+let read_cell co = thesheet.(!tab_act).(fst co).(snd co)
 
 (* fonction qui supprime un élément d'une liste. *)
 let rec suppr l x = match l with
@@ -16,10 +18,10 @@ let rec suppr l x = match l with
 	| t::q when t = x -> q
 	| t::q -> t::(suppr q x)
 
-let update_cell_formula co f = thesheet.(fst co).(snd co).formula <- f
-let update_cell_value co v = thesheet.(fst co).(snd co).value <- v
-let add_cell_predependance co d = thesheet.(fst co).(snd co).predependance <- d::(thesheet.(fst co).(snd co).predependance)
-let remove_cell_predependance co d = thesheet.(fst co).(snd co).predependance <- suppr (thesheet.(fst co).(snd co).predependance) d
+let update_cell_formula co f = thesheet.(!tab_act).(fst co).(snd co).formula <- f
+let update_cell_value co v = thesheet.(!tab_act).(fst co).(snd co).value <- v
+let add_cell_predependance co d = thesheet.(!tab_act).(fst co).(snd co).predependance <- d::(thesheet.(!tab_act).(fst co).(snd co).predependance)
+let remove_cell_predependance co d = thesheet.(!tab_act).(fst co).(snd co).predependance <- suppr (thesheet.(!tab_act).(fst co).(snd co).predependance) d
 
 
 (* exécuter une fonction, f, sur tout le tableau *)
@@ -40,12 +42,13 @@ let sheet_iter f =
  * regarder ce que ça donne sur le tableau : cela devrait vous donner
  * une piste *)
 let init_sheet () =
-  let init_cell i j =
-    let c = { value = Some (I 0); formula = Cst (I 0); predependance = [] } in
-    thesheet.(i).(j) <- c
-  in
-  sheet_iter init_cell
-
+  for k = 0 to (nbtable-1) do
+    let init_cell i j =
+      let c = { value = Some (I 0); formula = Cst (I 0); predependance = [] } in
+      thesheet.(k).(i).(j) <- c
+    in
+    sheet_iter init_cell
+  done
 (* on y va, on initialise *)
 let _ = init_sheet ()
 
@@ -107,7 +110,7 @@ let rajoute_dep co fo = let dependance = find_dep fo in
 let invalidate_sheet () = 
   let g i j =
     begin
-    thesheet.(i).(j).value <- None
+    thesheet.(!tab_act).(i).(j).value <- None
     end
   in
   sheet_iter g
@@ -172,20 +175,20 @@ let rec eval_form fo = match fo with
 (* ici un "and", car eval_formula et eval_cell sont a priori 
    deux fonctions mutuellement récursives *)
 and eval_cell i j =
-  match thesheet.(i).(j).value with
-    | None -> let f = eval_form (thesheet.(i).(j).formula) in
-              thesheet.(i).(j).value <- Some f;
+  match thesheet.(!tab_act).(i).(j).value with
+    | None -> let f = eval_form (thesheet.(!tab_act).(i).(j).formula) in
+              thesheet.(!tab_act).(i).(j).value <- Some f;
               f
     | Some f -> f
   
 (* Fonction qui met à None tous les cases qui dépendent de co, 
 	 et qui renvoie true si on retombe sur co (après l'avoir mis une première fois à None,
 	 ce qui signifiera qu'il y a une boucle, donc qu'on doit passer l'instruction ) *)
-let rec liste_dep co ci = let valeur = thesheet.(fst ci).(snd ci).value in
+let rec liste_dep co ci = let valeur = thesheet.(!tab_act).(fst ci).(snd ci).value in
 	if valeur = None then (ci == co) else
 	begin
-		thesheet.(fst ci).(snd ci).value <- None;
-		let predep = thesheet.(fst ci).(snd ci).predependance in
+		thesheet.(!tab_act).(fst ci).(snd ci).value <- None;
+		let predep = thesheet.(!tab_act).(fst ci).(snd ci).predependance in
 		let rec aux = function
 			| [] -> false
 			| t::q -> (liste_dep co t ) || (aux q)

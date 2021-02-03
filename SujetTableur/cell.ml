@@ -89,5 +89,6 @@ let rec form2string = function
      begin
        (oper2string o) ^ "(" ^ list2string form2string fl ^ ")"
      end
+  | Inter (a, b) -> (form2string Cell a)^":"^(form2string Cell b)
 
 let rec show_form f = ps (form2string f)

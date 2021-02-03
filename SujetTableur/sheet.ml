@@ -10,6 +10,7 @@ let size = (20,10) (* lignes, colonnes *)
 (* default_cell est défini dans cell.ml (module Cell) *)
 let thesheet = Array.make nbtable (Array.make_matrix (fst size) (snd size) default_cell)
 
+
 let read_cell co = thesheet.(!tab_act).(fst co).(snd co)
 
 (* fonction qui supprime un élément d'une liste. *)
@@ -43,6 +44,7 @@ let sheet_iter f =
  * une piste *)
 let init_sheet () =
   for k = 0 to (nbtable-1) do
+    thesheet.(k)<-Array.make_matrix (fst size) (snd size) default_cell;
     let init_cell i j =
       let c = { value = Some (I 0); formula = Cst (I 0); predependance = [] } in
       thesheet.(k).(i).(j) <- c

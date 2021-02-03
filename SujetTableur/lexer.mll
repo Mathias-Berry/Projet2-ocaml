@@ -16,7 +16,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | ';'             { SEMICOL }
   | ':'             { DP }
   | '.'             { DOT }
-  | "Switchtos" { SWITCHTO }
+  | "SwitchTos" { SWITCHTO }
   | "Show" { SHOW }
   | "ShowAll" { SHOWALL }
   | "SUM" { SUM }

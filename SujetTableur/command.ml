@@ -32,6 +32,25 @@ let show_comm c =
 
 (************ faire tourner les commandes **************)
 
+
+let rec fusion_avec_doublons l =
+  match l with
+    | [] -> []
+    | t::q -> t@(fusion_avec_doublons q)
+
+let rec enleve_inter f = (*Permet de supprimer les intervalles de la formule f*)
+  match f with
+  | Inter ((a,b),(c,d)) -> let l = ref [] in 
+                           for i=a to c do
+                             for j=b to d do
+                              l:= (Cell (i,j))::(!l)
+                            done;
+                           done;
+                           !l
+  | Op(o,fs) -> [Op(o,fusion_avec_doublons (List.map enleve_inter fs))]
+  | _ -> [f]
+
+
 (* exécuter une commande *)
 let run_command c = match c with
   | Show cn ->
@@ -54,6 +73,7 @@ let run_command c = match c with
     let co = cellname_to_coord cn in
     eval_p_debug (fun () -> "Update cell " ^ cell_name2string cn ^ "\n");
     let fsecours = thesheet.(fst co).(snd co).formula in
+    let f = List.hd(enleve_inter f) in
     update_cell_formula co f;
 	suppr_dep co;
 	rajoute_dep co f;

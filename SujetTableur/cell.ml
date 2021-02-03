@@ -34,7 +34,7 @@ type oper = S | M | A | Max (* sum, multiply, average *)
 
 (* formules : une valeur, la même valeur qu'une autre cellule, une opération et
  * ses arguments *)
-type form = Cst of number | Cell of (int*int) | Op of oper * form list
+type form = Cst of number | Cell of (int*int) | Op of oper * form list | Inter of ((int*int)*(int*int))
 
 (* cellules *)
 (* un type enregistrement

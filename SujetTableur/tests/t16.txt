@@ -1,0 +1,7 @@
+A1 = 20.
+A2 = 30.
+SwitchTo s2 
+Show A1
+SwitchTo s1
+A1 = SUM(A2; 5.)
+Show A1

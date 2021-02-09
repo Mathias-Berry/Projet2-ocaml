@@ -6,6 +6,16 @@ type expr =
   | Min of expr*expr
   | Letin of expr*expr*expr
   | Variable of string
+  | Ifte of expr*expr*expr
+  | Lt of expr*expr
+  | Le of expr*expr
+  | Gt of expr*expr
+  | Ge of expr*expr
+  | Eg of expr*expr
+  | And of expr*expr 
+  | Or of expr*expr
+  | Non of expr
+
 
 
 
@@ -27,6 +37,7 @@ let rec affiche_expr e =
   | Min(e1,e2) -> aff_aux "Min(" e1 e2
   | Variable s -> print_string s
   | Letin (a, b, c) -> print_string "let "; affiche_expr a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c
+  |
 
 (* sémantique opérationnelle à grands pas *)
 

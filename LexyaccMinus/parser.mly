@@ -11,6 +11,7 @@ open Expr   (* rappel: dans expr.ml:
 %token <string> STR
 %token PLUS TIMES MINUS
 %token LET IN EGAL
+%token IF THEN ELSE
 %token LPAREN RPAREN
 %token EOL             /* retour à la ligne */
 
@@ -36,14 +37,23 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
 
   expression:			    /* règles de grammaire pour les expressions */
 
-  | LET STR EGAL expression IN expression		    { Letin(Variable $2, $4, $6) }
-  | INT                                         { Const $1 }
-  | STR                                         { Variable $1 }
-  | LPAREN expression RPAREN                    { $2 } /* on récupère le deuxième élément */
-  | expression PLUS expression                  { Add($1,$3) }
-  | expression TIMES expression                 { Mul($1,$3) }
-  | expression MINUS expression                 { Min($1,$3) }
-  | MINUS expression %prec UMINUS               { Min(Const 0, $2) }
+  | IF expression THEN expression ELSE expression { Ifte($2,$4$5) }
+  | LET STR EGAL expression IN expression		      { Letin(Variable $2,$4,$6) }
+  | INT                                           { Const $1 }
+  | STR                                           { Variable $1 }
+  | LPAREN expression RPAREN                      { $2 } /* on récupère le deuxième élément */
+  | expression PLUS expression                    { Add($1,$3) }
+  | expression TIMES expression                   { Mul($1,$3) }
+  | expression MINUS expression                   { Min($1,$3) }
+  | MINUS expression %prec UMINUS                 { Min(Const 0, $2) }
+  | expression LT expression                      { Lt($1,$3) }
+  | expression LE expression                      { Le($1,$3) }
+  | expression GT expression                      { Gt($1,$3) }
+  | expression GE expression                      { Ge($1,$3) }
+  | expression AND expression                     { And($1,$3) }
+  | expression OR expression                      { Or($1,$3) }
+  | expression EGAL expressions                   { Eg($1,$3) }
+  | NOT expressions                               { Non($2) }
 ;
 
 

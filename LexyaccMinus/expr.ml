@@ -4,6 +4,8 @@ type expr =
   | Add of expr*expr
   | Mul of expr*expr
   | Min of expr*expr
+  | Letin of expr*expr*expr
+  | Variable of string
 
 
 

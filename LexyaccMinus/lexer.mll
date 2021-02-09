@@ -16,5 +16,9 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '-'             { MINUS }
   | '('             { LPAREN }
   | ')'             { RPAREN }
+  | "let"			{ LET }
+  | "in"			{ IN }
+  | "="				{ EGAL }
   | ['0'-'9']+ as s { INT (int_of_string s) }
+  | ['a'-'z']+ as s { STR s }
   | eof             { raise Eof } 

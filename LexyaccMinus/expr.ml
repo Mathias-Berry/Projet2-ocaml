@@ -25,12 +25,9 @@ let rec affiche_expr e =
   | Add(e1,e2) -> aff_aux "Add(" e1 e2
   | Mul(e1,e2) -> aff_aux "Mul(" e1 e2
   | Min(e1,e2) -> aff_aux "Min(" e1 e2
+  | Variable s -> print_string s
+  | Letin (a, b, c) -> print_string "let "; affiche_expr a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c
 
 (* sémantique opérationnelle à grands pas *)
-let rec eval = function
-  | Const k -> k
-  | Add(e1,e2) -> (eval e1) + (eval e2)
-  | Mul(e1,e2) -> (eval e1) * (eval e2)
-  | Min(e1,e2) -> (eval e1) - (eval e2)
 
   

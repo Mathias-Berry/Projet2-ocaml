@@ -13,6 +13,7 @@ let rec eval env = function
   | Add(e1,e2) -> (eval env e1) + (eval env e2)
   | Mul(e1,e2) -> (eval env e1) * (eval env e2)
   | Min(e1,e2) -> (eval env e1) - (eval env e2)
+  | Div(e1,e2) -> (eval env e1) / (eval env e2)
   | Letin(Variable s, b, c) -> eval ( (s, eval env b):: env ) c
   | Variable s -> recup env s
   | Ifte(e1, e2, e3) -> if eval_bool env e1 then eval env e2 else eval env e3

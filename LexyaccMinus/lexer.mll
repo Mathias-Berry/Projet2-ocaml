@@ -13,6 +13,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '\n'            { EOL }
   | '+'             { PLUS }
   | '*'             { TIMES }
+  | '/'				{ DIV }
   | '-'             { MINUS }
   | '('             { LPAREN }
   | ')'             { RPAREN }

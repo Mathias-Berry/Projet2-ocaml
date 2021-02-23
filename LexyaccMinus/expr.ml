@@ -3,6 +3,7 @@ type expr =
     Const of int
   | Add of expr*expr
   | Mul of expr*expr
+  | Div of expr*expr
   | Min of expr*expr
   | Letin of expr*expr*expr
   | Variable of string
@@ -36,6 +37,7 @@ let rec affiche_expr e =
   | Const k -> print_int k
   | Add(e1,e2) -> aff_aux "Add(" e1 e2
   | Mul(e1,e2) -> aff_aux "Mul(" e1 e2
+  | Div(e1,e2) -> aff_aux "Div(" e1 e2
   | Min(e1,e2) -> aff_aux "Min(" e1 e2
   | Variable s -> print_string s
   | Letin (a, b, c) -> (print_string "let "; affiche_expr a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)

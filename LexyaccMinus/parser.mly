@@ -10,7 +10,7 @@ open Expr   (* rappel: dans expr.ml:
 %token <int> INT       /* le lexème INT a un attribut entier */
 %token <string> STR
 %token PRINT
-%token PLUS TIMES MINUS
+%token PLUS TIMES DIV MINUS
 %token LET IN EGAL
 %token IF THEN ELSE
 %token LT LE GT GE AND OR NOT
@@ -18,7 +18,7 @@ open Expr   (* rappel: dans expr.ml:
 %token EOL             /* retour à la ligne */
 
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
-%left TIMES  /* associativité gauche: a*b*c, c'est (a*b)*c */
+%left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
 
@@ -46,6 +46,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | LPAREN expression RPAREN                      { $2 } /* on récupère le deuxième élément */
   | expression PLUS expression                    { Add($1,$3) }
   | expression TIMES expression                   { Mul($1,$3) }
+  | expression DIV expression					  { Div($1, $3) }
   | expression MINUS expression                   { Min($1,$3) }
   | MINUS expression %prec UMINUS                 { Min(Const 0, $2) }
   | expression LT expression                      { Lt($1,$3) }

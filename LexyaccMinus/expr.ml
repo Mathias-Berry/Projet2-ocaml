@@ -16,7 +16,8 @@ type expr =
   | Or of expr*expr
   | Non of expr
   | Print of expr
-
+  | Foction of expr*expr
+  | Appli of expr*expr
 
 
 

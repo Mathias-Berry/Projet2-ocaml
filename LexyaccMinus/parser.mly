@@ -56,7 +56,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | expression OR expression                      { Or($1,$3) }
   | expression EGAL expression                    { Eg($1,$3) }
   | NOT expression                                { Non($2) }
-  | PRINT INT                                     { Print($2) } 
+  | PRINT expression                              { Print($2) } 
 ;
 
 

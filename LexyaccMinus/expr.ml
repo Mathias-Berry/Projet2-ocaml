@@ -15,7 +15,7 @@ type expr =
   | And of expr*expr 
   | Or of expr*expr
   | Non of expr
-  | Print of int
+  | Print of expr
 
 
 
@@ -47,6 +47,6 @@ let rec affiche_expr e =
   |And (a,b) ->(affiche_expr a; print_string " && "; affiche_expr b)
   |Or (a,b) ->(affiche_expr a; print_string " || "; affiche_expr b)
   |Non (a) ->(print_string "Not "; affiche_expr a)
-  |Print (a) ->(print_string "Print "; print_int a)
+  |Print (a) ->(print_string "Print "; affiche_expr a)
   
 (* sémantique opérationnelle à grands pas *)

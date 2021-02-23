@@ -15,5 +15,14 @@ let rec eval env = function
   | Min(e1,e2) -> (eval env e1) - (eval env e2)
   | Letin(Variable s, b, c) -> eval ( (s, eval env b):: env ) c
   | Variable s -> recup env s
+  | Ifte(e1, e2, e3) -> if eval env e1 then eval env e2 else eval env e3
+  | Lt(e1, e2) -> (eval env e1) < (eval env e2)
+  | Le(e1, e2) -> (eval env e1) <= (eval env e2)
+  | Eg(e1, e2) -> (eval env e1) = (eval env e2)
+  | Ge(e1, e2) -> (eval env e1) >= (eval env e2)
+  | Gt(e1, e2) -> (eval env e1) > (eval env e2)
+  | Or(e1, e2) -> (eval env e1) || (eval env e2)
+  | And(e1, e2) -> (eval env e1) && (eval env e2)
+  | Non(e) -> not (eval env e)
   | _ -> failwith "bite"
 

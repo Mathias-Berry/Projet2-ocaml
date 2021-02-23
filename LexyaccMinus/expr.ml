@@ -37,8 +37,6 @@ let rec affiche_expr e =
   | Min(e1,e2) -> aff_aux "Min(" e1 e2
   | Variable s -> print_string s
   | Letin (a, b, c) -> print_string "let "; affiche_expr a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c
-  |
+
 
 (* sémantique opérationnelle à grands pas *)
-
-  

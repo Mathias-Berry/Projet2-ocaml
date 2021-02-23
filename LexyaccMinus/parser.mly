@@ -37,7 +37,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
 
   expression:			    /* règles de grammaire pour les expressions */
 
-  | IF expression THEN expression ELSE expression { Ifte($2,$4$5) }
+  | IF expression THEN expression ELSE expression { Ifte($2,$4,$5) }
   | LET STR EGAL expression IN expression		      { Letin(Variable $2,$4,$6) }
   | INT                                           { Const $1 }
   | STR                                           { Variable $1 }

@@ -36,7 +36,15 @@ let rec affiche_expr e =
   | Mul(e1,e2) -> aff_aux "Mul(" e1 e2
   | Min(e1,e2) -> aff_aux "Min(" e1 e2
   | Variable s -> print_string s
-  | Letin (a, b, c) -> print_string "let "; affiche_expr a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c
-
+  | Letin (a, b, c) -> (print_string "let "; affiche_expr a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
+  |Ifte (a,b,c) -> (print_string "if "; affiche_expr a ; print_string " then "; affiche_expr b; print_string " else "; affiche_expr c)
+  |Lt (a,b) ->(affiche_expr a; print_string " < "; affiche_expr b) 
+  |Le (a,b) ->(affiche_expr a; print_string " <= "; affiche_expr b)
+  |Gt (a,b) ->(affiche_expr a; print_string " > "; affiche_expr b)
+  |Ge (a,b) ->(affiche_expr a; print_string " >= "; affiche_expr b)
+  |Eg (a,b) ->(affiche_expr a; print_string " = "; affiche_expr b)
+  |And (a,b) ->(affiche_expr a; print_string " && "; affiche_expr b)
+  |Or (a,b) ->(affiche_expr a; print_string " || "; affiche_expr b)
+  |Non (a) ->(print_string " Not "; affiche_expr a)
 
 (* sémantique opérationnelle à grands pas *)

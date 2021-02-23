@@ -16,6 +16,7 @@ let rec eval env = function
   | Letin(Variable s, b, c) -> eval ( (s, eval env b):: env ) c
   | Variable s -> recup env s
   | Ifte(e1, e2, e3) -> if eval_bool env e1 then eval env e2 else eval env e3
+  | Print (a) -> (print_int a;print_newline (); a)
   | _ -> failwith "bite"
 
 and eval_bool env = function

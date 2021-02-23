@@ -9,6 +9,7 @@ open Expr   (* rappel: dans expr.ml:
 
 %token <int> INT       /* le lexème INT a un attribut entier */
 %token <string> STR
+%token PRINT
 %token PLUS TIMES MINUS
 %token LET IN EGAL
 %token IF THEN ELSE
@@ -55,6 +56,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | expression OR expression                      { Or($1,$3) }
   | expression EGAL expression                    { Eg($1,$3) }
   | NOT expression                                { Non($2) }
+  | PRINT INT                                     { Print($2) } 
 ;
 
 

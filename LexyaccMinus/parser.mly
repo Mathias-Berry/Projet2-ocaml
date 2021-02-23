@@ -12,6 +12,7 @@ open Expr   (* rappel: dans expr.ml:
 %token PLUS TIMES MINUS
 %token LET IN EGAL
 %token IF THEN ELSE
+%token LT LE GT GE AND OR NOT
 %token LPAREN RPAREN
 %token EOL             /* retour à la ligne */
 
@@ -37,7 +38,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
 
   expression:			    /* règles de grammaire pour les expressions */
 
-  | IF expression THEN expression ELSE expression { Ifte($2,$4,$5) }
+  | IF expression THEN expression ELSE expression { Ifte($2,$4,$6) }
   | LET STR EGAL expression IN expression		      { Letin(Variable $2,$4,$6) }
   | INT                                           { Const $1 }
   | STR                                           { Variable $1 }
@@ -52,8 +53,8 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | expression GE expression                      { Ge($1,$3) }
   | expression AND expression                     { And($1,$3) }
   | expression OR expression                      { Or($1,$3) }
-  | expression EGAL expressions                   { Eg($1,$3) }
-  | NOT expressions                               { Non($2) }
+  | expression EGAL expression                    { Eg($1,$3) }
+  | NOT expression                                { Non($2) }
 ;
 
 

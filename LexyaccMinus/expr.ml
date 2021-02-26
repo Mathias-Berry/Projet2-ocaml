@@ -17,7 +17,7 @@ type expr =
   | Or of expr*expr
   | Non of expr
   | Print of expr
-  | Foction of expr*expr
+  | Fonction of expr*expr
   | Appli of expr*expr
 
 
@@ -51,6 +51,6 @@ let rec affiche_expr e =
   | Or (a,b) ->(affiche_expr a; print_string " || "; affiche_expr b)
   | Non (a) ->(print_string "Not "; affiche_expr a)
   | Print (a) ->(print_string "Print "; affiche_expr a)
-  | Foction (a,b) ->(print_string f"fun"; affiche_expr a; print_string "->"; affiche_expr b)
+  | Fonction (a,b) ->(print_string "fun"; affiche_expr a; print_string "->"; affiche_expr b)
   | Appli (a,b) ->(affiche_expr a; print_string " "; affiche_expr b)
 (* sémantique opérationnelle à grands pas *)

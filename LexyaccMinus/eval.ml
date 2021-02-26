@@ -9,7 +9,7 @@ let rec recup e s = match e with
 
 let recupfonc  e =
   match e with
-    | Function (x,f)-> (x,f)
+    | Fonction (x,f)-> (x,f)
     | _ -> failwith"e n'est pas une fonction"
 
 let rec remplce x e f =
@@ -31,8 +31,8 @@ let rec remplce x e f =
   | Or (a,b) -> Or(remplce x e a,remplce x e b)
   | Non (a) -> Non(remplce x e a)
   | Print (a) -> Print(remplce x e a)
-  | Foction (a,b) -> Foction(remplce x e a,remplce x e b)
-  | Appli (a,b) -> Appli(remplce x e a,remplce x e b)*
+  | Fonction (a,b) -> Fonction(remplce x e a,remplce x e b)
+  | Appli (a,b) -> Appli(remplce x e a,remplce x e b)
 
 
 let rec eval env = function

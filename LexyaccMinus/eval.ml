@@ -1,7 +1,5 @@
 open Expr
 
-type envi = (string*int) list
-
 let rec recup e s = match e with
 	| [] -> failwith "La variable n'est pas définie"
 	| (a, b)::q when a <> s -> recup q s
@@ -11,6 +9,11 @@ let recupfonc  e =
   match e with
     | Fonction (x,f)-> (x,f)
     | _ -> failwith"e n'est pas une fonction"
+let estfun e = 
+  match e with
+    |Fonction(_,_) -> true
+    |_ -> false
+
 
 let rec remplce x e f =
   match f with

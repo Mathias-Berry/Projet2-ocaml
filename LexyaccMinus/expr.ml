@@ -1,4 +1,5 @@
 (* un type pour des expressions arithmétiques simples *)
+
 type expr =
     Const of int
   | Add of expr*expr
@@ -19,6 +20,10 @@ type expr =
   | Print of expr
   | Fonction of expr*expr
   | Appli of expr*expr
+
+type envi = (string*value) list
+and value = Int of int | Fun of envi*expr*expr
+
 
 
 
@@ -52,5 +57,5 @@ let rec affiche_expr e =
   | Non (a) ->(print_string "Not "; affiche_expr a)
   | Print (a) ->(print_string "Print "; affiche_expr a)
   | Fonction (a,b) ->(print_string "fun"; affiche_expr a; print_string "->"; affiche_expr b)
-  | Appli (a,b) ->(affiche_expr a; print_string " "; affiche_expr b)
+  | Appli (a,b) ->(affiche_expr a; print_string "("; affiche_expr b; print_string ") ")
 (* sémantique opérationnelle à grands pas *)

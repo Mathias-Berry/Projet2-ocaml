@@ -46,7 +46,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | LPAREN expression RPAREN                      { $2 } /* on récupère le deuxième élément */
   | expression PLUS expression                    { Add($1,$3) }
   | expression TIMES expression                   { Mul($1,$3) }
-  | expression DIV expression					  { Div($1, $3) }
+  | expression DIV expression				           	  { Div($1, $3) }
   | expression MINUS expression                   { Min($1,$3) }
   | MINUS expression %prec UMINUS                 { Min(Const 0, $2) }
   | expression LT expression                      { Lt($1,$3) }

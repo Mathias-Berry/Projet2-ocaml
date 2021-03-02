@@ -21,7 +21,7 @@ type expr =
   | Print of expr
   | Fonction of string*expr
   | Appli of expr*expr
-  | Letrec of string*string*expr*expr
+  | Letrec of string*expr*expr
 
 
 

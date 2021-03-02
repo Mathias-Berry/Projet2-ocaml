@@ -53,17 +53,17 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | IF expression THEN expression ELSE expression { Ifte($2,$4,$6) }
   | LET strlist EGAL expression IN expression		  { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
   | FUN strlist TO expression											{ List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
-  | expression PLUS expression                    { Add($1,$3) }
-  | expression TIMES expression                   { Mul($1,$3) }
-  | expression DIV expression										  { Div($1, $3) }
-  | expression MINUS expression                   { Min($1,$3) }
-  | MINUS expression %prec UMINUS 								{ Min(Const 0, $2) }
-  | expression LE expression                      { Le($1,$3) }
-	| expression GE expression                      { Ge($1,$3) }
-  | expression AND expression                     { And($1,$3) }
-  | expression OR expression                      { Or($1,$3) }
-  | expression EGAL expression                    { Eg($1,$3) }
-  | expression GT expression                      { Gt($1,$3) }
+  | expression PLUS expression                    { Arithop(Add,$1,$3) }
+  | expression TIMES expression                   { Arithop(Mul,$1,$3) }
+  | expression DIV expression										  { Arithop(Div,$1, $3) }
+  | expression MINUS expression                   { Arithop(Min,$1,$3) }
+  | MINUS expression %prec UMINUS 								{ Arithop(Min,Const 0, $2) }
+  | expression LE expression                      { Boolop1(Le,$1,$3) }
+	| expression GE expression                      { Boolop1(Ge,$1,$3) }
+  | expression AND expression                     { Boolop2(And,$1,$3) }
+  | expression OR expression                      { Boolop2(Or,$1,$3) }
+  | expression EGAL expression                    { Boolop1(Eg,$1,$3) }
+  | expression GT expression                      { Boolop1(Gt,$1,$3) }
   | NOT expression                                { Non($2) }
   | PRINT expression                              { Print($2) }
 	| expression atomique %prec FUNPRE							{ Appli($1, $2) }

@@ -52,7 +52,7 @@ let rec affiche_expr e =
   | Const k -> print_int k
   | Arithop (op,a,b) -> affichearithop op ; affiche_expr a; print_string "; "; affiche_expr b; print_string ")"
   | Variable s -> print_string s
-  | Letin (a, b, c) -> (print_string "let "; affiche_expr a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
+  | Letin (a, b, c) -> (print_string "let "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
   | Ifte (a,b,c) -> (print_string "if "; affiche_expr a ; print_string " then "; affiche_expr b; print_string " else "; affiche_expr c)
   | Boolop1 (op,a,b) -> afficheboolop1 op ; affiche_expr a; print_string "; "; affiche_expr b; print_string ")"
   | Boolop2 (op,a,b) -> afficheboolop2 op ; affiche_expr a; print_string "; "; affiche_expr b; print_string ")"

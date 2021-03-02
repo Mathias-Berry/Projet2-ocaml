@@ -15,7 +15,7 @@ open Expr   (* rappel: dans expr.ml:
 %token IF THEN ELSE
 %token LT LE GT GE AND OR NOT
 %token LPAREN RPAREN
-%token FUN TO
+%token FUN TO REC
 %token EOL             /* retour à la ligne */
 
 
@@ -51,8 +51,8 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
 
 	| atomique %prec ATOME					 								{ $1 }
   | IF expression THEN expression ELSE expression { Ifte($2,$4,$6) }
-  | LET STR EGAL expression IN expression		      { Letin(Variable $2,$4,$6) }
-  | FUN STR TO expression													{ Fonction(Variable $2, $4) }
+  | LET strlist EGAL expression IN expression		  { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+  | FUN strlist TO expression											{ List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
   | expression PLUS expression                    { Add($1,$3) }
   | expression TIMES expression                   { Mul($1,$3) }
   | expression DIV expression										  { Div($1, $3) }
@@ -67,10 +67,16 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | NOT expression                                { Non($2) }
   | PRINT expression                              { Print($2) }
 	| expression atomique %prec FUNPRE							{ Appli($1, $2) }
+	| LET REC strlist EGAL expression IN expression { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
 ;
 
 	atomique:
 	| LPAREN expression RPAREN											{ $2 }
 	| INT 																					{ Const $1 }
 	| STR 																					{ Variable $1 }
+;
+
+	strlist:
+	| STR																						{ [$1] }
+	| STR strlist																		{ $1 :: $2 }
 ;

@@ -1,7 +1,7 @@
 open Expr
 
 type envi = (string*value) list
-and value = Int of int | Fun of envi*string*expr*(string option)
+and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool
 
 let arithop2fun = function
   | Add -> fun x y -> x + y
@@ -20,6 +20,10 @@ let boolop22fun = function
   | Or -> fun x y -> x || y
   | And -> fun x y -> x && y
 
+let recupsome = function
+  |Some s -> s
+  |_ -> failwith "c'est None"
+
 let rec recup e s = match e with
 	| [] -> failwith "La variable n'est pas définie"
 	| (a, b)::q when a <> s -> recup q s
@@ -37,13 +41,19 @@ let recupfonc  e =
 
 let recupfun  v =
   match v with
-    | Fun (env,x,f)-> (env,x,f)
+    | Fun (env,x,f,r)-> (env,x,f,r)
     | _ -> failwith"v n'est pas une fonction"
 
 let recupint v =
   match v with
     | Int k-> k
     | _ -> failwith"v n'est pas un entier"
+
+let recupbool v =
+  match v with
+    | Bool b-> b
+    | _ -> failwith"v n'est pas un booléen"
+
 
 let estfun e = 
   match e with
@@ -52,23 +62,23 @@ let estfun e =
 
 
 let rec eval env = function
-  | Const k -> k
-  | Arithop(op,e1,e2) -> (arithop2fun op) (eval env e1) (eval env e2)
+  | Const k -> Int k
+  | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e1)) (recupint (eval env e2)))
   | Letin(s, b, c) -> if estfun b then 
                                 begin
                                   let (x,f)= recupfonc b in
-                                  eval ( (s,Fun (env,x,f)):: env ) c
+                                  eval ( (s,Fun (env,x,f, None )):: env) c
                                 end
                                else
                                begin
-                                eval ( (s,Int  (eval env b)):: env ) c
+                                eval ( (s,(eval env b)):: env ) c
                                end
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
-                                eval ( (s,Fun (env,x,f)):: env ) c
-  | Variable s -> recupint (recup env s)
-  | Ifte(e1, e2, e3) -> if eval_bool env e1 then eval env e2 else eval env e3
+                                eval ( (s,(Fun (env,x,f, Some s))):: env ) c
+  | Variable s -> recup env s
+  | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
   | Print (a) -> (let b = eval env a in
-                  print_int b;print_newline (); b)
+                  print_int (recupint b);print_newline (); b)
   | Appli (e1, e2) -> if estfun e1 then
                         begin
                           let v2 = eval env e2 in
@@ -79,14 +89,19 @@ let rec eval env = function
                         begin
                           let v = recupvar e1 in
                           let a = recup env v in
-                          let (envi,x,f) = recupfun a in
+                          let (envi,x,f,r) = recupfun a in
                           let v2 = eval env e2 in
-                          eval ((x,v2)::envi) f
+                          if r = None then
+                            begin
+                              eval ((x,v2)::envi) f
+                            end
+                          else
+                            begin
+                              let s = recupsome r in
+                              eval ((s,a)::(x,v2)::envi) f
+                            end
                         end
-  | _ -> failwith "bite"
-
-and eval_bool env = function
-  | Boolop1 (op, e1, e2) -> (boolop12fun op) (eval env e1) (eval env e2)
-  | Boolop2 (op, e1, e2) -> (boolop22fun op) (eval_bool env e1) (eval_bool env e2)
-  | Non(e) -> not (eval_bool env e)
+  | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))
+  | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
+  | Non(e) ->Bool (not (recupbool (eval env e)))
   | _ -> failwith "Stade toulousain champion de france"

@@ -60,4 +60,5 @@ let rec affiche_expr e =
   | Print (a) ->(print_string "Print("; affiche_expr a; print_string ")")
   | Fonction (a,b) ->(print_string "(fun "; print_string a; print_string "->"; affiche_expr b; print_string ")")
   | Appli (a,b) ->(affiche_expr a; print_string "("; affiche_expr b; print_string ") ")
+  | Letrec (a, b, c) -> (print_string "let rec "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
 (* sémantique opérationnelle à grands pas *)

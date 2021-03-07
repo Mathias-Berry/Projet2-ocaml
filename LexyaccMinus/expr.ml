@@ -1,4 +1,7 @@
 (* un type pour des expressions arithmétiques simples *)
+let source = ref false
+let debug = ref false
+
 type arithop = 
   Add | Mul |Div |Min
 

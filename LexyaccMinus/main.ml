@@ -3,8 +3,7 @@ open Eval
 
 let compile e =
   begin
-    begin if !source || !debug then affiche_expr e end;
-    print_newline();
+    begin if !source || !debug then (affiche_expr e; print_newline()) end;
     print_value (eval [] e);
     print_newline()
   end
@@ -21,9 +20,9 @@ let calc () =
   Arg.parse optlist (fun s -> nom_fichier := s) usage;
   
   try
-      let code = open_in !nom_fichier
-      let lexbuf = Lexing.from_channel in_file in
-      let parse () = Parser.main Lexer.token lexbuf
+      let code = open_in !nom_fichier in
+      let lexbuf = Lexing.from_channel code in
+      let parse () = Parser.main Lexer.token lexbuf in
       let result = parse () in
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
 	compile result; flush stdout

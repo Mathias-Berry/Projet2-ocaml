@@ -85,7 +85,11 @@ let rec eval env = function
   | Variable s -> recup env s
   | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
   | Print (a) -> (let b = eval env a in
-                  print_int (recupint b);print_newline (); b)
+                  if (not (!source)) then 
+                    begin
+                      print_int (recupint b);print_newline ()
+                    end;
+                  b)
   | Appli (e1, e2) -> if estfun e1 then
                         begin
                           let v2 = eval env e2 in

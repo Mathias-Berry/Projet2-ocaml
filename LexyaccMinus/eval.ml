@@ -3,6 +3,13 @@ open Expr
 type envi = (string*value) list
 and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool
 
+let print_value x =
+  match x with
+    |Int k -> print_int k
+    |Bool b -> if b then print_string "true" else print_string "false"
+    |Fun (e,x,f,r)-> print_string ("fun "^x^" -> "); affiche_expr f 
+
+
 let arithop2fun = function
   | Add -> fun x y -> x + y
   | Min -> fun x y -> x - y

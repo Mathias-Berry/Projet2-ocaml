@@ -5,7 +5,7 @@ let compile e =
   begin
     affiche_expr e;
     print_newline();
- (*   print_int (eval [] e);*)
+    print_value (eval [] e);
     print_newline()
   end
 

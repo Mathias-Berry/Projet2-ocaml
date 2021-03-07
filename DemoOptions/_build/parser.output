@@ -1,0 +1,134 @@
+   0  $accept : %entry% $end
+
+   1  main : expression EOL
+
+   2  expression : INT
+   3             | LPAREN expression RPAREN
+   4             | expression PLUS expression
+   5             | expression TIMES expression
+
+   6  %entry% : '\001' main
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . main  (6)
+
+	INT  shift 3
+	LPAREN  shift 4
+	.  error
+
+	main  goto 5
+	expression  goto 6
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	expression : INT .  (2)
+
+	.  reduce 2
+
+
+state 4
+	expression : LPAREN . expression RPAREN  (3)
+
+	INT  shift 3
+	LPAREN  shift 4
+	.  error
+
+	expression  goto 7
+
+
+state 5
+	%entry% : '\001' main .  (6)
+
+	.  reduce 6
+
+
+state 6
+	main : expression . EOL  (1)
+	expression : expression . PLUS expression  (4)
+	expression : expression . TIMES expression  (5)
+
+	PLUS  shift 8
+	TIMES  shift 9
+	EOL  shift 10
+	.  error
+
+
+state 7
+	expression : LPAREN expression . RPAREN  (3)
+	expression : expression . PLUS expression  (4)
+	expression : expression . TIMES expression  (5)
+
+	PLUS  shift 8
+	TIMES  shift 9
+	RPAREN  shift 11
+	.  error
+
+
+state 8
+	expression : expression PLUS . expression  (4)
+
+	INT  shift 3
+	LPAREN  shift 4
+	.  error
+
+	expression  goto 12
+
+
+state 9
+	expression : expression TIMES . expression  (5)
+
+	INT  shift 3
+	LPAREN  shift 4
+	.  error
+
+	expression  goto 13
+
+
+state 10
+	main : expression EOL .  (1)
+
+	.  reduce 1
+
+
+state 11
+	expression : LPAREN expression RPAREN .  (3)
+
+	.  reduce 3
+
+
+state 12
+	expression : expression . PLUS expression  (4)
+	expression : expression PLUS expression .  (4)
+	expression : expression . TIMES expression  (5)
+
+	TIMES  shift 9
+	PLUS  reduce 4
+	RPAREN  reduce 4
+	EOL  reduce 4
+
+
+state 13
+	expression : expression . PLUS expression  (4)
+	expression : expression . TIMES expression  (5)
+	expression : expression TIMES expression .  (5)
+
+	.  reduce 5
+
+
+9 terminals, 4 nonterminals
+7 grammar rules, 14 states

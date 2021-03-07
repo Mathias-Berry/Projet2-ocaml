@@ -19,7 +19,7 @@ open Expr   (* rappel: dans expr.ml:
 %token EOL             /* retour à la ligne */
 
 
-%left NOT PRINT ELSE IN TO
+%left PRINT ELSE IN TO
 
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
@@ -30,7 +30,7 @@ open Expr   (* rappel: dans expr.ml:
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
-
+%left NOT
 %nonassoc ATOME
 %nonassoc LPAREN RPAREN INT STR
 %start main             /* "start" signale le point d'entrée: */

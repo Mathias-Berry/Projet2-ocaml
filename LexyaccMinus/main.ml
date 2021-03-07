@@ -3,23 +3,14 @@ open Eval
 
 let compile e =
   begin
-    affiche_expr e;
+    begin if !source || !debug then affiche_expr e end;
     print_newline();
     print_value (eval [] e);
     print_newline()
   end
 
-(* stdin désigne l'entrée standard (le clavier) *)
-(* lexbuf est un canal ouvert sur stdin *)
 
 let nom_fichier = ref ""
-
-let lexbuf = Lexing.from_channel stdin
-
-(* on enchaîne les tuyaux: lexbuf est passé à Lexer.token,
-   et le résultat est donné à Parser.main *)
-
-let parse () = Parser.main Lexer.token lexbuf
 
 (* la fonction que l'on lance ci-dessous *)
 let calc () =
@@ -31,6 +22,8 @@ let calc () =
   
   try
       let code = open_in !nom_fichier
+      let lexbuf = Lexing.from_channel in_file in
+      let parse () = Parser.main Lexer.token lexbuf
       let result = parse () in
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
 	compile result; flush stdout

@@ -1,0 +1,1594 @@
+   0  $accept : %entry% $end
+
+   1  main : expression EOF
+
+   2  expression : atomique
+   3             | IF expression THEN expression ELSE expression
+   4             | LET strlist EGAL expression IN expression
+   5             | FUN strlist TO expression
+   6             | expression PLUS expression
+   7             | expression TIMES expression
+   8             | expression DIV expression
+   9             | expression MINUS expression
+  10             | MINUS expression
+  11             | expression LE expression
+  12             | expression GE expression
+  13             | expression AND expression
+  14             | expression OR expression
+  15             | expression EGAL expression
+  16             | expression NE expression
+  17             | expression GT expression
+  18             | expression LT expression
+  19             | NOT expression
+  20             | PRINT expression
+  21             | expression atomique
+  22             | LET REC strlist EGAL expression IN expression
+
+  23  atomique : LPAREN expression RPAREN
+  24           | INT
+  25           | STR
+
+  26  strlist : STR
+  27          | STR strlist
+
+  28  %entry% : '\001' main
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . main  (28)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	main  goto 12
+	expression  goto 13
+	atomique  goto 14
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	atomique : INT .  (24)
+
+	.  reduce 24
+
+
+state 4
+	atomique : STR .  (25)
+
+	.  reduce 25
+
+
+state 5
+	expression : PRINT . expression  (20)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 15
+	atomique  goto 14
+
+
+state 6
+	expression : MINUS . expression  (10)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 16
+	atomique  goto 14
+
+
+state 7
+	expression : LET . strlist EGAL expression IN expression  (4)
+	expression : LET . REC strlist EGAL expression IN expression  (22)
+
+	STR  shift 17
+	REC  shift 18
+	.  error
+
+	strlist  goto 19
+
+
+state 8
+	expression : IF . expression THEN expression ELSE expression  (3)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 20
+	atomique  goto 14
+
+
+state 9
+	expression : NOT . expression  (19)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 21
+	atomique  goto 14
+
+
+state 10
+	atomique : LPAREN . expression RPAREN  (23)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 22
+	atomique  goto 14
+
+
+state 11
+	expression : FUN . strlist TO expression  (5)
+
+	STR  shift 17
+	.  error
+
+	strlist  goto 23
+
+
+state 12
+	%entry% : '\001' main .  (28)
+
+	.  reduce 28
+
+
+state 13
+	main : expression . EOF  (1)
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	EOF  shift 36
+	.  error
+
+	atomique  goto 37
+
+
+state 14
+	expression : atomique .  (2)
+
+	.  reduce 2
+
+
+state 15
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : PRINT expression .  (20)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	IN  reduce 20
+	THEN  reduce 20
+	ELSE  reduce 20
+	RPAREN  reduce 20
+	EOF  reduce 20
+
+	atomique  goto 37
+
+
+state 16
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : MINUS expression .  (10)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 10
+	TIMES  reduce 10
+	DIV  reduce 10
+	MINUS  reduce 10
+	IN  reduce 10
+	EGAL  reduce 10
+	THEN  reduce 10
+	ELSE  reduce 10
+	LT  reduce 10
+	LE  reduce 10
+	GT  reduce 10
+	GE  reduce 10
+	AND  reduce 10
+	OR  reduce 10
+	NE  reduce 10
+	RPAREN  reduce 10
+	EOF  reduce 10
+
+	atomique  goto 37
+
+
+state 17
+	strlist : STR .  (26)
+	strlist : STR . strlist  (27)
+
+	STR  shift 17
+	EGAL  reduce 26
+	TO  reduce 26
+
+	strlist  goto 38
+
+
+state 18
+	expression : LET REC . strlist EGAL expression IN expression  (22)
+
+	STR  shift 17
+	.  error
+
+	strlist  goto 39
+
+
+state 19
+	expression : LET strlist . EGAL expression IN expression  (4)
+
+	EGAL  shift 40
+	.  error
+
+
+state 20
+	expression : IF expression . THEN expression ELSE expression  (3)
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	THEN  shift 41
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	.  error
+
+	atomique  goto 37
+
+
+state 21
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : NOT expression .  (19)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 19
+	TIMES  reduce 19
+	DIV  reduce 19
+	MINUS  reduce 19
+	IN  reduce 19
+	EGAL  reduce 19
+	THEN  reduce 19
+	ELSE  reduce 19
+	LT  reduce 19
+	LE  reduce 19
+	GT  reduce 19
+	GE  reduce 19
+	AND  reduce 19
+	OR  reduce 19
+	NE  reduce 19
+	RPAREN  reduce 19
+	EOF  reduce 19
+
+	atomique  goto 37
+
+
+state 22
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+	atomique : LPAREN expression . RPAREN  (23)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	RPAREN  shift 42
+	.  error
+
+	atomique  goto 37
+
+
+state 23
+	expression : FUN strlist . TO expression  (5)
+
+	TO  shift 43
+	.  error
+
+
+state 24
+	expression : expression PLUS . expression  (6)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 44
+	atomique  goto 14
+
+
+state 25
+	expression : expression TIMES . expression  (7)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 45
+	atomique  goto 14
+
+
+state 26
+	expression : expression DIV . expression  (8)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 46
+	atomique  goto 14
+
+
+state 27
+	expression : expression MINUS . expression  (9)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 47
+	atomique  goto 14
+
+
+state 28
+	expression : expression EGAL . expression  (15)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 48
+	atomique  goto 14
+
+
+state 29
+	expression : expression LT . expression  (18)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 49
+	atomique  goto 14
+
+
+state 30
+	expression : expression LE . expression  (11)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 50
+	atomique  goto 14
+
+
+state 31
+	expression : expression GT . expression  (17)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 51
+	atomique  goto 14
+
+
+state 32
+	expression : expression GE . expression  (12)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 52
+	atomique  goto 14
+
+
+state 33
+	expression : expression AND . expression  (13)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 53
+	atomique  goto 14
+
+
+state 34
+	expression : expression OR . expression  (14)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 54
+	atomique  goto 14
+
+
+state 35
+	expression : expression NE . expression  (16)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 55
+	atomique  goto 14
+
+
+state 36
+	main : expression EOF .  (1)
+
+	.  reduce 1
+
+
+state 37
+	expression : expression atomique .  (21)
+
+	.  reduce 21
+
+
+state 38
+	strlist : STR strlist .  (27)
+
+	.  reduce 27
+
+
+state 39
+	expression : LET REC strlist . EGAL expression IN expression  (22)
+
+	EGAL  shift 56
+	.  error
+
+
+state 40
+	expression : LET strlist EGAL . expression IN expression  (4)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 57
+	atomique  goto 14
+
+
+state 41
+	expression : IF expression THEN . expression ELSE expression  (3)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 58
+	atomique  goto 14
+
+
+state 42
+	atomique : LPAREN expression RPAREN .  (23)
+
+	.  reduce 23
+
+
+state 43
+	expression : FUN strlist TO . expression  (5)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 59
+	atomique  goto 14
+
+
+state 44
+	expression : expression . PLUS expression  (6)
+	expression : expression PLUS expression .  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	TIMES  shift 25
+	DIV  shift 26
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	PLUS  reduce 6
+	MINUS  reduce 6
+	IN  reduce 6
+	THEN  reduce 6
+	ELSE  reduce 6
+	RPAREN  reduce 6
+	EOF  reduce 6
+
+	atomique  goto 37
+
+
+state 45
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression TIMES expression .  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	PLUS  reduce 7
+	TIMES  reduce 7
+	DIV  reduce 7
+	MINUS  reduce 7
+	IN  reduce 7
+	THEN  reduce 7
+	ELSE  reduce 7
+	RPAREN  reduce 7
+	EOF  reduce 7
+
+	atomique  goto 37
+
+
+state 46
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression DIV expression .  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	PLUS  reduce 8
+	TIMES  reduce 8
+	DIV  reduce 8
+	MINUS  reduce 8
+	IN  reduce 8
+	THEN  reduce 8
+	ELSE  reduce 8
+	RPAREN  reduce 8
+	EOF  reduce 8
+
+	atomique  goto 37
+
+
+state 47
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression MINUS expression .  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	TIMES  shift 25
+	DIV  shift 26
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	PLUS  reduce 9
+	MINUS  reduce 9
+	IN  reduce 9
+	THEN  reduce 9
+	ELSE  reduce 9
+	RPAREN  reduce 9
+	EOF  reduce 9
+
+	atomique  goto 37
+
+
+state 48
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression EGAL expression .  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 15
+	TIMES  reduce 15
+	DIV  reduce 15
+	MINUS  reduce 15
+	IN  reduce 15
+	EGAL  reduce 15
+	THEN  reduce 15
+	ELSE  reduce 15
+	LT  reduce 15
+	LE  reduce 15
+	GT  reduce 15
+	GE  reduce 15
+	AND  reduce 15
+	OR  reduce 15
+	NE  reduce 15
+	RPAREN  reduce 15
+	EOF  reduce 15
+
+	atomique  goto 37
+
+
+state 49
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression LT expression .  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 18
+	TIMES  reduce 18
+	DIV  reduce 18
+	MINUS  reduce 18
+	IN  reduce 18
+	EGAL  reduce 18
+	THEN  reduce 18
+	ELSE  reduce 18
+	LT  reduce 18
+	LE  reduce 18
+	GT  reduce 18
+	GE  reduce 18
+	AND  reduce 18
+	OR  reduce 18
+	NE  reduce 18
+	RPAREN  reduce 18
+	EOF  reduce 18
+
+	atomique  goto 37
+
+
+state 50
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression LE expression .  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 11
+	TIMES  reduce 11
+	DIV  reduce 11
+	MINUS  reduce 11
+	IN  reduce 11
+	EGAL  reduce 11
+	THEN  reduce 11
+	ELSE  reduce 11
+	LT  reduce 11
+	LE  reduce 11
+	GT  reduce 11
+	GE  reduce 11
+	AND  reduce 11
+	OR  reduce 11
+	NE  reduce 11
+	RPAREN  reduce 11
+	EOF  reduce 11
+
+	atomique  goto 37
+
+
+state 51
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression GT expression .  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 17
+	TIMES  reduce 17
+	DIV  reduce 17
+	MINUS  reduce 17
+	IN  reduce 17
+	EGAL  reduce 17
+	THEN  reduce 17
+	ELSE  reduce 17
+	LT  reduce 17
+	LE  reduce 17
+	GT  reduce 17
+	GE  reduce 17
+	AND  reduce 17
+	OR  reduce 17
+	NE  reduce 17
+	RPAREN  reduce 17
+	EOF  reduce 17
+
+	atomique  goto 37
+
+
+state 52
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression GE expression .  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 12
+	TIMES  reduce 12
+	DIV  reduce 12
+	MINUS  reduce 12
+	IN  reduce 12
+	EGAL  reduce 12
+	THEN  reduce 12
+	ELSE  reduce 12
+	LT  reduce 12
+	LE  reduce 12
+	GT  reduce 12
+	GE  reduce 12
+	AND  reduce 12
+	OR  reduce 12
+	NE  reduce 12
+	RPAREN  reduce 12
+	EOF  reduce 12
+
+	atomique  goto 37
+
+
+state 53
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression AND expression .  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 13
+	TIMES  reduce 13
+	DIV  reduce 13
+	MINUS  reduce 13
+	IN  reduce 13
+	EGAL  reduce 13
+	THEN  reduce 13
+	ELSE  reduce 13
+	LT  reduce 13
+	LE  reduce 13
+	GT  reduce 13
+	GE  reduce 13
+	AND  reduce 13
+	OR  reduce 13
+	NE  reduce 13
+	RPAREN  reduce 13
+	EOF  reduce 13
+
+	atomique  goto 37
+
+
+state 54
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression OR expression .  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 14
+	TIMES  reduce 14
+	DIV  reduce 14
+	MINUS  reduce 14
+	IN  reduce 14
+	EGAL  reduce 14
+	THEN  reduce 14
+	ELSE  reduce 14
+	LT  reduce 14
+	LE  reduce 14
+	GT  reduce 14
+	GE  reduce 14
+	AND  reduce 14
+	OR  reduce 14
+	NE  reduce 14
+	RPAREN  reduce 14
+	EOF  reduce 14
+
+	atomique  goto 37
+
+
+state 55
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression NE expression .  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 10
+	PLUS  reduce 16
+	TIMES  reduce 16
+	DIV  reduce 16
+	MINUS  reduce 16
+	IN  reduce 16
+	EGAL  reduce 16
+	THEN  reduce 16
+	ELSE  reduce 16
+	LT  reduce 16
+	LE  reduce 16
+	GT  reduce 16
+	GE  reduce 16
+	AND  reduce 16
+	OR  reduce 16
+	NE  reduce 16
+	RPAREN  reduce 16
+	EOF  reduce 16
+
+	atomique  goto 37
+
+
+state 56
+	expression : LET REC strlist EGAL . expression IN expression  (22)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 60
+	atomique  goto 14
+
+
+state 57
+	expression : LET strlist EGAL expression . IN expression  (4)
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	IN  shift 61
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	.  error
+
+	atomique  goto 37
+
+
+state 58
+	expression : IF expression THEN expression . ELSE expression  (3)
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	ELSE  shift 62
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	.  error
+
+	atomique  goto 37
+
+
+state 59
+	expression : FUN strlist TO expression .  (5)
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	IN  reduce 5
+	THEN  reduce 5
+	ELSE  reduce 5
+	RPAREN  reduce 5
+	EOF  reduce 5
+
+	atomique  goto 37
+
+
+state 60
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+	expression : LET REC strlist EGAL expression . IN expression  (22)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	IN  shift 63
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	.  error
+
+	atomique  goto 37
+
+
+state 61
+	expression : LET strlist EGAL expression IN . expression  (4)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 64
+	atomique  goto 14
+
+
+state 62
+	expression : IF expression THEN expression ELSE . expression  (3)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 65
+	atomique  goto 14
+
+
+state 63
+	expression : LET REC strlist EGAL expression IN . expression  (22)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	LPAREN  shift 10
+	FUN  shift 11
+	.  error
+
+	expression  goto 66
+	atomique  goto 14
+
+
+state 64
+	expression : LET strlist EGAL expression IN expression .  (4)
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	IN  reduce 4
+	THEN  reduce 4
+	ELSE  reduce 4
+	RPAREN  reduce 4
+	EOF  reduce 4
+
+	atomique  goto 37
+
+
+state 65
+	expression : IF expression THEN expression ELSE expression .  (3)
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	IN  reduce 3
+	THEN  reduce 3
+	ELSE  reduce 3
+	RPAREN  reduce 3
+	EOF  reduce 3
+
+	atomique  goto 37
+
+
+state 66
+	expression : expression . PLUS expression  (6)
+	expression : expression . TIMES expression  (7)
+	expression : expression . DIV expression  (8)
+	expression : expression . MINUS expression  (9)
+	expression : expression . LE expression  (11)
+	expression : expression . GE expression  (12)
+	expression : expression . AND expression  (13)
+	expression : expression . OR expression  (14)
+	expression : expression . EGAL expression  (15)
+	expression : expression . NE expression  (16)
+	expression : expression . GT expression  (17)
+	expression : expression . LT expression  (18)
+	expression : expression . atomique  (21)
+	expression : LET REC strlist EGAL expression IN expression .  (22)
+
+	INT  shift 3
+	STR  shift 4
+	PLUS  shift 24
+	TIMES  shift 25
+	DIV  shift 26
+	MINUS  shift 27
+	EGAL  shift 28
+	LT  shift 29
+	LE  shift 30
+	GT  shift 31
+	GE  shift 32
+	AND  shift 33
+	OR  shift 34
+	NE  shift 35
+	LPAREN  shift 10
+	IN  reduce 22
+	THEN  reduce 22
+	ELSE  reduce 22
+	RPAREN  reduce 22
+	EOF  reduce 22
+
+	atomique  goto 37
+
+
+33 terminals, 6 nonterminals
+29 grammar rules, 67 states

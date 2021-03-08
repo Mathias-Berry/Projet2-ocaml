@@ -12,9 +12,9 @@ let print_value x =
 
 
 let rec recup e s = match e with
-	| [] -> failwith "La variable n'est pas définie"
-	| (a, b)::q when a <> s -> recup q s
-	| (a, b)::q -> b
+  | [] -> failwith "La variable n'est pas définie"
+  | (a, b)::q when a <> s -> recup q s
+  | (a, b)::q -> b
 
 let recupsome = function
   |Some s -> s
@@ -52,6 +52,11 @@ let estfun e =
     |_ -> false
 
 
+let estappli e = 
+  match e with
+    |Appli(_,_) -> true
+    |_ -> false
+
 
 let arithop2fun = function
   | Add -> fun x y -> x + y
@@ -83,6 +88,7 @@ let rec eval env = function
   | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))
   | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
   | Non(e) ->Bool (not (recupbool (eval env e)))
+  |Fonction(x,e) ->Fun (env,x,e,None)
   | Letin(s, b, c) -> if estfun b then 
                                 begin
                                   let (x,f)= recupfonc b in
@@ -106,11 +112,19 @@ let rec eval env = function
                           let (x,f) = recupfonc e1 in
                           eval ((x,v2)::env) f
                          end
-                      else 
+                      else
                         begin
-                          let v = recupvar e1 in
-                          let a = recup env v in
-                          let (envi,x,f,r) = recupfun a in
+                          let a = ref (Int 0) in
+                          if estappli e1 then 
+                            begin
+                              a := eval env e1
+                            end
+                          else
+                          begin
+                            let v = recupvar e1 in
+                            a := (recup env v)
+                          end;
+                          let (envi,x,f,r) = recupfun (!a) in
                           let v2 = eval env e2 in
                           if r = None then
                             begin
@@ -119,7 +133,6 @@ let rec eval env = function
                           else
                             begin
                               let s = recupsome r in
-                              eval ((s,a)::(x,v2)::envi) f
+                              eval ((s,!a)::(x,v2)::envi) f
                             end
                         end
-  | _ -> failwith "Stade toulousain champion de france"

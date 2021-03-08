@@ -23,6 +23,6 @@ Pour le letrec, on a considerer que cela ne s'appliquer que au fonction (même s
 Pour le print j'ai juste regardé si on voulait le fair (si on fait un -showsrc on affiche pas les print).
 Pour l'application :
 	Je commence par regarder si le première élément est une fonction, en ce cas j'évalue le body de la fontion dans l'environnement au quel j'ai ajouté le fait que la variable de la fonction soit attribué à la valeur de de ce a quoi in l'applique.
-	Ensuite si je l'applique a une variable, c'est que cette variable est une fonction. Je traite d'abord les fonctions non recursive. Pour cela je fais environs la même chose sauf que j'évalu le body dans l'environnement dans lequel a était créé la fonction au quel j'ai ajouté le fait que la variable soit associé a la valeur dans l'environnement actuel de ce a quoi on applique la fonction.
+	Ensuite si je distingue 2 cas, si ce que j'ai avant est une application ou une variable. Dans les deux cas je récupère cette elémént sous la forme d'une valeur Fun. Je traite d'abord les fonctions non recursive. Pour cela je fais environs la même chose sauf que j'évalu le body dans l'environnement dans lequel a était créé la fonction au quel j'ai ajouté le fait que la variable soit associé a la valeur dans l'environnement actuel de ce a quoi on applique la fonction.
 	Enfin si la fonction est recursive je fais la même chose que dans le cas 2 mais j'ajoute a l'environement dans lequel on évalu le body la fonction elle même avant la valeur.
-Et enfin, il y a un failwith "Stade toulousain champion de france" qu'Emile avait mis au début mais que je n'ai pas enlevé car c'est quelque chose qui n'arrive jamais car le match est complet, ce qui n'est pas contradictoire avec la vrai vie.
+

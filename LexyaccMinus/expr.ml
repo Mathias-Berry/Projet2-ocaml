@@ -63,6 +63,6 @@ let rec affiche_expr e =
   | Non (a) ->(print_string "not("; affiche_expr a;print_string ")")
   | Print (a) ->(print_string "prInt("; affiche_expr a; print_string ")")
   | Fonction (a,b) ->(print_string "(fun "; print_string a; print_string "->"; affiche_expr b; print_string ")")
-  | Appli (a,b) ->(affiche_expr a; print_string "("; affiche_expr b; print_string ") ")
+  | Appli (a,b) ->(print_string "(";affiche_expr a; print_string "("; affiche_expr b; print_string ")) ")
   | Letrec (a, b, c) -> (print_string "let rec "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
 

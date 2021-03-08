@@ -7,7 +7,7 @@ type arithop =
 
 
 type boolop1 =
-   Eg | Ge | Gt | Le | Lt 
+   Eg | Ge | Gt | Le | Lt |Ne
 
 type boolop2 =
    Or | And
@@ -44,6 +44,7 @@ let afficheboolop1 = function
   | Le -> print_string "<="
   | Gt -> print_string ">"
   | Ge -> print_string ">="
+  | Ne -> print_string "<>"
 
 let afficheboolop2 = function
   | And -> print_string " && "

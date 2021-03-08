@@ -22,6 +22,7 @@ let boolop12fun = function
   | Gt -> fun x y -> (x > y)
   | Le -> fun x y -> (x <= y)
   | Lt -> fun x y -> (x < y)
+  | Ne -> fun x y -> (x <> y)
 
 let boolop22fun = function
   | Or -> fun x y -> x || y

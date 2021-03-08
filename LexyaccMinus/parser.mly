@@ -13,7 +13,7 @@ open Expr   (* rappel: dans expr.ml:
 %token PLUS TIMES DIV MINUS
 %token LET IN EGAL
 %token IF THEN ELSE
-%token LT LE GT GE AND OR NOT
+%token LT LE GT GE AND OR NOT NE
 %token LPAREN RPAREN
 %token FUN TO REC
 %token EOL             /* retour à la ligne */
@@ -24,7 +24,7 @@ open Expr   (* rappel: dans expr.ml:
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
 
-%left LE GE AND OR EGAL GT
+%left LE GE AND OR EGAL GT NE LT
 
 %nonassoc FUNPRE
 
@@ -63,6 +63,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | expression AND expression                     { Boolop2(And,$1,$3) }
   | expression OR expression                      { Boolop2(Or,$1,$3) }
   | expression EGAL expression                    { Boolop1(Eg,$1,$3) }
+  | expression NE expression                      { Boolop1(Ne,$1,$3) }
   | expression GT expression                      { Boolop1(Gt,$1,$3) }
   | NOT expression                                { Non($2) }
   | PRINT expression                              { Print($2) }

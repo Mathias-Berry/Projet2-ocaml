@@ -2,11 +2,9 @@ open Expr
 open Eval
 
 let compile e =
-  begin
     begin if !source || !debug then (affiche_expr e; print_newline()) end;
-    print_value (eval [] e);
-    print_newline()
-  end
+
+let _ = eval [] e in ()
 
 
 let nom_fichier = ref ""
@@ -26,7 +24,7 @@ let calc () =
       let result = parse () in
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
 	compile result; flush stdout
-  with _ -> (print_string "erreur de saisie\n")
+  with _ -> (print_string "Error\n")
 ;;
 
 let _ = calc()

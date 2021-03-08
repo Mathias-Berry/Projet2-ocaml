@@ -16,7 +16,7 @@ open Expr   (* rappel: dans expr.ml:
 %token LT LE GT GE AND OR NOT NE
 %token LPAREN RPAREN
 %token FUN TO REC
-%token EOL             /* retour à la ligne */
+%token EOF             /* Fin de fichier */
 
 
 %left PRINT ELSE IN TO
@@ -43,7 +43,7 @@ open Expr   (* rappel: dans expr.ml:
 
 
 main:                       /* <- le point d'entrée (cf. + haut, "start") */
-expression EOL                { $1 }  /* on veut reconnaître une expression */
+expression EOF                { $1 }  /* on veut reconnaître une expression */
   ;
   
 
@@ -65,6 +65,7 @@ expression EOL                { $1 }  /* on veut reconnaître une expression */
   | expression EGAL expression                    { Boolop1(Eg,$1,$3) }
   | expression NE expression                      { Boolop1(Ne,$1,$3) }
   | expression GT expression                      { Boolop1(Gt,$1,$3) }
+  | expression LT expression                      { Boolop1(Lt,$1,$3) }
   | NOT expression                                { Non($2) }
   | PRINT expression                              { Print($2) }
 	| expression atomique %prec FUNPRE							{ Appli($1, $2) }

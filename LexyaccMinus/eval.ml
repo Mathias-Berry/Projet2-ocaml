@@ -10,32 +10,15 @@ let print_value x =
     |Fun (e,x,f,r)-> print_string ("fun "^x^" -> "); affiche_expr f 
 
 
-let arithop2fun = function
-  | Add -> fun x y -> x + y
-  | Min -> fun x y -> x - y
-  | Mul -> fun x y -> x * y
-  | Div -> fun x y -> x / y
-
-let boolop12fun = function
-  | Eg -> fun x y -> (x = y)
-  | Ge -> fun x y -> (x >= y)
-  | Gt -> fun x y -> (x > y)
-  | Le -> fun x y -> (x <= y)
-  | Lt -> fun x y -> (x < y)
-  | Ne -> fun x y -> (x <> y)
-
-let boolop22fun = function
-  | Or -> fun x y -> x || y
-  | And -> fun x y -> x && y
-
-let recupsome = function
-  |Some s -> s
-  |_ -> failwith "c'est None"
 
 let rec recup e s = match e with
 	| [] -> failwith "La variable n'est pas définie"
 	| (a, b)::q when a <> s -> recup q s
 	| (a, b)::q -> b
+
+let recupsome = function
+  |Some s -> s
+  |_ -> failwith "c'est None"
 
 let recupvar  e =
   match e with
@@ -69,9 +52,37 @@ let estfun e =
     |_ -> false
 
 
+
+let arithop2fun = function
+  | Add -> fun x y -> x + y
+  | Min -> fun x y -> x - y
+  | Mul -> fun x y -> x * y
+  | Div -> fun x y -> x / y
+
+
+let boolop12fun = function
+  | Eg -> fun x y -> (x = y)
+  | Ge -> fun x y -> (x >= y)
+  | Gt -> fun x y -> (x > y)
+  | Le -> fun x y -> (x <= y)
+  | Lt -> fun x y -> (x < y)
+  | Ne -> fun x y -> (x <> y)
+
+
+let boolop22fun = function
+  | Or -> fun x y -> x || y
+  | And -> fun x y -> x && y
+
+
+
 let rec eval env = function
   | Const k -> Int k
   | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e1)) (recupint (eval env e2)))
+  | Variable s -> recup env s
+  | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
+  | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))
+  | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
+  | Non(e) ->Bool (not (recupbool (eval env e)))
   | Letin(s, b, c) -> if estfun b then 
                                 begin
                                   let (x,f)= recupfonc b in
@@ -83,8 +94,6 @@ let rec eval env = function
                                end
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
-  | Variable s -> recup env s
-  | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
   | Print (a) -> (let b = eval env a in
                   if (not (!source)) then 
                     begin
@@ -113,7 +122,4 @@ let rec eval env = function
                               eval ((s,a)::(x,v2)::envi) f
                             end
                         end
-  | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))
-  | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
-  | Non(e) ->Bool (not (recupbool (eval env e)))
   | _ -> failwith "Stade toulousain champion de france"

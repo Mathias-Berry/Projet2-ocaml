@@ -24,6 +24,7 @@ type expr =
   | Fonction of string*expr
   | Appli of expr*expr
   | Letrec of string*expr*expr
+  | Letpv of string*expr*expr
 
 
 

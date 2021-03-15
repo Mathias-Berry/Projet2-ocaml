@@ -24,8 +24,7 @@ type expr =
   | Fonction of string*expr
   | Appli of expr*expr
   | Letrec of string*expr*expr
-  | Letpv of string*expr*expr
-
+  | Pv of expr*expr
 
 
 
@@ -65,4 +64,5 @@ let rec affiche_expr e =
   | Fonction (a,b) ->(print_string "(fun "; print_string a; print_string "->"; affiche_expr b; print_string ")")
   | Appli (a,b) ->(print_string "(";affiche_expr a; print_string "("; affiche_expr b; print_string ")) ")
   | Letrec (a, b, c) -> (print_string "let rec "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
+  | Pv (a,b) -> (affiche_expr a; print_string(" ; ";affiche_expr b))
 

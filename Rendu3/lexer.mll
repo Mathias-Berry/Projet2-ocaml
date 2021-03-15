@@ -37,4 +37,3 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "end"           { END }
   | ['0'-'9']+ as s { INT (int_of_string s) }
   | ['a'-'z']['a'-'z' 'A'-'Z' '0'-'9']* as s { STR s }
-  | eof             { raise Eof } 

@@ -18,18 +18,18 @@ open Expr
 %token EOF             /* Fin de fichier */
 
 
-%left PRINT ELSE IN TO
+%left ELSE IN TO
 
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
 
 %left LE GE AND OR EGAL GT NE LT
 
-%nonassoc FUNPRE MAX
+%nonassoc FUNPRE
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
-%left NOT
+%left NOT PRINT
 %nonassoc ATOME
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
@@ -50,7 +50,7 @@ expression_init:
   | expression                                            { $1 }
   | expression PVDOUBLE                                   { $1 }
   | expression PVDOUBLE expression_init                   { Pv($1, $3) }
-  | LET strlist EGAL expression PVDOUBLE expression_init %prec MAX { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+  | LET strlist EGAL expression PVDOUBLE expression_init  { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
 ;
 
   expression:			    /* règles de grammaire pour les expressions */

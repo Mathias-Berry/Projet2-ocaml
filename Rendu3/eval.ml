@@ -98,7 +98,25 @@ let rec eval env = function
                       print_int (recupint b);print_newline ()
                     end;
                   b)
-  | Appli (e1, e2) -> if estfun e1 then
+  | Appli (e1, e2) -> let v2 = eval env e2 in
+                      let a = eval env e1 in
+                      let (envi,x,f,r)= recupfun a in
+                      if r = None then
+                        begin
+                          eval ((x,v2)::envi) f
+                        end
+                      else
+                        begin
+                          let s = recupsome r in
+                          eval ((s,a)::(x,v2)::envi) f
+                        end
+
+
+
+
+
+
+  (*if estfun e1 then
                         begin
                           let v2 = eval env e2 in
                           let (x,f) = recupfonc e1 in
@@ -127,4 +145,4 @@ let rec eval env = function
                               let s = recupsome r in
                               eval ((s,!a)::(x,v2)::envi) f
                             end
-                        end
+                        end*)

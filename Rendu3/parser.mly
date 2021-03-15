@@ -47,7 +47,7 @@ expression_init EOF                { $1 }  /* on veut reconnaître une expressio
   
 
 expression_init:
-  | expression                                            { $1 }
+  | expression                                            { $1 }
   | expression PVDOUBLE                                   { $1 }
   | expression PVDOUBLE expression_init                   { Pv($1, $3) }
   | LET strlist EGAL expression PVDOUBLE expression_init %prec MAX { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }

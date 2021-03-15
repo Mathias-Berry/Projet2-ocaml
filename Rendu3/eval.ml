@@ -88,16 +88,8 @@ let rec eval env = function
   | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))
   | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
   | Non(e) ->Bool (not (recupbool (eval env e)))
-  |Fonction(x,e) ->Fun (env,x,e,None)
-  | Letin(s, b, c) -> if estfun b then 
-                                begin
-                                  let (x,f)= recupfonc b in
-                                  eval ( (s,Fun (env,x,f, None )):: env) c
-                                end
-                               else
-                               begin
-                                eval ( (s,(eval env b)):: env ) c
-                               end
+  | Fonction(x,e) ->Fun (env,x,e,None)
+  | Letin(s, b, c) -> eval ( (s,(eval env b)):: env ) c
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
   | Print (a) -> (let b = eval env a in

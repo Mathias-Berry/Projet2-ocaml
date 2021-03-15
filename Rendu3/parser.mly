@@ -10,10 +10,10 @@ open Expr
 %token <string> STR
 %token PRINT
 %token PLUS TIMES DIV MINUS
-%token LET IN EGAL
+%token LET IN EGAL PVDOUBLE
 %token IF THEN ELSE
 %token LT LE GT GE AND OR NOT NE
-%token LPAREN RPAREN
+%token LPAREN RPAREN BEGIN END
 %token FUN TO REC
 %token EOF             /* Fin de fichier */
 
@@ -25,13 +25,13 @@ open Expr
 
 %left LE GE AND OR EGAL GT NE LT
 
-%nonassoc FUNPRE
+%nonassoc FUNPRE MAX
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
 %left NOT
 %nonassoc ATOME
-%nonassoc LPAREN RPAREN INT STR
+%nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
 %type <Expr.expr> main     /* on _doit_ donner le type associé au point d'entrée */
@@ -42,13 +42,20 @@ open Expr
 
 
 main:                       /* <- le point d'entrée (cf. + haut, "start") */
-expression EOF                { $1 }  /* on veut reconnaître une expression */
+expression_init EOF                { $1 }  /* on veut reconnaître une expression */
   ;
   
 
+expression_init:
+  | expression                                            { $1 }
+  | expression PVDOUBLE                                   { $1 }
+  | expression PVDOUBLE expression_init                   { Pv($1, $3) }
+  | LET strlist EGAL expression PVDOUBLE expression_init %prec MAX { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+
+
   expression:			    /* règles de grammaire pour les expressions */
 
-	| atomique %prec ATOME					 								{ $1 }
+  | atomique %prec ATOME					 								{ $1 }
   | IF expression THEN expression ELSE expression { Ifte($2,$4,$6) }
   | LET strlist EGAL expression IN expression		  { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
   | FUN strlist TO expression											{ List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
@@ -72,6 +79,7 @@ expression EOF                { $1 }  /* on veut reconnaître une expression */
 ;
 
 	atomique:
+	| BEGIN expression END                          { $2 }
 	| LPAREN expression RPAREN											{ $2 }
 	| INT 																					{ Const $1 }
 	| STR 																					{ Variable $1 }

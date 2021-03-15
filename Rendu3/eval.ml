@@ -82,7 +82,7 @@ let boolop22fun = function
 
 let rec eval env = function
   | Const k -> Int k
-  | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e1)) (recupint (eval env e2)))
+  | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e2)) (recupint (eval env e1)))
   | Variable s -> recup env s
   | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
   | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))

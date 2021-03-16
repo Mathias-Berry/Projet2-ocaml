@@ -13,13 +13,14 @@ open Expr
 %token LET IN EGAL PVDOUBLE
 %token IF THEN ELSE
 %token LT LE GT GE AND OR NOT NE
+%token EVALREF REF ASS
 %token LPAREN RPAREN BEGIN END
 %token FUN TO REC
 %token EOF             /* Fin de fichier */
 
 
 %left ELSE IN TO
-
+%nonassoc REF EVALREF
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
 
@@ -29,7 +30,7 @@ open Expr
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
-%left NOT PRINT
+%left ASS NOT PRINT
 %nonassoc ATOME
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
@@ -76,6 +77,9 @@ expression_init:
   | PRINT expression                              { Print($2) }
 	| expression atomique %prec FUNPRE							{ Appli($1, $2) }
 	| LET REC strlist EGAL expression IN expression { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
+  | EVALREF expression                            { Valeurref($2)}
+  | REF expression                                { Ref($2)}
+  | expression ASS expression                     { Changeref($1,$3)}
 ;
 
 	atomique:

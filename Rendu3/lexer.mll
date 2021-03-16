@@ -7,7 +7,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | [' ' '\t' '\n']     { token lexbuf }    (* on saute les blancs, les tabulations et les sauts de lignes*)
 
 
-  | eof            { EOF }
+  | eof             { EOF }
   | '+'             { PLUS }
   | '*'             { TIMES }
   | '/'             { DIV }
@@ -35,5 +35,8 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | ";;"            { PVDOUBLE }
   | "begin"         { BEGIN }
   | "end"           { END }
+  | "!"             { EVALREF }
+  | "ref"           { REF }
+  | ":="            { ASS }
   | ['0'-'9']+ as s { INT (int_of_string s) }
   | ['a'-'z']['a'-'z' 'A'-'Z' '0'-'9']* as s { STR s }

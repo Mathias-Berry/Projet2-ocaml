@@ -20,7 +20,7 @@ type expr =
   | Boolop1 of boolop1*expr*expr
   | Boolop2 of boolop2*expr*expr
   | Non of expr
-  | Print of expr
+  | Print
   | Fonction of string*expr
   | Appli of expr*expr
   | Letrec of string*expr*expr

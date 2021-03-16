@@ -12,6 +12,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '*'             { TIMES }
   | '/'             { DIV }
   | '-'             { MINUS }
+  | "()"            { UNIT }
   | '('             { LPAREN }
   | ')'             { RPAREN }
   | "let"           { LET }

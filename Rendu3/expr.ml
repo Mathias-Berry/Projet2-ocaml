@@ -28,6 +28,7 @@ type expr =
   | Ref of expr
   | Changeref of expr*expr
   | Valeurref of expr
+  | Unite
 
 
 
@@ -72,5 +73,6 @@ let rec affiche_expr e =
   | Ref (a) ->( print_string "ref ("; affiche_expr a; print_string ")" )
   | Changeref (a, b) -> (print_string "("; affiche_expr a; print_string ") := "; print_string "("; affiche_expr b; print_string ")" )
   | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")")
+  | Unite -> print_string "()"
 
 

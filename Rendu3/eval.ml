@@ -2,9 +2,9 @@ open Expr
 
 
 type envi = (string*value) list
-and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Ref of int
+and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Ref of int | Unitv
 
-let reference = Array.make 1000 Int(0)
+let reference = Array.make 1000 (Int(0))
 
 let index = ref 0
 
@@ -12,7 +12,9 @@ let print_value x =
   match x with
     |Int k -> print_int k
     |Bool b -> if b then print_string "true" else print_string "false"
-    |Fun (e,x,f,r)-> print_string ("fun "^x^" -> "); affiche_expr f 
+    |Fun (e,x,f,r)-> print_string ("fun "^x^" -> "); affiche_expr f
+    |Unitv -> ()
+    |Ref(_) -> failwith "Pas affichable"
 
 
 
@@ -50,6 +52,15 @@ let recupbool v =
     | Bool b-> b
     | _ -> failwith"v n'est pas un booléen"
 
+let recupref v =
+  match v with
+    | Ref b -> b
+    | _ -> failwith "l'argument n'est pas une référence"
+
+let recuprunit v =
+  match v with
+    | Unite -> Unitv
+    | _ -> failwith "L'argument n'est pas de type unit"
 
 let estfun e = 
   match e with
@@ -115,11 +126,11 @@ let rec eval env = function
                           let s = recupsome r in
                           eval ((s,a)::(x,v2)::envi) f
                         end
-  | Pv(e1, e2) -> begin eval env e1; eval env e2 end
+  | Pv(e1, e2) -> begin let _ = eval env e1 in eval env e2 end
   | Ref(e1) -> begin incr index; reference.(!index) <- (eval env e1); Ref(!index) end
-  | Valeurref(e1) -> let s = eval env e1 in let Ref(a) = s in reference.(a)
-  | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in let Ref(b) = s in reference.(b) <- a
-
+  | Valeurref(e1) -> let s = eval env e1 in reference.(recupref s)
+  | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in (reference.(recupref s) <- a; Unitv)
+  | Unite -> Unitv
 
 
 

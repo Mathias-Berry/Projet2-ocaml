@@ -33,6 +33,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "->"      			{ TO }
   | "rec"           { REC }
   | ";;"            { PVDOUBLE }
+  | ";"             { PV }
   | "begin"         { BEGIN }
   | "end"           { END }
   | "!"             { EVALREF }

@@ -28,6 +28,7 @@ type expr =
   | Changeref of expr*expr
   | Valeurref of expr
   | Unite
+  | Tuple of (expr list)
 
 
 

@@ -10,7 +10,7 @@ open Expr
 %token <string> STR
 %token PRINT
 %token PLUS TIMES DIV MINUS
-%token LET IN EGAL PVDOUBLE PTV
+%token LET IN EGAL PVDOUBLE PTV UNIT
 %token IF THEN ELSE
 %token LT LE GT GE AND OR NOT NE
 %token EVALREF REF ASS
@@ -30,7 +30,9 @@ open Expr
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
-%left REF EVALREF NOT PRINT
+%nonassoc REF EVALREF
+%nonassoc UNIT
+%left NOT PRINT
 %nonassoc ATOME
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
@@ -78,7 +80,8 @@ expression_init:
   | EVALREF expression                            { Valeurref($2)}
   | REF expression                                { Ref($2)}
   | expression ASS expression                     { Changeref($1,$3)}
-  | expression PTV expression                      { Letin("_",$1,$3)}
+  | expression PTV expression                     { Letin("_",$1,$3)}
+  | UNIT                                          { Unite }
 ;
 
 	atomique:

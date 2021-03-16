@@ -1,7 +1,12 @@
 open Expr
 
+
 type envi = (string*value) list
-and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool
+and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Ref of int
+
+let reference = Array.make 1000 Int(0)
+
+let index = ref 0
 
 let print_value x =
   match x with
@@ -110,8 +115,10 @@ let rec eval env = function
                           let s = recupsome r in
                           eval ((s,a)::(x,v2)::envi) f
                         end
-
-
+  | Pv(e1, e2) -> begin eval env e1; eval env e2 end
+  | Ref(e1) -> begin incr index; reference.(!index) <- (eval env e1); Ref(!index) end
+  | Valeurref(e1) -> let s = eval env e1 in let Ref(a) = s in reference.(a)
+  | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in let Ref(b) = s in reference.(b) <- a
 
 
 

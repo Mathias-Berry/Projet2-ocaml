@@ -64,7 +64,7 @@ let rec affiche_expr e =
   | Boolop1 (op,a,b) -> print_string "("; affiche_expr a; afficheboolop1 op ; affiche_expr b; print_string ")"
   | Boolop2 (op,a,b) -> print_string "("; affiche_expr a; afficheboolop2 op ; affiche_expr b; print_string ")"
   | Non (a) ->(print_string "not("; affiche_expr a;print_string ")")
-  | Print ->(print_string "prInt "
+  | Print ->(print_string "prInt ")
   | Fonction (a,b) ->(print_string "(fun "; print_string a; print_string "->"; affiche_expr b; print_string ")")
   | Appli (a,b) ->(print_string "(";affiche_expr a; print_string "("; affiche_expr b; print_string ")) ")
   | Letrec (a, b, c) -> (print_string "let rec "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)

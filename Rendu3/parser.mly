@@ -10,7 +10,7 @@ open Expr
 %token <string> STR
 %token PRINT
 %token PLUS TIMES DIV MINUS
-%token LET IN EGAL PVDOUBLE PTV UNIT
+%token LET IN EGAL PVDOUBLE PTV UNIT VIRGULE
 %token IF THEN ELSE
 %token LT LE GT GE AND OR NOT NE
 %token EVALREF REF ASS
@@ -21,6 +21,7 @@ open Expr
 %left PTV
 %left ELSE IN TO
 %nonassoc ASS
+%left VIRGULE
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
 
@@ -77,11 +78,11 @@ expression_init:
   | PRINT expression                              { Appli(Print,$2) }
 	| expression atomique %prec FUNPRE							{ Appli($1, $2) }
 	| LET REC strlist EGAL expression IN expression { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
-  | EVALREF expression                            { Valeurref($2)}
-  | REF expression                                { Appli(Ref,$2)}
-  | expression ASS expression                     { Changeref($1,$3)}
-  | expression PTV expression                     { Letin("_",$1,$3)}
-  | UNIT                                          { Unite }
+  | EVALREF expression                            { Valeurref($2) }
+  | REF expression                                { Appli(Ref,$2) }
+  | expression ASS expression                     { Changeref($1,$3) }
+  | expression PTV expression                     { Letin("_",$1,$3) }
+  | UNIT                                          { Unite }           
 ;
 
 	atomique:
@@ -95,3 +96,4 @@ expression_init:
 	| STR																						{ [$1] }
 	| STR strlist																		{ $1 :: $2 }
 ;
+

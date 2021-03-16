@@ -126,7 +126,6 @@ let rec eval env = function
                           let s = recupsome r in
                           eval ((s,a)::(x,v2)::envi) f
                         end
-  | Pv(e1, e2) -> begin let _ = eval env e1 in eval env e2 end
   | Ref(e1) -> begin incr index; reference.(!index) <- (eval env e1); Ref(!index) end
   | Valeurref(e1) -> let s = eval env e1 in reference.(recupref s)
   | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in (reference.(recupref s) <- a; Unitv)

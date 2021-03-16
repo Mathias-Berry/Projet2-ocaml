@@ -10,7 +10,7 @@ open Expr
 %token <string> STR
 %token PRINT
 %token PLUS TIMES DIV MINUS
-%token LET IN EGAL PVDOUBLE
+%token LET IN EGAL PVDOUBLE PTV
 %token IF THEN ELSE
 %token LT LE GT GE AND OR NOT NE
 %token EVALREF REF ASS
@@ -18,9 +18,9 @@ open Expr
 %token FUN TO REC
 %token EOF             /* Fin de fichier */
 
-
+%left PTV
 %left ELSE IN TO
-%nonassoc REF EVALREF
+%nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
 
@@ -30,7 +30,7 @@ open Expr
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
-%left ASS NOT PRINT
+%left REF EVALREF NOT PRINT
 %nonassoc ATOME
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
@@ -49,8 +49,6 @@ expression_init EOF                { $1 }  /* on veut reconnaître une expressio
 
 expression_init:
   | expression                                            { $1 }
-  | expression PVDOUBLE                                   { $1 }
-  | expression PVDOUBLE expression_init                   { Pv($1, $3) }
   | LET strlist EGAL expression PVDOUBLE expression_init  { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
 ;
 
@@ -80,6 +78,7 @@ expression_init:
   | EVALREF expression                            { Valeurref($2)}
   | REF expression                                { Ref($2)}
   | expression ASS expression                     { Changeref($1,$3)}
+  | expression PTV expression                      { Letin("_",$1,$3)}
 ;
 
 	atomique:

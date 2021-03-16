@@ -27,7 +27,7 @@ type expr =
   | Pv of expr*expr
   | Ref of expr
   | Changeref of expr*expr
-  | Valeurref of expr
+  | Valeurref of expr
 
 
 
@@ -71,6 +71,6 @@ let rec affiche_expr e =
   | Pv (a,b) -> (affiche_expr a; print_string(" ; ");affiche_expr b)
   | Ref (a) ->( print_string "ref ("; affiche_expr a; print_string ")" )
   | Changeref (a, b) -> (print_string "("; affiche_expr a; print_string ") := "; print_string "("; affiche_expr b; print_string ")" )
-  | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")"
+  | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")")
 
 

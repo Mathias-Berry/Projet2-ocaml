@@ -24,7 +24,7 @@ type expr =
   | Fonction of string*expr
   | Appli of expr*expr
   | Letrec of string*expr*expr
-  | Ref of expr
+  | Ref
   | Changeref of expr*expr
   | Valeurref of expr
   | Unite
@@ -63,11 +63,11 @@ let rec affiche_expr e =
   | Boolop1 (op,a,b) -> print_string "("; affiche_expr a; afficheboolop1 op ; affiche_expr b; print_string ")"
   | Boolop2 (op,a,b) -> print_string "("; affiche_expr a; afficheboolop2 op ; affiche_expr b; print_string ")"
   | Non (a) ->(print_string "not("; affiche_expr a;print_string ")")
-  | Print (a) ->(print_string "prInt("; affiche_expr a; print_string ")")
+  | Print ->(print_string "prInt "
   | Fonction (a,b) ->(print_string "(fun "; print_string a; print_string "->"; affiche_expr b; print_string ")")
   | Appli (a,b) ->(print_string "(";affiche_expr a; print_string "("; affiche_expr b; print_string ")) ")
   | Letrec (a, b, c) -> (print_string "let rec "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
-  | Ref (a) ->( print_string "ref ("; affiche_expr a; print_string ")" )
+  | Ref->( print_string "ref " )
   | Changeref (a, b) -> (print_string "("; affiche_expr a; print_string ") := "; print_string "("; affiche_expr b; print_string ")" )
   | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")")
   | Unite -> print_string "()"

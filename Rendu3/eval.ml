@@ -1,4 +1,4 @@
-open Expr
+(*open Expr
 
 
 type envi = (string*value) list
@@ -164,3 +164,5 @@ let rec eval env = function
                             end
                         end*)
 
+*)
+let eval env e = 1

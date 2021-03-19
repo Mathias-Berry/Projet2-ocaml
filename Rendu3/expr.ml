@@ -72,5 +72,10 @@ let rec affiche_expr e =
   | Changeref (a, b) -> (print_string "("; affiche_expr a; print_string ") := "; print_string "("; affiche_expr b; print_string ")" )
   | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")")
   | Unite -> print_string "()"
+  | Tuple l -> print_string "("; affiche_list l
 
-
+and affiche_list l =
+    match l with 
+      |t::[]-> affiche_expr t;print_string ")"
+      |t::q -> affiche_expr t; print_string","; affiche_list q
+      |_-> failwith "pas possible"

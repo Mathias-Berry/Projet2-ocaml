@@ -1,21 +1,24 @@
-(*open Expr
+open Expr
 
 
 type envi = (string*value) list
-and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Ref of int | Unitv
+and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Refv of int | Unitv | Printv | Reff | Tuplev of (value list ) | Consv of value*value | Vide
 
-let reference = Array.make 1000 (Int(0))
+(* Ici Reff représente la fonction ref, quand Refv représente une référence, un pointeur, en lui-même, au même titre que Int représente un entier *)
+
+let reference = Array.make 1000 Unitv
 
 let index = ref 0
 
-let print_value x =
+(*let print_value x =
   match x with
     |Int k -> print_int k
     |Bool b -> if b then print_string "true" else print_string "false"
     |Fun (e,x,f,r)-> print_string ("fun "^x^" -> "); affiche_expr f
-    |Unitv -> ()
-    |Ref(_) -> failwith "Pas affichable"
-
+    |Unitv -> print_string"()"
+    |Refv -> print_string "ref "
+    |Printv -> print_string "prInt "
+*)
 
 
 let rec recup e s = match e with
@@ -40,6 +43,8 @@ let recupfonc  e =
 let recupfun  v =
   match v with
     | Fun (env,x,f,r)-> (env,x,f,r)
+    | Printv -> ([], "x", Unite, Some "1") (* je mets Some "1" parce que je suis sur que ca ne peut pas arriver en fouine puisque les noms de varibles ne peuvent pas commencer par des chiffres *)
+    | Reff -> ([], "x", Unite, Some "2")
     | _ -> failwith"v n'est pas une fonction"
 
 let recupint v =
@@ -54,13 +59,18 @@ let recupbool v =
 
 let recupref v =
   match v with
-    | Ref b -> b
+    | Refv b -> b
     | _ -> failwith "l'argument n'est pas une référence"
 
-let recuprunit v =
+let recuptuple v =
   match v with
-    | Unite -> Unitv
-    | _ -> failwith "L'argument n'est pas de type unit"
+    | Tuplev(l) -> l
+    | _ -> failwith "J'aurai du recevoir un tuple"
+
+let recupcons v =
+  match v with 
+    | Consv(a, b) -> (a, b)
+    | _ -> failwith "J'aurai du recevoir un cons."
 
 let estfun e = 
   match e with
@@ -94,7 +104,14 @@ let boolop22fun = function
   | Or -> fun x y -> x || y
   | And -> fun x y -> x && y
 
+(* Cette fonction plusieurs dit si on a une expression qui contient plusieurs information, et sera donc utiliser dans un let in, pour déterminer si on a une structure du type let (a, b) =  ou let t::q = ( et même let t1::t2::q etc ... ) *)
 
+(*let plusieurs v = match v with
+  | Tuplev (_) -> true
+  | Consv (_) -> true
+  | Vide -> true
+  | _ -> false
+*)
 
 let rec eval env = function
   | Const k -> Int k
@@ -105,15 +122,10 @@ let rec eval env = function
   | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
   | Non(e) ->Bool (not (recupbool (eval env e)))
   | Fonction(x,e) ->Fun (env,x,e,None)
-  | Letin(s, b, c) -> eval ( (s,(eval env b)):: env ) c
+  | Letin(s, b, c) -> eval ( eval_egal env s (eval env b) ) c
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
-  | Print (a) -> (let b = eval env a in
-                  if (not (!source)) then 
-                    begin
-                      print_int (recupint b);print_newline ()
-                    end;
-                  b)
+  | Print -> Printv
   | Appli (e1, e2) -> let v2 = eval env e2 in
                       let a = eval env e1 in
                       let (envi,x,f,r)= recupfun a in
@@ -123,13 +135,26 @@ let rec eval env = function
                         end
                       else
                         begin
-                          let s = recupsome r in
-                          eval ((s,a)::(x,v2)::envi) f
+                        match r with
+                          | Some "1" -> begin print_int (recupint v2); print_newline (); v2 end
+                          | Some "2" -> begin incr index; reference.(!index) <- v2; Refv(!index) end
+                          | Some s -> eval ((s,a)::(x,v2)::envi) f
                         end
-  | Ref(e1) -> begin incr index; reference.(!index) <- (eval env e1); Ref(!index) end
+  | Ref -> Reff
   | Valeurref(e1) -> let s = eval env e1 in reference.(recupref s)
   | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in (reference.(recupref s) <- a; Unitv)
   | Unite -> Unitv
+  | Tuple(l) -> Tuplev of (List.map (eval env) l)
+  | Cons(a, b) -> Consv( (eval env a), (eval env b))
+
+and
+
+  eval_egal env s b = match s with
+    | Tuplem([]) -> env
+    | Tuplem(t::q) -> let l = recuptuple b in eval_egal (eval_egal env q (List.tl l)) t (List.hd l)
+    | Listevidem -> env
+    | Consv(a, q) -> let (c, d) = recupcons b in eval_egal (eval_egal env q d) a c
+    | _ -> (s, b) :: env
 
 
 
@@ -164,5 +189,4 @@ let rec eval env = function
                             end
                         end*)
 
-*)
-let eval env e = 1
+

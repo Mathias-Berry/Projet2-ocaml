@@ -29,6 +29,8 @@ type expr =
   | Valeurref of expr
   | Unite
   | Tuple of (expr list)
+  | Listvide
+  | Cons of expr*expr
 
 
 
@@ -73,6 +75,7 @@ let rec affiche_expr e =
   | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")")
   | Unite -> print_string "()"
   | Tuple l -> print_string "("; affiche_list l
+  |_ -> failwith "ok"
 
 and affiche_list l =
     match l with 

@@ -11,7 +11,7 @@ open Expr
 %token PRINT
 %token PLUS TIMES DIV MINUS
 %token LET IN EGAL PVDOUBLE PTV UNIT VIRGULE
-%token IF THEN ELSE
+%token IF THEN ELSE CONS LISTVIDE
 %token LT LE GT GE AND OR NOT NE
 %token EVALREF REF ASS
 %token LPAREN RPAREN BEGIN END
@@ -25,7 +25,7 @@ open Expr
 %nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
-
+%left CONS
 %left LE GE AND OR EGAL GT NE LT
 
 %nonassoc FUNPRE
@@ -83,7 +83,9 @@ expression_init:
   | expression ASS expression                      { Changeref($1,$3) }
   | expression PTV expression                      { Letin("_",$1,$3) }
   | UNIT                                           { Unite }
-  | tuples %prec TUPLES                            { Tuple(List.rev($1)) }                
+  | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
+  | LISTVIDE                                       { Listvide }
+  | expression CONS expression                     { Cons($1,$3)}                
 ;
 
   atomique:

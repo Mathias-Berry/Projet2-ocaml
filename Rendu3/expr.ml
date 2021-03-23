@@ -1,4 +1,4 @@
-let source = ref falseA
+let source = ref false
 let debug = ref false
 
 type arithop = 
@@ -10,6 +10,12 @@ type boolop1 =
 
 type boolop2 =
    Or | And
+
+type motif =
+  | Varm of string
+  | Tuplem of (motif list)
+  | Consm of motif*motif
+  | Videm
 
 type expr =
   | Const of int

@@ -2,7 +2,7 @@ open Expr
 
 
 type envi = (string*value) list
-and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Refv of int | Unitv | Printv | Reff | Tuplev of (value list ) | Consv of value*value | Vide
+and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Refv of int | Unitv | Tuplev of (value list ) | Consv of value*value | Vide
 
 (* Ici Reff représente la fonction ref, quand Refv représente une référence, un pointeur, en lui-même, au même titre que Int représente un entier *)
 
@@ -43,8 +43,6 @@ let recupfonc  e =
 let recupfun  v =
   match v with
     | Fun (env,x,f,r)-> (env,x,f,r)
-    | Printv -> ([], "x", Unite, Some "1") (* je mets Some "1" parce que je suis sur que ca ne peut pas arriver en fouine puisque les noms de varibles ne peuvent pas commencer par des chiffres *)
-    | Reff -> ([], "x", Unite, Some "2")
     | _ -> failwith"v n'est pas une fonction"
 
 let recupint v =
@@ -71,6 +69,8 @@ let recupcons v =
   match v with 
     | Consv(a, b) -> (a, b)
     | _ -> failwith "J'aurai du recevoir un cons."
+
+
 
 let estfun e = 
   match e with
@@ -111,6 +111,7 @@ let boolop22fun = function
 let rec eval env = function
   | Const k -> Int k
   | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e2)) (recupint (eval env e1)))
+  | Variable "_" -> failwith "Ordure cosmopolite"
   | Variable s -> recup env s
   | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
   | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))
@@ -120,68 +121,37 @@ let rec eval env = function
   | Letin(s, b, c) -> eval ( eval_affectation env s (eval env b) ) c
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
-  | Print -> Printv
+(* là pour traiter prInt et ref comme des fonctions, on leur associe une valeur de fonctions, où en realité seule importe le dernier argument, qui est Some "1" ou Some "2", car Some contient d'habitude un nom de variables, qui ne peut pas commencer par un chifre donc il n'y a pas d'ambigüité, et donc quand on tombe sur une fonction avec Some "1" ou Some "2" on sait que on a affaire à ce type de fonction.*)
+  | Print -> Fun([], "x", Unite, Some "1")
+  | Ref -> Fun ([], "x", Unite, Some "2")
   | Appli (e1, e2) -> let v2 = eval env e2 in
                       let a = eval env e1 in
                       let (envi,x,f,r)= recupfun a in
-                      if r = None then
-                        begin
-                          eval ((x,v2)::envi) f
-                        end
-                      else
-                        begin
+                      begin
                         match r with
+                          | None -> eval ((x,v2)::envi) f
                           | Some "1" -> begin print_int (recupint v2); print_newline (); v2 end
                           | Some "2" -> begin incr index; reference.(!index) <- v2; Refv(!index) end
                           | Some s -> eval ((s,a)::(x,v2)::envi) f
-                        end
-  | Ref -> Reff
+                      end
   | Valeurref(e1) -> let s = eval env e1 in reference.(recupref s)
   | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in (reference.(recupref s) <- a; Unitv)
   | Unite -> Unitv
-  | Tuple(l) -> Tuplev of (List.map (eval env) l)
+  | Tuple(l) -> Tuplev (List.map (eval env) l)
   | Cons(a, b) -> Consv( (eval env a), (eval env b))
+  | Listvide -> Vide
 
 and
 
+(* Dans eval_affectation, on cherche à faire l'équivalent d'un matching. Pour cela, on va parcourir récurisvement ce qu'on a à gauche et affecter au fur et à mesure des valeurs aux variables en enrichissant petit à petit l'envrionnement. Pour cela, affecte la valeur avec l'environnement modifié du reste. *)
   eval_affectation env s b = match s with
     | Tuplem([]) -> env
-    | Tuplem(t::q) -> let l = recuptuple b in eval_affectation (eval_affectation env q (List.tl l)) t (List.hd l)
-    | Listevidem -> env
-    | Consv(a, q) -> let (c, d) = recupcons b in eval_affectation (eval_affectation env q d) a c
-    | _ -> (s, b) :: env
+    | Tuplem(t::q) -> let l = recuptuple b in eval_affectation (eval_affectation env (Tuplem(q)) (Tuplev(List.tl l))) t (List.hd l)
+    | Videm -> env
+    | Consm(a, q) -> let (c, d) = recupcons b in eval_affectation (eval_affectation env q d) a c
+    | Varm ("_") -> env
+    | Varm(s1) -> (s1, b) :: env
 
 
-
-  (*if estfun e1 then
-                        begin
-                          let v2 = eval env e2 in
-                          let (x,f) = recupfonc e1 in
-                          eval ((x,v2)::env) f
-                         end
-                      else
-                        begin
-                          let a = ref (Int 0) in
-                          if estappli e1 then 
-                            begin
-                              a := eval env e1
-                            end
-                          else
-                          begin
-                            let v = recupvar e1 in
-                            a := (recup env v)
-                          end;
-                          let (envi,x,f,r) = recupfun (!a) in
-                          let v2 = eval env e2 in
-                          if r = None then
-                            begin
-                              eval ((x,v2)::envi) f
-                            end
-                          else
-                            begin
-                              let s = recupsome r in
-                              eval ((s,!a)::(x,v2)::envi) f
-                            end
-                        end*)
 
 

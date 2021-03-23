@@ -13,8 +13,8 @@ type boolop2 =
 
 type motif =
   | Varm of string
-  | Tuplem of (motif list)
-  | Consm of motif*motif
+  | Tuplem of (motif list)
+  | Consm of motif*motif
   | Videm
 
 type expr =
@@ -62,12 +62,24 @@ let afficheboolop2 = function
   | Or -> print_string " || "
 
 
+let rec affiche_motif e = match e with
+  | Varm (s) -> print_string s
+  | Tuplem(l) -> print_string "("; affiche_listm l
+  | Videm -> print_string "[]"
+  | Consm(a, b) -> affiche_motif a; print_string ";;"; affiche_motif b
+
+and affiche_listm l =
+    match l with 
+      |t::[]-> affiche_motif t;print_string ")"
+      |t::q -> affiche_motif t; print_string","; affiche_listm q
+      |_-> failwith "pas possible"
+
 let rec affiche_expr e =
   match e with
   | Const k -> print_int k
   | Arithop (op,a,b) -> print_string "("; affiche_expr a; affichearithop op ; affiche_expr b; print_string ")"
   | Variable s -> print_string s
-  | Letin (a, b, c) -> (print_string "let "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
+  | Letin (a, b, c) -> (print_string "let "; affiche_motif a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
   | Ifte (a,b,c) -> (print_string "if "; affiche_expr a ; print_string " then "; affiche_expr b; print_string " else "; affiche_expr c)
   | Boolop1 (op,a,b) -> print_string "("; affiche_expr a; afficheboolop1 op ; affiche_expr b; print_string ")"
   | Boolop2 (op,a,b) -> print_string "("; affiche_expr a; afficheboolop2 op ; affiche_expr b; print_string ")"
@@ -88,3 +100,4 @@ and affiche_list l =
       |t::[]-> affiche_expr t;print_string ")"
       |t::q -> affiche_expr t; print_string","; affiche_list q
       |_-> failwith "pas possible"
+

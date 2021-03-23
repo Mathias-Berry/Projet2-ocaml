@@ -106,12 +106,7 @@ let boolop22fun = function
 
 (* Cette fonction plusieurs dit si on a une expression qui contient plusieurs information, et sera donc utiliser dans un let in, pour déterminer si on a une structure du type let (a, b) =  ou let t::q = ( et même let t1::t2::q etc ... ) *)
 
-(*let plusieurs v = match v with
-  | Tuplev (_) -> true
-  | Consv (_) -> true
-  | Vide -> true
-  | _ -> false
-*)
+
 
 let rec eval env = function
   | Const k -> Int k
@@ -122,7 +117,7 @@ let rec eval env = function
   | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
   | Non(e) ->Bool (not (recupbool (eval env e)))
   | Fonction(x,e) ->Fun (env,x,e,None)
-  | Letin(s, b, c) -> eval ( eval_egal env s (eval env b) ) c
+  | Letin(s, b, c) -> eval ( eval_affectation env s (eval env b) ) c
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
   | Print -> Printv
@@ -149,11 +144,11 @@ let rec eval env = function
 
 and
 
-  eval_egal env s b = match s with
+  eval_affectation env s b = match s with
     | Tuplem([]) -> env
-    | Tuplem(t::q) -> let l = recuptuple b in eval_egal (eval_egal env q (List.tl l)) t (List.hd l)
+    | Tuplem(t::q) -> let l = recuptuple b in eval_affectation (eval_affectation env q (List.tl l)) t (List.hd l)
     | Listevidem -> env
-    | Consv(a, q) -> let (c, d) = recupcons b in eval_egal (eval_egal env q d) a c
+    | Consv(a, q) -> let (c, d) = recupcons b in eval_affectation (eval_affectation env q d) a c
     | _ -> (s, b) :: env
 
 

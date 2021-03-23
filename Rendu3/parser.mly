@@ -83,7 +83,9 @@ expression_init:
   | UNIT                                           { Unite }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | LISTVIDE                                       { Listvide }
-  | expression CONS expression                     { Cons($1,$3)}                
+  | expression CONS expression                     { Cons($1,$3)}
+  | PRINT                                          { Print }
+  | REF                                            { Ref }
 ;
 
   atomique:
@@ -91,9 +93,7 @@ expression_init:
   | LPAREN expression RPAREN                       { $2 }
   | INT                                            { Const $1 }
   | STR                                            { Variable $1 }
-  | PRINT                                          { Print }
-  | REF                                            { Ref }
-;
+ ;
 
   strlist:
   | STR                                            { [$1] }

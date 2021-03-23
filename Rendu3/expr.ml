@@ -1,4 +1,4 @@
-let source = ref false
+let source = ref falseA
 let debug = ref false
 
 type arithop = 

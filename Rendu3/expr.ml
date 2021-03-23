@@ -20,7 +20,7 @@ type motif =
 type expr =
   | Const of int
   | Arithop of arithop*expr*expr
-  | Letin of string*expr*expr
+  | Letin of motif*expr*expr
   | Variable of string
   | Ifte of expr*expr*expr
   | Boolop1 of boolop1*expr*expr

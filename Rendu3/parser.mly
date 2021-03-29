@@ -61,6 +61,7 @@ expression_init:
   expression:         /* règles de grammaire pour les expressions */
   | atomique %prec ATOME                           { $1 }
   | IF expression THEN expression ELSE expression  { Ifte($2,$4,$6) }
+  | LET strlist2 EGAL expression IN expression     { Letin(Varm (List.hd $2), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
   | LET motif EGAL expression IN expression        { Letin($2,$4,$6) }
   | FUN strlist TO expression                      { List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
   | expression PLUS expression                     { Arithop(Add,$1,$3) }
@@ -81,14 +82,14 @@ expression_init:
   | LET REC strlist EGAL expression IN expression  { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
   | EVALREF expression                             { Valeurref($2) }
   | expression ASS expression                      { Changeref($1,$3) }
-  | expression PTV expression                      { Letin(Varlistm(["_"]),$1,$3) }
+  | expression PTV expression                      { Letin(Varm("_"),$1,$3) }
   | UNIT                                           { Unite }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | LISTVIDE                                       { Listvide }
   | expression CONS expression                     { Cons($1,$3)}
   | PRINT                                          { Print }
   | REF                                            { Ref }
-  | MATCH expression WITH matching                 { Match($2,$4) }
+  | MATCH motif WITH matching                       { Match($2,$4) }
 ;
 
   atomique:
@@ -98,13 +99,20 @@ expression_init:
   | STR                                            { Variable $1 }
  ;
 
+  strlist2:
+  | STR STR                                        { [$1; $2] }
+  | STR strlist                                    { $1 :: $2 }
+;
+  
+
   strlist:
   | STR                                            { [$1] }
   | STR strlist                                    { $1 :: $2 }
 ;
 
  motif:
-  | strlist                                         { Varlistm($1) }
+  | INT                                             { Constm($1) }
+  | STR                                        		  { Varm($1) }
   | tuplem %prec TUPLES                             { Tuplem (List.rev($1))}
   | motif CONS motif                                { Consm($1,$3) }
   | LISTVIDE                                        { Videm }

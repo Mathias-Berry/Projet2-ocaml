@@ -1,4 +1,4 @@
-(*open Expr
+open Expr
 
 
 type envi = (string*value) list
@@ -104,9 +104,26 @@ let boolop22fun = function
   | Or -> fun x y -> x || y
   | And -> fun x y -> x && y
 
-(* Cette fonction plusieurs dit si on a une expression qui contient plusieurs information, et sera donc utiliser dans un let in, pour déterminer si on a une structure du type let (a, b) =  ou let t::q = ( et même let t1::t2::q etc ... ) *)
+(* la fonction suivante sert à savoir si le motif que l'on a sous les yeux peut correspondre à une liste. Ainsi ca permet de tester si on veut nous entourlouper en faisant des trucs du genre *)
+let testlistem = function
+  | Consm (_, _) -> true
+  | Videm -> true
+  | Varm("_") -> true
+  | _ -> false
+  
+(* Là on fait une fonction qui dit si une liste d'éléments contient deux fois le élément, ce qui nous servira pour le matching pour tester si on veut nous filouter en attribuant deux fois le même nom de variables, ce que Caml ne semble pas vraiment apprécier *)
+let rec doublon l = match l with
+  | [] -> false
+  | t::q -> (List.mem t q) || (doublon q)
 
+let rec motif2expression m = match m with
+  | Videm -> Listvide
+  | Consm(a, b) -> Cons(motif2expression a, motif2expression b)
+  | Varm(x) -> Variable(x)
+  | Tuplem(l) -> Tuple(List.map motif2expression l)
+  | Constm(x) -> Const(x)
 
+exception NOMATCH (* On aura besoin de cette exception quand on fera le matching, car on parcourera récursivement le matching, et si a un moment on voit que ca marche pas, au lieu de se passer un booléen pour se dire que ca va pas, on soulève une exception pour dire hop hop hop, on passe au truc suivant *)
 
 let rec eval env = function
   | Const k -> Int k
@@ -138,8 +155,13 @@ let rec eval env = function
   | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in (reference.(recupref s) <- a; Unitv)
   | Unite -> Unitv
   | Tuple(l) -> Tuplev (List.map (eval env) l)
-  | Cons(a, b) -> Consv( (eval env a), (eval env b))
+  | Cons(a, b) -> begin match b with 
+    | Listvide -> Consv( (eval env a), (eval env b)) 
+    | Cons(_,_) -> Consv( (eval env a), (eval env b)) 
+    | _ -> failwith "Une liste doit finir par la liste vide" end
+(* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à la liste vide.*)
   | Listvide -> Vide
+  | Match(x, l) -> let mat = eval_matching(eval env (motif2expression x),l) in eval ((fst mat) @ env) (snd mat)
 
 and
 
@@ -151,9 +173,33 @@ and
     | Consm(a, q) -> let (c, d) = recupcons b in eval_affectation (eval_affectation env q d) a c
     | Varm ("_") -> env
     | Varm(s1) -> (s1, b) :: env
+    | Constm(_) -> failwith "On ne peut pas affecter une valeur à une constante entière."
+
+
+and eval_matching (x,l) = match l with | [] -> failwith "Le matching n'était pas assez complet." | t :: q -> begin
+  let (m, e) = t in
+
+  let rec aux env s b = match s with
+    | Consm(a, z) -> begin match b with 
+      | Consv(c, d) -> aux (aux env z d ) a c
+      | _ -> raise NOMATCH end
+    | Videm -> if b = Vide then env else raise NOMATCH
+    | Tuplem([]) -> if b = Tuplev([]) then env else raise NOMATCH
+    | Tuplem(y::z) -> begin match b with 
+      | Tuplev(l) -> aux (aux env (Tuplem(z)) (Tuplev(List.tl l))) y (List.hd l) 
+      | _ -> raise NOMATCH end
+    | Varm ("_") -> env
+    | Varm(s1) -> (s1, b) :: env
+    | Constm(c) -> if b = Int(c) then env else raise NOMATCH
+
+  in
+  try let caca = aux [] m x in if doublon (List.map fst caca) then failwith "Voyou !" else (caca, e)
+  with | NOMATCH -> eval_matching (x, q)
+
+end
 
 
 
 
-*)
-let eval x y = 21
+
+

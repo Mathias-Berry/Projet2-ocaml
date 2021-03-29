@@ -12,7 +12,7 @@ type boolop2 =
    Or | And
 
 type motif =
-  | Varlistm of (string list)
+  | Varm of string
   | Tuplem of (motif list)
   | Consm of motif*motif
   | Videm
@@ -38,7 +38,7 @@ type expr =
   | Tuple of (expr list)
   | Listvide
   | Cons of expr*expr
-  | Match of (expr*((motif*expr) list))
+  | Match of (motif*((motif*expr) list))
 
 
 
@@ -65,7 +65,7 @@ let afficheboolop2 = function
 
 
 let rec affiche_motif e = match e with
-  | Varlistm (l) -> let _ = List.map print_string l in ()
+  | Varm (l) -> print_string l
   | Tuplem(l) -> print_string "("; affiche_listm l
   | Videm -> print_string "[]"
   | Consm(a, b) -> affiche_motif a; print_string ";;"; affiche_motif b
@@ -96,7 +96,9 @@ let rec affiche_expr e =
   | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")")
   | Unite -> print_string "()"
   | Tuple l -> print_string "("; affiche_list l
-  |_ -> failwith "ok"
+  | Listvide -> print_string "[]"
+  | Cons(a, b) -> begin print_string "("; affiche_expr a; print_string ") :: "; affiche_expr b end
+  | Match(a, b) -> begin print_string "match "; affiche_motif a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_motif (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 
 
 and affiche_list l =
     match l with 

@@ -17,14 +17,13 @@ let calc () =
    
   Arg.parse optlist (fun s -> nom_fichier := s) usage;
   
-  try
       let code = open_in !nom_fichier in
       let lexbuf = Lexing.from_channel code in
       let parse () = Parser.main Lexer.token lexbuf in
       let result = parse () in
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
 	compile result; flush stdout
-  with _ -> (print_string "Error\n")
+
 ;;
 
 let _ = calc()

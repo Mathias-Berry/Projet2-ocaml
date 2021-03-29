@@ -16,6 +16,7 @@ open Expr
 %token EVALREF REF ASS
 %token LPAREN RPAREN BEGIN END
 %token FUN TO REC
+%token MATCH ORMATCH WITH
 %token EOF             /* Fin de fichier */
 
  
@@ -36,7 +37,7 @@ open Expr
 %nonassoc REF EVALREF
 %nonassoc UNIT
 %left NOT PRINT
-%nonassoc ATOME REC
+%nonassoc ATOME PLUSFORT
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
@@ -87,6 +88,7 @@ expression_init:
   | expression CONS expression                     { Cons($1,$3)}
   | PRINT                                          { Print }
   | REF                                            { Ref }
+  | MATCH expression WITH matching                 { Match($2,$4) }
 ;
 
   atomique:
@@ -103,12 +105,22 @@ expression_init:
 
  motif:
   | strlist                                         { Varlistm($1) }
-  | tuples                                          { Tuplem(List.map expr2motif ($1))}
+  | tuplem %prec TUPLES                             { Tuplem (List.rev($1))}
   | motif CONS motif                                { Consm($1,$3) }
   | LISTVIDE                                        { Videm }
+;
+
+  tuplem:
+  | tuplem VIRGULE motif                           { $3::$1 }    
+  | motif VIRGULE motif                            { [$3;$1] }
 ;
 
   tuples:
   | tuples VIRGULE expression                      { $3::$1 }    
   | expression VIRGULE expression                  { [$3;$1] }
+;
+
+  matching:
+  | ORMATCH motif TO expression matching           { ($2,$4)::$5 }
+  | ORMATCH motif TO expression %prec PLUSFAIBLE   { [($2,$4)] }
 ;

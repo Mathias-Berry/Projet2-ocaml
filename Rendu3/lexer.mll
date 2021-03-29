@@ -16,6 +16,9 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '('             { LPAREN }
   | ')'             { RPAREN }
   | ','             { VIRGULE }
+  | "match"         { MATCH }
+  | "|"             { ORMATCH }
+  | "with"          { WITH }
   | "let"           { LET }
   | "in"            { IN }
   | "="             { EGAL }

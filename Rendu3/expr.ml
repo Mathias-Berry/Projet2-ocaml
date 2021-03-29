@@ -38,7 +38,7 @@ type expr =
   | Tuple of (expr list)
   | Listvide
   | Cons of expr*expr
-  | Match of ((motif*expr) list)
+  | Match of (expr*((motif*expr) list))
 
 
 
@@ -65,10 +65,11 @@ let afficheboolop2 = function
 
 
 let rec affiche_motif e = match e with
-  | Varm (s) -> print_string s
+  | Varlistm (l) -> let _ = List.map print_string l in ()
   | Tuplem(l) -> print_string "("; affiche_listm l
   | Videm -> print_string "[]"
   | Consm(a, b) -> affiche_motif a; print_string ";;"; affiche_motif b
+  | Constm k -> print_int k
 
 and affiche_listm l =
     match l with 
@@ -103,26 +104,4 @@ and affiche_list l =
       |t::q -> affiche_expr t; print_string","; affiche_list q
       |_-> failwith "pas possible"
 
-
-
-let rec expr2motif e =
-  match e with
-    | Variable(v) -> Varlistm([v])
-    | Listvide -> Videm
-    | Cons(e1,e2)-> Consm(expr2motif(e1),expr2motif(e2))
-    | Tuple(l)-> Tuplem(List.map expr2motif l)
-    | _ -> failwith"ceci ne peut pas être un motif"
-
-
-
-
-
-let recupcons e =
-  match e with
-    |Cons(e1,e2)-> (e1,e2)
-    |_ -> failwith"ce n'est pas une cons"
-
-
-
-(*List.hd l, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl l) e*)
 

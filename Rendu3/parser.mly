@@ -18,10 +18,11 @@ open Expr
 %token FUN TO REC
 %token EOF             /* Fin de fichier */
 
-%nonassoc PLUSFAIBLE
+ 
+%nonassoc PLUSFAIBLE TUPLES
 %left PTV
 %left ELSE IN TO
-%left VIRGULE 
+%nonassoc VIRGULE 
 %nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
@@ -35,7 +36,7 @@ open Expr
 %nonassoc REF EVALREF
 %nonassoc UNIT
 %left NOT PRINT
-%nonassoc ATOME TUPLES
+%nonassoc ATOME REC
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
@@ -53,13 +54,13 @@ expression_init EOF                { $1 }  /* on veut reconnaître une expressio
 
 expression_init:
   | expression                                            { $1 }
-  | LET motif EGAL expression PVDOUBLE expression_init    { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+  | LET motif EGAL expression PVDOUBLE expression_init    { Letin($2,$4,$6) }
 ;
 
   expression:         /* règles de grammaire pour les expressions */
   | atomique %prec ATOME                           { $1 }
   | IF expression THEN expression ELSE expression  { Ifte($2,$4,$6) }
-  | LET motif EGAL expression IN expression        { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+  | LET motif EGAL expression IN expression        { Letin($2,$4,$6) }
   | FUN strlist TO expression                      { List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
   | expression PLUS expression                     { Arithop(Add,$1,$3) }
   | expression TIMES expression                    { Arithop(Mul,$1,$3) }
@@ -79,7 +80,7 @@ expression_init:
   | LET REC strlist EGAL expression IN expression  { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
   | EVALREF expression                             { Valeurref($2) }
   | expression ASS expression                      { Changeref($1,$3) }
-  | expression PTV expression                      { Letin("_",$1,$3) }
+  | expression PTV expression                      { Letin(Varlistm(["_"]),$1,$3) }
   | UNIT                                           { Unite }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | LISTVIDE                                       { Listvide }
@@ -105,9 +106,9 @@ expression_init:
   | tuples                                          { Tuplem(List.map expr2motif ($1))}
   | motif CONS motif                                { Consm($1,$3) }
   | LISTVIDE                                        { Videm }
-
+;
 
   tuples:
   | tuples VIRGULE expression                      { $3::$1 }    
-  | expression VIRGULE expression %prec PLUSFAIBLE { [$3;$1] }
+  | expression VIRGULE expression                  { [$3;$1] }
 ;

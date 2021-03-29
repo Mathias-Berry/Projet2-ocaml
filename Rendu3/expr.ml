@@ -16,6 +16,7 @@ type motif =
   | Tuplem of (motif list)
   | Consm of motif*motif
   | Videm
+  | Constm of int
 
 type expr =
   | Const of int
@@ -37,6 +38,7 @@ type expr =
   | Tuple of (expr list)
   | Listvide
   | Cons of expr*expr
+  | Match of ((motif*expr) list)
 
 
 
@@ -105,7 +107,7 @@ and affiche_list l =
 
 let rec expr2motif e =
   match e with
-    | Variable(v) -> Varm(v)
+    | Variable(v) -> Varlistm([v])
     | Listvide -> Videm
     | Cons(e1,e2)-> Consm(expr2motif(e1),expr2motif(e2))
     | Tuple(l)-> Tuplem(List.map expr2motif l)
@@ -115,11 +117,12 @@ let rec expr2motif e =
 
 
 
+let recupcons e =
+  match e with
+    |Cons(e1,e2)-> (e1,e2)
+    |_ -> failwith"ce n'est pas une cons"
 
 
 
-let rec letin m e =
-  match m with
-    | Varlistm l -> List.hd l, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl l) e
-    | Videm -> 
-    | Consm(t,q) -> 
+(*List.hd l, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl l) e*)
+

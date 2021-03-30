@@ -23,7 +23,7 @@ open Expr
 %nonassoc PLUSFAIBLE TUPLES
 %left PTV
 %left ELSE IN TO
-%nonassoc VIRGULE 
+%left VIRGULE 
 %nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
@@ -51,7 +51,7 @@ open Expr
 main:                       /* <- le point d'entrée (cf. + haut, "start") */
 expression_init EOF                { $1 }  /* on veut reconnaître une expression */
   ;
-  
+
 
 expression_init:
   | expression                                            { $1 }
@@ -61,7 +61,7 @@ expression_init:
   expression:         /* règles de grammaire pour les expressions */
   | atomique %prec ATOME                           { $1 }
   | IF expression THEN expression ELSE expression  { Ifte($2,$4,$6) }
-  | LET strlist2 EGAL expression IN expression     { Letin(Varm (List.hd $2), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+  | LET strlist EGAL expression IN expression      { Letin(Varm (List.hd $2), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
   | LET motif EGAL expression IN expression        { Letin($2,$4,$6) }
   | FUN strlist TO expression                      { List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
   | expression PLUS expression                     { Arithop(Add,$1,$3) }
@@ -89,7 +89,7 @@ expression_init:
   | expression CONS expression                     { Cons($1,$3)}
   | PRINT                                          { Print }
   | REF                                            { Ref }
-  | MATCH motif WITH matching                       { Match($2,$4) }
+  | MATCH expression WITH matching                 { Match($2,$4) }
 ;
 
   atomique:
@@ -98,12 +98,6 @@ expression_init:
   | INT                                            { Const $1 }
   | STR                                            { Variable $1 }
  ;
-
-  strlist2:
-  | STR STR                                        { [$1; $2] }
-  | STR strlist                                    { $1 :: $2 }
-;
-  
 
   strlist:
   | STR                                            { [$1] }
@@ -129,6 +123,8 @@ expression_init:
 ;
 
   matching:
-  | ORMATCH motif TO expression matching           { ($2,$4)::$5 }
-  | ORMATCH motif TO expression %prec PLUSFAIBLE   { [($2,$4)] }
+  | onematch matching %prec PLUSFORT          { $1::$2 }
+  | onematch { [($1)] }
 ;
+onematch:
+   | ORMATCH motif TO expression                { ($2,$4) };

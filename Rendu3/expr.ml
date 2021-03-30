@@ -39,6 +39,8 @@ type expr =
   | Listvide
   | Cons of expr*expr
   | Match of (expr*((motif*expr) list))
+  | Raise of expr
+  | Try of (expr*((expr*expr) list))
 
 
 
@@ -99,6 +101,7 @@ let rec affiche_expr e =
   | Listvide -> print_string "[]"
   | Cons(a, b) -> begin print_string "("; affiche_expr a; print_string ") :: "; affiche_expr b end
   | Match(a, b) -> begin print_string "match "; affiche_expr a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_motif (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 
+  | _ -> failwith"ok"
 
 and affiche_list l =
     match l with 

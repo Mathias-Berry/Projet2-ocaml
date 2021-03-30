@@ -16,8 +16,10 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '('             { LPAREN }
   | ')'             { RPAREN }
   | ','             { VIRGULE }
+  | "E"             { EXCEPTION }
+  | "try"           { TRY }
+  | "raise"         { RAISE }
   | "match"         { MATCH }
-  | "|"             { ORMATCH }
   | "with"          { WITH }
   | "let"           { LET }
   | "in"            { IN }
@@ -25,14 +27,15 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "if"            { IF } 
   | "else"          { ELSE }
   | "then"          { THEN }
+  | "<>"            { NE }
   | "<="            { LE }
   | ">="            { GE }
   | "<"             { LT }
-  | "<>"            { NE }
   | ">"             { GT }
   | "not"           { NOT }
   | "&&"            { AND }
   | "||"            { OR }
+  | "|"             { ORMATCH }
   | "prInt"         { PRINT }
   | "fun"			      { FUN }
   | "->"      			{ TO }

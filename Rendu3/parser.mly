@@ -15,7 +15,7 @@ open Expr
 %token LT LE GT GE AND OR NOT NE
 %token EVALREF REF ASS
 %token LPAREN RPAREN BEGIN END
-%token FUN TO REC
+%token FUN TO REC EXCEPTION TRY RAISE
 %token MATCH ORMATCH WITH
 %token EOF             /* Fin de fichier */
 
@@ -37,7 +37,7 @@ open Expr
 %nonassoc REF EVALREF
 %nonassoc UNIT
 %left NOT PRINT
-%nonassoc ATOME PLUSFORT 
+%nonassoc ATOME PLUSFORT EXCEPTION
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
@@ -90,6 +90,8 @@ expression_init:
   | PRINT                                          { Print }
   | REF                                            { Ref }
   | MATCH expression WITH matching                 { Match($2,$4) }
+  | RAISE EXCEPTION expression                     { Raise($3) }
+  | TRY expression WITH matchex                    { Try($2,$4) }
 ;
 
   atomique:
@@ -125,8 +127,17 @@ expression_init:
 ;
 
   matching:
-  | onematch matching %prec PLUSFORT          { $1::$2 }
-  | onematch                                  { [($1)] }
+  | onematch matching %prec PLUSFORT               { $1::$2 }
+  | onematch                                       { [$1] }
 ;
-onematch:
-   | ORMATCH motif TO expression                { ($2,$4) };
+
+  onematch:
+  | ORMATCH motif TO expression                    { ($2,$4) };
+
+  matchex:
+  | onematchex matchex %prec PLUSFAIBLE            { $1::$2 }
+  | onematchex                                     { [$1] }
+;
+
+  onematchex:
+  | ORMATCH EXCEPTION atomique TO expression      { ($3,$5) };

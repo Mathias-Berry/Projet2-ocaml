@@ -116,13 +116,6 @@ let rec doublon l = match l with
   | [] -> false
   | t::q -> (List.mem t q) || (doublon q)
 
-let rec motif2expression m = match m with
-  | Videm -> Listvide
-  | Consm(a, b) -> Cons(motif2expression a, motif2expression b)
-  | Varm(x) -> Variable(x)
-  | Tuplem(l) -> Tuple(List.map motif2expression l)
-  | Constm(x) -> Const(x)
-
 exception NOMATCH (* On aura besoin de cette exception quand on fera le matching, car on parcourera récursivement le matching, et si a un moment on voit que ca marche pas, au lieu de se passer un booléen pour se dire que ca va pas, on soulève une exception pour dire hop hop hop, on passe au truc suivant *)
 
 let rec eval env = function
@@ -159,9 +152,9 @@ let rec eval env = function
     | Listvide -> Consv( (eval env a), (eval env b)) 
     | Cons(_,_) -> Consv( (eval env a), (eval env b)) 
     | _ -> failwith "Une liste doit finir par la liste vide" end
-(* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à la liste vide.*)
+(* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à cons la liste vide.*)
   | Listvide -> Vide
-  | Match(x, l) -> let mat = eval_matching(eval env (motif2expression x),l) in eval ((fst mat) @ env) (snd mat)
+  | Match(x, l) -> let mat = eval_matching(eval env x,l) in eval ((fst mat) @ env) (snd mat)
 
 and
 

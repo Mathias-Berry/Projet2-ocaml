@@ -38,7 +38,7 @@ type expr =
   | Tuple of (expr list)
   | Listvide
   | Cons of expr*expr
-  | Match of (motif*((motif*expr) list))
+  | Match of (expr*((motif*expr) list))
 
 
 
@@ -88,7 +88,7 @@ let rec affiche_expr e =
   | Boolop2 (op,a,b) -> print_string "("; affiche_expr a; afficheboolop2 op ; affiche_expr b; print_string ")"
   | Non (a) ->(print_string "not("; affiche_expr a;print_string ")")
   | Print ->(print_string "prInt ")
-  | Fonction (a,b) ->(print_string "(fun "; print_string a; print_string "->"; affiche_expr b; print_string ")")
+  | Fonction (a,b) ->(print_string "(fun "; print_string a; print_string " -> "; affiche_expr b; print_string ")")
   | Appli (a,b) ->(print_string "(";affiche_expr a; print_string "("; affiche_expr b; print_string ")) ")
   | Letrec (a, b, c) -> (print_string "let rec "; print_string a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
   | Ref->( print_string "ref " )

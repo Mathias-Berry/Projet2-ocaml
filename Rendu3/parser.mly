@@ -27,17 +27,17 @@ open Expr
 %nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
-%left CONS
+%right CONS
 %left LE GE AND OR EGAL GT NE LT
 
-%nonassoc FUNPRE
+%nonassoc FUNPRE WITH
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
 %nonassoc REF EVALREF
 %nonassoc UNIT
 %left NOT PRINT
-%nonassoc ATOME PLUSFORT
+%nonassoc ATOME PLUSFORT 
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
@@ -110,6 +110,8 @@ expression_init:
   | tuplem %prec TUPLES                             { Tuplem (List.rev($1))}
   | motif CONS motif                                { Consm($1,$3) }
   | LISTVIDE                                        { Videm }
+  | LPAREN motif RPAREN                             { $2 }
+  | BEGIN motif END                                 { $2 }
 ;
 
   tuplem:
@@ -124,7 +126,7 @@ expression_init:
 
   matching:
   | onematch matching %prec PLUSFORT          { $1::$2 }
-  | onematch { [($1)] }
+  | onematch                                  { [($1)] }
 ;
 onematch:
    | ORMATCH motif TO expression                { ($2,$4) };

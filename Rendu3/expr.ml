@@ -98,7 +98,7 @@ let rec affiche_expr e =
   | Tuple l -> print_string "("; affiche_list l
   | Listvide -> print_string "[]"
   | Cons(a, b) -> begin print_string "("; affiche_expr a; print_string ") :: "; affiche_expr b end
-  | Match(a, b) -> begin print_string "match "; affiche_motif a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_motif (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 
+  | Match(a, b) -> begin print_string "match "; affiche_expr a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_motif (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 
 
 and affiche_list l =
     match l with 

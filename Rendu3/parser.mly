@@ -14,7 +14,7 @@ open Expr
 %token IF THEN ELSE CONS LISTVIDE
 %token LT LE GT GE AND OR NOT NE
 %token EVALREF REF ASS
-%token LPAREN RPAREN BEGIN END
+%token LPAREN RPAREN BEGIN END RCROCH LCROCH
 %token FUN TO REC EXCEPTION TRY RAISE
 %token MATCH ORMATCH WITH
 %token EOF             /* Fin de fichier */
@@ -37,7 +37,9 @@ open Expr
 %nonassoc REF EVALREF
 %nonassoc UNIT
 %left NOT PRINT
-%nonassoc ATOME PLUSFORT EXCEPTION
+%nonassoc ATOME 
+%nonassoc ORMATCH
+%nonassoc PLUSFORT EXCEPTION
 %nonassoc LPAREN RPAREN INT STR BEGIN END
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
@@ -92,6 +94,7 @@ expression_init:
   | MATCH expression WITH matching                 { Match($2,$4) }
   | RAISE EXCEPTION expression                     { Raise($3) }
   | TRY expression WITH matchex                    { Try($2,$4) }
+  | LCROCH liste RCROCH                            { $2 }
 ;
 
   atomique:
@@ -126,18 +129,20 @@ expression_init:
   | expression VIRGULE expression                  { [$3;$1] }
 ;
 
+
   matching:
-  | onematch matching %prec PLUSFORT               { $1::$2 }
-  | onematch                                       { [$1] }
+    |  motif TO expression ORMATCH matching          { ($1,$3)::$5 }
+    |  motif TO expression                           { [($1,$3)] }
 ;
 
-  onematch:
-  | ORMATCH motif TO expression                    { ($2,$4) };
 
   matchex:
-  | onematchex matchex %prec PLUSFAIBLE            { $1::$2 }
-  | onematchex                                     { [$1] }
+    |  EXCEPTION atomique TO expression ORMATCH matchex            { ($2,$4)::$6 }
+    |  EXCEPTION atomique TO expression                            { [($2,$4)] }
 ;
 
-  onematchex:
-  | ORMATCH EXCEPTION atomique TO expression      { ($3,$5) };
+
+  liste:
+  | expression PTV expression                      { Cons($1,$3) }
+  | expression %prec PLUSFAIBLE                    { Cons($1,Listvide) }
+;

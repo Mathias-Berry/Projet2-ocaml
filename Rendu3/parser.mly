@@ -92,6 +92,7 @@ expression_init:
   | PRINT                                          { Print }
   | REF                                            { Ref }
   | MATCH expression WITH matching                 { Match($2,$4) }
+  | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
   | RAISE EXCEPTION expression                     { Raise($3) }
   | TRY expression WITH matchex                    { Try($2,$4) }
   | LCROCH liste RCROCH                            { $2 }
@@ -143,6 +144,6 @@ expression_init:
 
 
   liste:
-  | expression PTV expression                      { Cons($1,$3) }
+  | liste PTV expression %prec PLUSFORT            { Cons($1,$3) }
   | expression %prec PLUSFAIBLE                    { Cons($1,Listvide) }
 ;

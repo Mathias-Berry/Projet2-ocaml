@@ -82,7 +82,7 @@ expression_init:
   | NOT expression                                 { Non($2) }
   | expression atomique %prec FUNPRE               { Appli($1, $2) }
   | LET REC strlist EGAL expression IN expression  { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
-  | EVALREF expression                             { Valeurref($2) }
+  | EVALREF atomique                               { Valeurref($2) }
   | expression ASS expression                      { Changeref($1,$3) }
   | expression PTV expression                      { Letin(Varm("_"),$1,$3) }
   | UNIT                                           { Unite }

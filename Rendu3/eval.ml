@@ -1,4 +1,4 @@
-(*open Expr
+open Expr
 
 
 type envi = (string*value) list
@@ -10,15 +10,13 @@ let reference = Array.make 1000 Unitv
 
 let index = ref 0
 
-(*let print_value x =
+let print_value x =
   match x with
     |Int k -> print_int k
     |Bool b -> if b then print_string "true" else print_string "false"
     |Fun (e,x,f,r)-> print_string ("fun "^x^" -> "); affiche_expr f
     |Unitv -> print_string"()"
-    |Refv -> print_string "ref "
-    |Printv -> print_string "prInt "
-*)
+	| _ -> failwith "On le traitera plus tard."
 
 
 let rec recup e s = match e with
@@ -120,7 +118,7 @@ exception NOMATCH (* On aura besoin de cette exception quand on fera le matching
 
 let rec eval env = function
   | Const k -> Int k
-  | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e2)) (recupint (eval env e1)))
+  | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e1)) (recupint (eval env e2))) (* L'ordre d'évalutation des arguments est déjà le bon car Caml interprète les opérateurs comme des fonctions à deux variables curryfiés, et donc évalue les arguments dans le même ordre que nous quand on donne des arguments à arithop2fun op *)
   | Variable "_" -> failwith "Ordure cosmopolite"
   | Variable s -> recup env s
   | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
@@ -155,6 +153,7 @@ let rec eval env = function
 (* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à cons la liste vide.*)
   | Listvide -> Vide
   | Match(x, l) -> let mat = eval_matching(eval env x,l) in eval ((fst mat) @ env) (snd mat)
+  | _ -> failwith "On verra plus tard."
 
 and
 
@@ -191,9 +190,5 @@ and eval_matching (x,l) = match l with | [] -> failwith "Le matching n'était pa
 
 end
 
-
-
-*)
-let eval x y = 1
 
 

@@ -22,8 +22,8 @@ open Expr
  
 %nonassoc PLUSFAIBLE TUPLES LISTEP
 %left ELSE IN TO
-%left VIRGULE
 %right PTV 
+%left VIRGULE
 %nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
@@ -84,7 +84,6 @@ expression_init:
   | LET REC strlist EGAL expression IN expression  { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
   | EVALREF atomique                               { Valeurref($2) }
   | expression ASS expression                      { Changeref($1,$3) }
-  | LPAREN RPAREN                                  { Unite }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | expression CONS expression                     { Cons($1,$3)}
   | PRINT                                          { Print }
@@ -105,6 +104,7 @@ expression_init:
   | LPAREN expression RPAREN                       { $2 }
   | INT                                            { Const $1 }
   | STR                                            { Variable $1 }
+  | LPAREN RPAREN                                  { Unite }
  ;
 
   strlist2:

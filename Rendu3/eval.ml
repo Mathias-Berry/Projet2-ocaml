@@ -113,6 +113,8 @@ let testlistem = function
 let rec doublon l = match l with
   | [] -> false
   | t::q -> (List.mem t q) || (doublon q)
+  
+  
 
 exception NOMATCH (* On aura besoin de cette exception quand on fera le matching, car on parcourera récursivement le matching, et si a un moment on voit que ca marche pas, au lieu de se passer un booléen pour se dire que ca va pas, on soulève une exception pour dire hop hop hop, on passe au truc suivant *)
 
@@ -140,6 +142,14 @@ let rec eval env = function
                           | None -> eval ((x,v2)::envi) f
                           | Some "1" -> begin print_int (recupint v2); print_newline (); v2 end
                           | Some "2" -> begin incr index; reference.(!index) <- v2; Refv(!index) end
+                          | Some "3" -> begin match v2 with
+                                          | Tuplev([t1; t2]) -> t1
+                                          | _ -> failwith "Mauvaise utilisation de fst."
+                                        end
+                          | Some "4" -> begin match v2 with
+                                          | Tuplev([t1; t2]) -> t2
+                                          | _ -> failwith "Mauvaise utilisation de snd."
+                                        end
                           | Some s -> eval ((s,a)::(x,v2)::envi) f
                       end
   | Valeurref(e1) -> let s = eval env e1 in reference.(recupref s)
@@ -153,6 +163,8 @@ let rec eval env = function
 (* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à cons la liste vide.*)
   | Listvide -> Vide
   | Match(x, l) -> let mat = eval_matching(eval env x,l) in eval ((fst mat) @ env) (snd mat)
+  | Fst -> Fun([], "x", Unite, Some "3")
+  | Snd -> Fun ([], "x", Unite, Some "4")
   | _ -> failwith "On verra plus tard."
 
 and
@@ -161,7 +173,7 @@ and
   eval_affectation env s b = match s with
     | Tuplem([]) -> env
     | Tuplem(t::q) -> let l = recuptuple b in eval_affectation (eval_affectation env (Tuplem(q)) (Tuplev(List.tl l))) t (List.hd l)
-    | Videm -> env
+    | Videm -> if b = Vide then env else failwith "Si on veut matcher une liste de taille fixer, il faut que en face ca corresponde." (* ce if est là pour empecher let a::[] = [1;2] de marcher. *)
     | Consm(a, q) -> let (c, d) = recupcons b in eval_affectation (eval_affectation env q d) a c
     | Varm ("_") -> env
     | Varm(s1) -> (s1, b) :: env
@@ -178,7 +190,7 @@ and eval_matching (x,l) = match l with | [] -> failwith "Le matching n'était pa
     | Videm -> if b = Vide then env else raise NOMATCH
     | Tuplem([]) -> if b = Tuplev([]) then env else raise NOMATCH
     | Tuplem(y::z) -> begin match b with 
-      | Tuplev(l) -> aux (aux env (Tuplem(z)) (Tuplev(List.tl l))) y (List.hd l) 
+      | Tuplev(l) -> if List.length (y::z) = List.length l then aux (aux env (Tuplem(z)) (Tuplev(List.tl l))) y (List.hd l) else raise NOMATCH
       | _ -> raise NOMATCH end
     | Varm ("_") -> env
     | Varm(s1) -> (s1, b) :: env

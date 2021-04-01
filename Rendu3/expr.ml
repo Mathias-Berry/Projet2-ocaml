@@ -99,7 +99,7 @@ let rec affiche_expr e =
   | Unite -> print_string "()"
   | Tuple l -> print_string "("; affiche_list l
   | Listvide -> print_string "[]"
-  | Cons(a, b) -> begin print_string "("; affiche_expr a; print_string ") :: "; affiche_expr b end
+  | Cons(a, b) -> begin print_string "("; affiche_expr a; print_string ") :: ("; affiche_expr b; print_string ")" end
   | Match(a, b) -> begin print_string "match "; affiche_expr a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_motif (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 
   | Raise k -> print_string"raise (E ";affiche_expr k ; print_string")"
   | Try (a,b) -> begin print_string "try "; affiche_expr a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_expr (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 

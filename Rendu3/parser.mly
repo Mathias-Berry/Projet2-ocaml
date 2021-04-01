@@ -20,7 +20,7 @@ open Expr
 %token EOF             /* Fin de fichier */
 
  
-%nonassoc PLUSFAIBLE TUPLES
+%nonassoc PLUSFAIBLE TUPLES LISTEP RCROCH
 %left PTV
 %left ELSE IN TO
 %left VIRGULE 
@@ -95,7 +95,7 @@ expression_init:
   | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
   | RAISE EXCEPTION expression                     { Raise($3) }
   | TRY expression WITH matchex                    { Try($2,$4) }
-  | LCROCH liste RCROCH                            { $2 }
+  | liste %prec LISTEP                                  { $1 }
 ;
 
   atomique:
@@ -149,6 +149,11 @@ expression_init:
 
 
   liste:
-  | liste PTV expression %prec PLUSFORT            { Cons($1,$3) }
-  | expression %prec PLUSFAIBLE                    { Cons($1,Listvide) }
+  | LCROCH RCROCH                                                    { Listvide }
+  | LCROCH elts                                                      {$2}
+;
+
+  elts :
+  | expression  RCROCH                                              { Cons($1,Listvide) }
+  | expression PTV elts                                             { Cons($1,$3) }
 ;

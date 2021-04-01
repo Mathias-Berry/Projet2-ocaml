@@ -16,7 +16,7 @@ open Expr
 %token EVALREF REF ASS
 %token LPAREN RPAREN BEGIN END RCROCH LCROCH
 %token FUN TO REC EXCEPTION TRY RAISE
-%token MATCH ORMATCH WITH
+%token MATCH ORMATCH WITH FST SND
 %token EOF             /* Fin de fichier */
 
  
@@ -58,6 +58,7 @@ expression_init EOF                { $1 }  /* on veut reconnaître une expressio
 expression_init:
   | expression                                            { $1 }
   | LET motif EGAL expression PVDOUBLE expression_init    { Letin($2,$4,$6) }
+  | expression PTV expression                             { Letin(Varm("_"),$1,$3) }
 ;
 
   expression:         /* règles de grammaire pour les expressions */
@@ -84,7 +85,6 @@ expression_init:
   | LET REC strlist EGAL expression IN expression  { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
   | EVALREF atomique                               { Valeurref($2) }
   | expression ASS expression                      { Changeref($1,$3) }
-  | expression PTV expression                      { Letin(Varm("_"),$1,$3) }
   | LPAREN RPAREN                                  { Unite }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | expression CONS expression                     { Cons($1,$3)}
@@ -96,6 +96,8 @@ expression_init:
   | TRY expression WITH matchex                    { Try($2,$4) }
   | TRY expression WITH ORMATCH matchex            { Try($2,$5) }
   | liste                                          { $1 }
+  | SND                                            { Snd }
+  | FST                                            { Fst }
 ;
 
   atomique:
@@ -165,6 +167,6 @@ expression_init:
 ;
 
   eltsm :
-  | motif PTV eltsm                                             { Consm($1,$3) }
+  | motif PTV eltsm %prec LISTEP                                { Consm($1,$3) }
   | motif  RCROCH                                               { Consm($1,Videm) }
 ;

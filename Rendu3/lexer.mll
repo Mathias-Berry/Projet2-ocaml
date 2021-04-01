@@ -47,9 +47,10 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "!"             { EVALREF }
   | "ref"           { REF }
   | ":="            { ASS }
-  | "[]"            { LISTVIDE }
   | "["             { LCROCH }
   | "]"             { RCROCH}
   | "::"            { CONS }
+  | "snd"           { SND }
+  | "fst"           { FST }
   | ['0'-'9']+ as s { INT (int_of_string s) }
   | ['a'-'z']['a'-'z' 'A'-'Z' '0'-'9']* | _ as s { STR s }

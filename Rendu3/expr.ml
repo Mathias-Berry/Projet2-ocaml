@@ -41,6 +41,8 @@ type expr =
   | Match of (expr*((motif*expr) list))
   | Raise of expr
   | Try of (expr*((expr*expr) list))
+  | Fst
+  | Snd
 
 
 
@@ -103,6 +105,8 @@ let rec affiche_expr e =
   | Match(a, b) -> begin print_string "match "; affiche_expr a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_motif (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 
   | Raise k -> print_string"raise (E ";affiche_expr k ; print_string")"
   | Try (a,b) -> begin print_string "try "; affiche_expr a; print_string " with "; print_newline (); let _ = List.map (fun x -> (print_string "| "; affiche_expr (fst x); print_string " -> "; affiche_expr (snd x); print_newline() ) ) b in () end 
+  | Fst -> print_string"fst"
+  | Snd -> print_string"snd"
 
 
 and affiche_list l =

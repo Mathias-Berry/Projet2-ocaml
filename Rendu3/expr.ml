@@ -70,7 +70,7 @@ let rec affiche_motif e = match e with
   | Varm (l) -> print_string l
   | Tuplem(l) -> print_string "("; affiche_listm l
   | Videm -> print_string "[]"
-  | Consm(a, b) -> affiche_motif a; print_string ";;"; affiche_motif b
+  | Consm(a, b) -> affiche_motif a; print_string "::"; affiche_motif b
   | Constm k -> print_int k
 
 and affiche_listm l =

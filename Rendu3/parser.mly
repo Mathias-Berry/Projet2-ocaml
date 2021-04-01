@@ -20,27 +20,27 @@ open Expr
 %token EOF             /* Fin de fichier */
 
  
-%nonassoc PLUSFAIBLE TUPLES LISTEP RCROCH
-%left PTV
+%nonassoc PLUSFAIBLE TUPLES LISTEP
 %left ELSE IN TO
-%left VIRGULE 
+%left VIRGULE
+%left PTV 
 %nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
 %right CONS
 %left LE GE AND OR EGAL GT NE LT
 
-%nonassoc FUNPRE WITH
+%nonassoc FUNPRE REF 
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
-%nonassoc REF EVALREF
+%nonassoc EVALREF
 %nonassoc UNIT
 %left NOT PRINT
 %nonassoc ATOME 
 %nonassoc ORMATCH
 %nonassoc PLUSFORT EXCEPTION
-%nonassoc LPAREN RPAREN INT STR BEGIN END
+%nonassoc LPAREN RPAREN INT STR BEGIN END RCROCH
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
 %type <Expr.expr> main     /* on _doit_ donner le type associé au point d'entrée */
@@ -63,7 +63,7 @@ expression_init:
   expression:         /* règles de grammaire pour les expressions */
   | atomique %prec ATOME                           { $1 }
   | IF expression THEN expression ELSE expression  { Ifte($2,$4,$6) }
-  | LET strlist2 EGAL expression IN expression      { Letin(Varm (List.hd $2), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+  | LET strlist2 EGAL expression IN expression     { Letin(Varm (List.hd $2), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
   | LET motif EGAL expression IN expression        { Letin($2,$4,$6) }
   | FUN strlist TO expression                      { List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
   | expression PLUS expression                     { Arithop(Add,$1,$3) }
@@ -95,6 +95,7 @@ expression_init:
   | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
   | RAISE EXCEPTION expression                     { Raise($3) }
   | TRY expression WITH matchex                    { Try($2,$4) }
+  | TRY expression WITH ORMATCH matchex            { Try($2,$5) }
   | liste                                          { $1 }
 ;
 

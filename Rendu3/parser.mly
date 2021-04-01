@@ -11,7 +11,7 @@ open Expr
 %token PRINT
 %token PLUS TIMES DIV MINUS
 %token LET IN EGAL PVDOUBLE PTV UNIT VIRGULE
-%token IF THEN ELSE CONS LISTVIDE
+%token IF THEN ELSE CONS
 %token LT LE GT GE AND OR NOT NE
 %token EVALREF REF ASS
 %token LPAREN RPAREN BEGIN END RCROCH LCROCH
@@ -23,7 +23,7 @@ open Expr
 %nonassoc PLUSFAIBLE TUPLES LISTEP
 %left ELSE IN TO
 %left VIRGULE
-%left PTV 
+%right PTV 
 %nonassoc ASS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
@@ -58,7 +58,6 @@ expression_init EOF                { $1 }  /* on veut reconnaître une expressio
 expression_init:
   | expression                                            { $1 }
   | LET motif EGAL expression PVDOUBLE expression_init    { Letin($2,$4,$6) }
-  | expression PTV expression                             { Letin(Varm("_"),$1,$3) }
 ;
 
   expression:         /* règles de grammaire pour les expressions */
@@ -90,6 +89,7 @@ expression_init:
   | expression CONS expression                     { Cons($1,$3)}
   | PRINT                                          { Print }
   | REF                                            { Ref }
+  | expression PTV expression                             { Letin(Varm("_"),$1,$3) }
   | MATCH expression WITH matching                 { Match($2,$4) }
   | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
   | RAISE EXCEPTION expression                     { Raise($3) }
@@ -122,7 +122,6 @@ expression_init:
   | STR                                             { Varm($1) }
   | tuplem %prec TUPLES                             { Tuplem (List.rev($1))}
   | motif CONS motif                                { Consm($1,$3) }
-  | LISTVIDE                                        { Videm }
   | LPAREN motif RPAREN                             { $2 }
   | BEGIN motif END                                 { $2 }
   | listem                                          { $1 }
@@ -158,7 +157,7 @@ expression_init:
 
   elts :
   | expression  RCROCH                                              { Cons($1,Listvide) }
-  | expression PTV elts                                             { Cons($1,$3) }
+  | expression PTV elts %prec LISTEP                                            { Cons($1,$3) }
 ;
 
   listem:

@@ -95,7 +95,7 @@ expression_init:
   | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
   | RAISE EXCEPTION expression                     { Raise($3) }
   | TRY expression WITH matchex                    { Try($2,$4) }
-  | liste                                   { $1 }
+  | liste                                          { $1 }
 ;
 
   atomique:
@@ -123,6 +123,7 @@ expression_init:
   | LISTVIDE                                        { Videm }
   | LPAREN motif RPAREN                             { $2 }
   | BEGIN motif END                                 { $2 }
+  | listem                                          { $1 }
 ;
 
   tuplem:
@@ -156,4 +157,14 @@ expression_init:
   elts :
   | expression  RCROCH                                              { Cons($1,Listvide) }
   | expression PTV elts                                             { Cons($1,$3) }
+;
+
+  listem:
+  | LCROCH RCROCH                                                    { Videm }
+  | LCROCH eltsm                                                     {$2}
+;
+
+  eltsm :
+  | motif  RCROCH                                               { Consm($1,Videm) }
+  | motif PTV eltsm                                             { Consm($1,$3) }
 ;

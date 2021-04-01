@@ -95,7 +95,7 @@ expression_init:
   | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
   | RAISE EXCEPTION expression                     { Raise($3) }
   | TRY expression WITH matchex                    { Try($2,$4) }
-  | liste %prec LISTEP                                  { $1 }
+  | liste                                   { $1 }
 ;
 
   atomique:

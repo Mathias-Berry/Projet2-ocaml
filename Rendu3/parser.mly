@@ -85,9 +85,8 @@ expression_init:
   | EVALREF atomique                               { Valeurref($2) }
   | expression ASS expression                      { Changeref($1,$3) }
   | expression PTV expression                      { Letin(Varm("_"),$1,$3) }
-  | UNIT                                           { Unite }
+  | LPAREN RPAREN                                  { Unite }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
-  | LISTVIDE                                       { Listvide }
   | expression CONS expression                     { Cons($1,$3)}
   | PRINT                                          { Print }
   | REF                                            { Ref }
@@ -118,7 +117,7 @@ expression_init:
 
  motif:
   | INT                                             { Constm($1) }
-  | STR                                        		  { Varm($1) }
+  | STR                                             { Varm($1) }
   | tuplem %prec TUPLES                             { Tuplem (List.rev($1))}
   | motif CONS motif                                { Consm($1,$3) }
   | LISTVIDE                                        { Videm }
@@ -166,6 +165,6 @@ expression_init:
 ;
 
   eltsm :
-  | motif  RCROCH                                               { Consm($1,Videm) }
   | motif PTV eltsm                                             { Consm($1,$3) }
+  | motif  RCROCH                                               { Consm($1,Videm) }
 ;

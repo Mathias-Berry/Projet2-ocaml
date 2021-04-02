@@ -2,9 +2,8 @@ open Expr
 
 
 type envi = (string*value) list
-and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Refv of int | Unitv | Tuplev of (value list ) | Consv of value*value | Vide
+and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Refv of int | Unitv | Tuplev of (value list ) | Consv of value*value | Vide | Except of int
 
-(* Ici Reff représente la fonction ref, quand Refv représente une référence, un pointeur, en lui-même, au même titre que Int représente un entier *)
 
 let reference = Array.make 1000 Unitv
 
@@ -68,7 +67,10 @@ let recupcons v =
     | Consv(a, b) -> (a, b)
     | _ -> failwith "J'aurai du recevoir un cons."
 
-
+let estexcept v = 
+  match v with
+    | Except(_) -> true
+    | _ -> false
 
 let estfun e = 
   match e with
@@ -114,28 +116,26 @@ let rec doublon l = match l with
   | [] -> false
   | t::q -> (List.mem t q) || (doublon q)
   
-  
-
 exception NOMATCH (* On aura besoin de cette exception quand on fera le matching, car on parcourera récursivement le matching, et si a un moment on voit que ca marche pas, au lieu de se passer un booléen pour se dire que ca va pas, on soulève une exception pour dire hop hop hop, on passe au truc suivant *)
 
 let rec eval env = function
   | Const k -> Int k
-  | Arithop(op,e1,e2) -> Int ((arithop2fun op) (recupint (eval env e1)) (recupint (eval env e2))) (* L'ordre d'évalutation des arguments est déjà le bon car Caml interprète les opérateurs comme des fonctions à deux variables curryfiés, et donc évalue les arguments dans le même ordre que nous quand on donne des arguments à arithop2fun op *)
+  | Arithop(op,e1,e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Int ((arithop2fun op) (recupint (inter1)) (recupint inter2)) end  
   | Variable "_" -> failwith "Ordure cosmopolite"
   | Variable s -> recup env s
-  | Ifte(e1, e2, e3) -> if (recupbool (eval env e1)) then eval env e2 else eval env e3
-  | Boolop1 (op, e1, e2) -> Bool ((boolop12fun op) (recupint (eval env e1)) (recupint (eval env e2)))
-  | Boolop2 (op, e1, e2) -> Bool ((boolop22fun op) (recupbool (eval env e1)) (recupbool (eval env e2)))
-  | Non(e) ->Bool (not (recupbool (eval env e)))
+  | Ifte(e1, e2, e3) -> let inter = eval env e1 in if estexcept inter then inter else begin if (recupbool (eval env e1)) then eval env e2 else eval env e3 end
+  | Boolop1 (op, e1, e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Bool ((boolop12fun op) (recupint inter1) (recupint inter2)) end
+  | Boolop2 (op, e1, e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Bool ((boolop22fun op) (recupbool inter1) (recupbool inter2)) end
+  | Non(e) -> let inter = eval env e in if estexcept inter then inter else Bool (not (recupbool inter))
   | Fonction(x,e) ->Fun (env,x,e,None)
-  | Letin(s, b, c) -> eval ( eval_affectation env s (eval env b) ) c
+  | Letin(s, b, c) -> let inter = eval env b in if estexcept inter then inter else eval ( eval_affectation env s inter)  c
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
 (* là pour traiter prInt et ref comme des fonctions, on leur associe une valeur de fonctions, où en realité seule importe le dernier argument, qui est Some "1" ou Some "2", car Some contient d'habitude un nom de variables, qui ne peut pas commencer par un chifre donc il n'y a pas d'ambigüité, et donc quand on tombe sur une fonction avec Some "1" ou Some "2" on sait que on a affaire à ce type de fonction.*)
   | Print -> Fun([], "x", Unite, Some "1")
   | Ref -> Fun ([], "x", Unite, Some "2")
-  | Appli (e1, e2) -> let v2 = eval env e2 in
-                      let a = eval env e1 in
+  | Appli (e1, e2) -> let v2 = eval env e2 in if estexcept v2 then v2 else begin
+                      let a = eval env e1 in if estexcept a then a else begin
                       let (envi,x,f,r)= recupfun a in
                       begin
                         match r with
@@ -151,28 +151,37 @@ let rec eval env = function
                                           | _ -> failwith "Mauvaise utilisation de snd."
                                         end
                           | Some s -> eval ((s,a)::(x,v2)::envi) f
-                      end
-  | Valeurref(e1) -> let s = eval env e1 in reference.(recupref s)
-  | Changeref(e1, e2) -> let s = eval env e1 in let a = eval env e2 in (reference.(recupref s) <- a; Unitv)
+                      end end end
+  | Valeurref(e1) -> let s = eval env e1 in if estexcept s then s else reference.(recupref s)
+  | Changeref(e1, e2) -> let a = eval env e2 in if estexcept a then a else begin let s = eval env e1 in if estexcept s then s else (reference.(recupref s) <- a; Unitv) end
   | Unite -> Unitv
-  | Tuple(l) -> Tuplev (List.map (eval env) l)
-  | Cons(a, b) -> begin match b with 
-    | Listvide -> Consv( (eval env a), (eval env b)) 
-    | Cons(_,_) -> Consv( (eval env a), (eval env b)) 
-    | _ -> failwith "Une liste doit finir par la liste vide" end
+  | Tuple(l) -> let rec aux l = match l with (* Aux sert à parcourir la liste en arrêtant dès que l'on rencontre une exception. *)
+                                  | [] -> [] 
+                                  | t::q -> let inter = eval env t in if estexcept inter then [inter] else let inter2 = aux q in begin match inter2 with [Except(k)] -> [Except(k)] | _ -> inter::inter2 end
+                in let inter3 = aux l in begin match inter3 with | [Except(k)] -> Except(k) | li -> Tuplev(li) end
+
+  | Cons(a, b) -> let inter2 = eval env b in if estexcept inter2 then inter2 else begin let inter1 = eval env a in if estexcept inter1 then inter1 else begin match b with 
+    | Listvide -> Consv( inter1, inter2) 
+    | Cons(_,_) -> Consv( inter1, inter2) 
+    | _ -> failwith "Une liste doit finir par la liste vide" end end
 (* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à cons la liste vide.*)
   | Listvide -> Vide
-  | Match(x, l) -> let mat = eval_matching(eval env x,l) in eval ((fst mat) @ env) (snd mat)
+  | Match(x, l) -> let inter = eval env x in if estexcept inter then inter else let mat = eval_matching(inter,l) in eval ((fst mat) @ env) (snd mat)
   | Fst -> Fun([], "x", Unite, Some "3")
   | Snd -> Fun ([], "x", Unite, Some "4")
-  | _ -> failwith "On verra plus tard."
+  | Raise(e) -> Except(recupint (eval env e))
+  | Try(a,b) -> let inter = eval env a in begin
+    match inter with
+      | Except(k) -> let mat = eval_matching(Int k,b) in eval ((fst mat) @ env) (snd mat)
+      | _ -> inter
+    end
 
 and
 
 (* Dans eval_affectation, on cherche à faire l'équivalent d'un matching. Pour cela, on va parcourir récurisvement ce qu'on a à gauche et affecter au fur et à mesure des valeurs aux variables en enrichissant petit à petit l'envrionnement. Pour cela, affecte la valeur avec l'environnement modifié du reste. *)
   eval_affectation env s b = match s with
     | Tuplem([]) -> env
-    | Tuplem(t::q) -> let l = recuptuple b in eval_affectation (eval_affectation env (Tuplem(q)) (Tuplev(List.tl l))) t (List.hd l)
+    | Tuplem(t::q) -> let l = recuptuple b in if List.length l = List.length (t::q) then eval_affectation (eval_affectation env (Tuplem(q)) (Tuplev(List.tl l))) t (List.hd l) else failwith "On ne peut faire correspondre que des tuples même taille."
     | Videm -> if b = Vide then env else failwith "Si on veut matcher une liste de taille fixer, il faut que en face ca corresponde." (* ce if est là pour empecher let a::[] = [1;2] de marcher. *)
     | Consm(a, q) -> let (c, d) = recupcons b in eval_affectation (eval_affectation env q d) a c
     | Varm ("_") -> env
@@ -197,7 +206,7 @@ and eval_matching (x,l) = match l with | [] -> failwith "Le matching n'était pa
     | Constm(c) -> if b = Int(c) then env else raise NOMATCH
 
   in
-  try let caca = aux [] m x in if doublon (List.map fst caca) then failwith "Voyou !" else (caca, e)
+  try let st = aux [] m x in if doublon (List.map fst st) then failwith "Voyou !" else (st, e)
   with | NOMATCH -> eval_matching (x, q)
 
 end

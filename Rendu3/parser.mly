@@ -82,16 +82,15 @@ expression_init:
   | NOT expression                                 { Non($2) }
   | expression atomique %prec FUNPRE               { Appli($1, $2) }
   | LET REC strlist EGAL expression IN expression  { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
-  | EVALREF atomique                               { Valeurref($2) }
   | expression ASS expression                      { Changeref($1,$3) }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | expression CONS expression                     { Cons($1,$3)}
   | PRINT                                          { Print }
   | REF                                            { Ref }
-  | expression PTV expression                             { Letin(Varm("_"),$1,$3) }
+  | expression PTV expression                      { Letin(Varm("_"),$1,$3) }
   | MATCH expression WITH matching                 { Match($2,$4) }
   | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
-  | RAISE EXCEPTION expression                     { Raise($3) }
+  | RAISE exceptio                                 { $2 }
   | TRY expression WITH matchex                    { Try($2,$4) }
   | TRY expression WITH ORMATCH matchex            { Try($2,$5) }
   | liste                                          { $1 }
@@ -105,8 +104,14 @@ expression_init:
   | INT                                            { Const $1 }
   | STR                                            { Variable $1 }
   | LPAREN RPAREN                                  { Unite }
+  | EVALREF atomique                               { Valeurref($2) }
  ;
 
+  exceptio:
+  | LPAREN exceptio RPAREN                         { $2 }
+  | EXCEPTION expression                           { Raise($2) }
+ ;
+ 
   strlist2:
   | STR STR strlist                                { $1 :: $2 :: $3 }
   | STR STR                                        { [$1; $2] }
@@ -145,8 +150,8 @@ expression_init:
 
 
   matchex:
-    |  EXCEPTION atomique TO expression ORMATCH matchex            { ($2,$4)::$6 }
-    |  EXCEPTION atomique TO expression                            { [($2,$4)] }
+    |  EXCEPTION motif TO expression ORMATCH matchex            { ($2,$4)::$6 }
+    |  EXCEPTION motif TO expression                            { [($2,$4)] }
 ;
 
 
@@ -169,3 +174,4 @@ expression_init:
   | motif PTV eltsm %prec LISTEP                                { Consm($1,$3) }
   | motif  RCROCH                                               { Consm($1,Videm) }
 ;
+

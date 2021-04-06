@@ -81,7 +81,8 @@ expression_init:
   | expression LT expression                       { Boolop1(Lt,$1,$3) }
   | NOT expression                                 { Non($2) }
   | expression atomique %prec FUNPRE               { Appli($1, $2) }
-  | LET REC motlist2 EGAL expression IN expression { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
+  | LET REC motlist2 EGAL expression IN expression { Letrec(recupvar (List.hd $3), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
+  | LET REC STR EGAL expression IN expression      { Letin(Varm $3,$5,$7) } 
   | expression ASS expression                      { Changeref($1,$3) }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | expression CONS expression                     { Cons($1,$3)}

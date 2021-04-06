@@ -30,7 +30,7 @@ type expr =
   | Print
   | Fonction of motif*expr
   | Appli of expr*expr
-  | Letrec of motif*expr*expr
+  | Letrec of string*expr*expr
   | Ref
   | Changeref of expr*expr
   | Valeurref of expr
@@ -94,7 +94,7 @@ let rec affiche_expr e =
   | Print ->(print_string "prInt ")
   | Fonction (a,b) ->(print_string "(fun "; affiche_motif a; print_string " -> "; affiche_expr b; print_string ")")
   | Appli (a,b) ->(affiche_expr a; print_string "("; affiche_expr b; print_string ") ")
-  | Letrec (a, b, c) -> (print_string "let rec "; affiche_motif a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
+  | Letrec (a, b, c) -> (print_string "let rec"; print_string  a; print_string " = "; affiche_expr b; print_string " in "; affiche_expr c)
   | Ref->( print_string "ref " )
   | Changeref (a, b) -> (print_string "("; affiche_expr a; print_string ") := "; print_string "("; affiche_expr b; print_string ")" )
   | Valeurref (a) -> (print_string "!("; affiche_expr a; print_string ")")
@@ -116,3 +116,7 @@ and affiche_list l =
       |_-> failwith "pas possible"
 
 
+let recupvar m =
+  match m with
+  | Varm x -> x
+  | _ -> failwith"impossible"

@@ -127,7 +127,7 @@ let rec eval env = function
   | Boolop1 (op, e1, e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Bool ((boolop12fun op) (recupint inter1) (recupint inter2)) end
   | Boolop2 (op, e1, e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Bool ((boolop22fun op) (recupbool inter1) (recupbool inter2)) end
   | Non(e) -> let inter = eval env e in if estexcept inter then inter else Bool (not (recupbool inter))
-  | Fonction(x,e) ->Fun (env,x,e,None)
+  | Fonction(m,e) ->Fun (env,m,e,None)
   | Letin(s, b, c) -> let inter = eval env b in if estexcept inter then inter else eval ( eval_affectation env s inter)  c
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
@@ -136,10 +136,10 @@ let rec eval env = function
   | Ref -> Fun ([], "x", Unite, Some "2")
   | Appli (e1, e2) -> let v2 = eval env e2 in if estexcept v2 then v2 else begin
                       let a = eval env e1 in if estexcept a then a else begin
-                      let (envi,x,f,r)= recupfun a in
+                      let (envi,m,f,r)= recupfun a in
                       begin
                         match r with
-                          | None -> eval ((x,v2)::envi) f
+                          | None -> eval (eval_matching envi m v2) f
                           | Some "1" -> begin print_int (recupint v2); print_newline (); v2 end
                           | Some "2" -> begin incr index; reference.(!index) <- v2; Refv(!index) end
                           | Some "3" -> begin match v2 with
@@ -150,7 +150,7 @@ let rec eval env = function
                                           | Tuplev([t1; t2]) -> t2
                                           | _ -> failwith "Mauvaise utilisation de snd."
                                         end
-                          | Some s -> eval ((s,a)::(x,v2)::envi) f
+                          | Some s -> eval ((s,a)::(eval_matching envi m v2)) f
                       end end end
   | Valeurref(e1) -> let s = eval env e1 in if estexcept s then s else reference.(recupref s)
   | Changeref(e1, e2) -> let a = eval env e2 in if estexcept a then a else begin let s = eval env e1 in if estexcept s then s else (reference.(recupref s) <- a; Unitv) end

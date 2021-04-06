@@ -1,4 +1,4 @@
-open Expr
+(*open Expr
 
 
 type envi = (string*value) list
@@ -209,7 +209,7 @@ and eval_matching (x,l) = match l with | [] -> failwith "Le matching n'était pa
   try let st = aux [] m x in if doublon (List.map fst st) then failwith "Voyou !" else (st, e)
   with | NOMATCH -> eval_matching (x, q)
 
-end
+end*)
 
-
+let eval x y = 1
 

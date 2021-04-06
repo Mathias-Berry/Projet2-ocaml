@@ -63,9 +63,9 @@ expression_init:
   expression:         /* règles de grammaire pour les expressions */
   | atomique %prec ATOME                           { $1 }
   | IF expression THEN expression ELSE expression  { Ifte($2,$4,$6) }
-  | LET strlist2 EGAL expression IN expression     { Letin(Varm (List.hd $2), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
+  | LET motlist2 EGAL expression IN expression     { Letin(List.hd $2, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $2) $4, $6) }
   | LET motif EGAL expression IN expression        { Letin($2,$4,$6) }
-  | FUN strlist TO expression                      { List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
+  | FUN motlist TO expression                      { List.fold_right (fun x expr -> Fonction(x, expr)) $2 $4 }
   | expression PLUS expression                     { Arithop(Add,$1,$3) }
   | expression TIMES expression                    { Arithop(Mul,$1,$3) }
   | expression DIV expression                      { Arithop(Div,$1, $3) }
@@ -81,7 +81,7 @@ expression_init:
   | expression LT expression                       { Boolop1(Lt,$1,$3) }
   | NOT expression                                 { Non($2) }
   | expression atomique %prec FUNPRE               { Appli($1, $2) }
-  | LET REC strlist EGAL expression IN expression  { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
+  | LET REC motlist2 EGAL expression IN expression { Letrec(List.hd $3, List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
   | expression ASS expression                      { Changeref($1,$3) }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | expression CONS expression                     { Cons($1,$3)}
@@ -112,14 +112,14 @@ expression_init:
   | EXCEPTION expression                           { Raise($2) }
  ;
  
-  strlist2:
-  | STR STR strlist                                { $1 :: $2 :: $3 }
-  | STR STR                                        { [$1; $2] }
+  motlist2:
+  | STR motif motlist                              { (Varm($1)) :: $2 :: $3 }
+  | STR motif                                      { [Varm($1); $2] }
 ;
 
-  strlist:
-  | STR                                            { [$1] }
-  | STR strlist                                    { $1 :: $2 }
+  motlist:
+  | motif                                          { [$1] }
+  | motif motlist                                  { $1 :: $2 }
 ;
 
  motif:

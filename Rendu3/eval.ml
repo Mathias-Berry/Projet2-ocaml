@@ -2,21 +2,12 @@ open Expr
 
 
 type envi = (string*value) list
-and value = Int of int | Fun of envi*string*expr*(string option) | Bool of bool | Refv of int | Unitv | Tuplev of (value list ) | Consv of value*value | Vide | Except of int
+and value = Int of int | Fun of envi*motif*expr*(string option) | Bool of bool | Refv of int | Unitv | Tuplev of (value list ) | Consv of value*value | Vide | Except of int
 
 
 let reference = Array.make 1000 Unitv
 
 let index = ref 0
-
-let print_value x =
-  match x with
-    |Int k -> print_int k
-    |Bool b -> if b then print_string "true" else print_string "false"
-    |Fun (e,x,f,r)-> print_string ("fun "^x^" -> "); affiche_expr f
-    |Unitv -> print_string"()"
-	| _ -> failwith "On le traitera plus tard."
-
 
 let rec recup e s = match e with
   | [] -> failwith "La variable n'est pas définie"

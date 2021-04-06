@@ -40,7 +40,7 @@ open Expr
 %nonassoc ATOME 
 %nonassoc ORMATCH
 %nonassoc PLUSFORT EXCEPTION
-%nonassoc LPAREN RPAREN INT STR BEGIN END RCROCH
+%nonassoc LPAREN RPAREN INT STR BEGIN END RCROCH LCROCH
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
 %type <Expr.expr> main     /* on _doit_ donner le type associé au point d'entrée */
@@ -93,7 +93,6 @@ expression_init:
   | RAISE exceptio                                 { $2 }
   | TRY expression WITH matchex                    { Try($2,$4) }
   | TRY expression WITH ORMATCH matchex            { Try($2,$5) }
-  | liste                                          { $1 }
   | SND                                            { Snd }
   | FST                                            { Fst }
 ;
@@ -105,6 +104,7 @@ expression_init:
   | STR                                            { Variable $1 }
   | LPAREN RPAREN                                  { Unite }
   | EVALREF atomique                               { Valeurref($2) }
+  | liste                                          { $1 }
  ;
 
   exceptio:

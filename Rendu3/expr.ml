@@ -28,7 +28,7 @@ type expr =
   | Boolop2 of boolop2*expr*expr
   | Non of expr
   | Print
-  | Fonction of string*expr
+  | Fonction of motif*expr
   | Appli of expr*expr
   | Letrec of string*expr*expr
   | Ref

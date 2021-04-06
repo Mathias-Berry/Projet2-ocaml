@@ -30,7 +30,7 @@ open Expr
 %right CONS
 %left LE GE AND OR EGAL GT NE LT
 
-%nonassoc FUNPRE REF 
+%nonassoc FUNPRE REF SND FST
 
 %nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
                   /* cf. son usage plus bas : il sert à "marquer" une règle pour lui donner la précédence maximale */
@@ -85,16 +85,12 @@ expression_init:
   | expression ASS expression                      { Changeref($1,$3) }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | expression CONS expression                     { Cons($1,$3)}
-  | PRINT                                          { Print }
-  | REF                                            { Ref }
   | expression PTV expression                      { Letin(Varm("_"),$1,$3) }
   | MATCH expression WITH matching                 { Match($2,$4) }
   | MATCH expression WITH ORMATCH matching         { Match($2,$5) }
   | RAISE exceptio                                 { $2 }
   | TRY expression WITH matchex                    { Try($2,$4) }
   | TRY expression WITH ORMATCH matchex            { Try($2,$5) }
-  | SND                                            { Snd }
-  | FST                                            { Fst }
 ;
 
   atomique:
@@ -105,6 +101,10 @@ expression_init:
   | LPAREN RPAREN                                  { Unite }
   | EVALREF atomique                               { Valeurref($2) }
   | liste                                          { $1 }
+  | SND                                            { Snd }
+  | FST                                            { Fst }
+  | PRINT                                          { Print }
+  | REF                                            { Ref }
  ;
 
   exceptio:

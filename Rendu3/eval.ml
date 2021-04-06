@@ -123,14 +123,14 @@ let rec eval env = function
   | Letrec(s, b, c) -> let (x,f) = recupfonc b in
                                 eval ( (s,(Fun (env,x,f, Some s))):: env ) c
 (* là pour traiter prInt et ref comme des fonctions, on leur associe une valeur de fonctions, où en realité seule importe le dernier argument, qui est Some "1" ou Some "2", car Some contient d'habitude un nom de variables, qui ne peut pas commencer par un chifre donc il n'y a pas d'ambigüité, et donc quand on tombe sur une fonction avec Some "1" ou Some "2" on sait que on a affaire à ce type de fonction.*)
-  | Print -> Fun([], "x", Unite, Some "1")
-  | Ref -> Fun ([], "x", Unite, Some "2")
+  | Print -> Fun([], Varm("x"), Unite, Some "1")
+  | Ref -> Fun ([], Varm("x"), Unite, Some "2")
   | Appli (e1, e2) -> let v2 = eval env e2 in if estexcept v2 then v2 else begin
                       let a = eval env e1 in if estexcept a then a else begin
                       let (envi,m,f,r)= recupfun a in
                       begin
                         match r with
-                          | None -> eval (eval_matching envi m v2) f
+                          | None -> eval (eval_affectation envi m v2) f
                           | Some "1" -> begin print_int (recupint v2); print_newline (); v2 end
                           | Some "2" -> begin incr index; reference.(!index) <- v2; Refv(!index) end
                           | Some "3" -> begin match v2 with
@@ -141,7 +141,7 @@ let rec eval env = function
                                           | Tuplev([t1; t2]) -> t2
                                           | _ -> failwith "Mauvaise utilisation de snd."
                                         end
-                          | Some s -> eval ((s,a)::(eval_matching envi m v2)) f
+                          | Some s -> eval ((s,a)::(eval_affectation envi m v2)) f
                       end end end
   | Valeurref(e1) -> let s = eval env e1 in if estexcept s then s else reference.(recupref s)
   | Changeref(e1, e2) -> let a = eval env e2 in if estexcept a then a else begin let s = eval env e1 in if estexcept s then s else (reference.(recupref s) <- a; Unitv) end
@@ -157,9 +157,9 @@ let rec eval env = function
     | _ -> failwith "Une liste doit finir par la liste vide" end end
 (* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à cons la liste vide.*)
   | Listvide -> Vide
-  | Match(x, l) -> let inter = eval env x in if estexcept inter then inter else let mat = eval_matching(inter,l) in eval ((fst mat) @ env) (snd mat)
-  | Fst -> Fun([], "x", Unite, Some "3")
-  | Snd -> Fun ([], "x", Unite, Some "4")
+  | Match(x, l) -> let inter = eval env x in if estexcept inter then inter else let mat = eval_matching (inter,l) in eval ((fst mat) @ env) (snd mat)
+  | Fst -> Fun([], Varm("x"), Unite, Some "3")
+  | Snd -> Fun ([], Varm("x"), Unite, Some "4")
   | Raise(e) -> Except(recupint (eval env e))
   | Try(a,b) -> let inter = eval env a in begin
     match inter with

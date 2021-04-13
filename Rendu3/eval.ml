@@ -36,7 +36,8 @@ let recupfun  v =
 let recupint v =
   match v with
     | Int k-> k
-    | _ -> failwith"v n'est pas un entier"
+    | Fun(_,_,x,_) -> affiche_expr x; failwith "fonction !!!"
+    | _ -> failwith "v n'est pas un entier"
 
 let recupbool v =
   match v with
@@ -106,13 +107,20 @@ let testlistem = function
 let rec doublon l = match l with
   | [] -> false
   | t::q -> (List.mem t q) || (doublon q)
+
+let rec motif2expr x = match x with
+  | Varm(s) -> Variable(s)
+  | Constm(s) -> Const(s)
+  | Consm(a,b) -> Cons(motif2expr a, motif2expr b)
+  | Videm -> Listvide
+  | Tuplem(l) -> Tuple(List.map motif2expr l)
   
 exception NOMATCH (* On aura besoin de cette exception quand on fera le matching, car on parcourera récursivement le matching, et si a un moment on voit que ca marche pas, au lieu de se passer un booléen pour se dire que ca va pas, on soulève une exception pour dire hop hop hop, on passe au truc suivant *)
 
 let rec eval env = function
   | Const k -> Int k
-  | Arithop(op,e1,e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Int ((arithop2fun op) (recupint (inter1)) (recupint inter2)) end  
-  | Variable "_" -> failwith "Ordure cosmopolite"
+  | Arithop(op,e1,e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Int ((arithop2fun op) (recupint (inter1)) (recupint inter2)) end
+  | Variable "_" -> failwith "Il ne faut pas utiliser _ comme variable"
   | Variable s -> recup env s
   | Ifte(e1, e2, e3) -> let inter = eval env e1 in if estexcept inter then inter else begin if (recupbool (eval env e1)) then eval env e2 else eval env e3 end
   | Boolop1 (op, e1, e2) -> let inter2 = eval env e2 in if estexcept inter2 then inter2 else begin let inter1 = eval env e1 in if estexcept inter1 then inter1 else Bool ((boolop12fun op) (recupint inter1) (recupint inter2)) end
@@ -120,8 +128,12 @@ let rec eval env = function
   | Non(e) -> let inter = eval env e in if estexcept inter then inter else Bool (not (recupbool inter))
   | Fonction(m,e) ->Fun (env,m,e,None)
   | Letin(s, b, c) -> let inter = eval env b in if estexcept inter then inter else eval ( eval_affectation env s inter)  c
-  | Letrec(s, b, c) -> let (x,f) = recupfonc b in
-                                eval ( (s,(Fun (env,x,f, Some s))):: env ) c
+  | Letrec(s, b, c) -> begin match eval env b with
+                          | Except(a) -> Except(a)
+  							          | Fun(_,m,_,_) -> eval ( (s, (Fun(env, m, Appli(b, motif2expr m), Some s))) :: env) c
+  							          | inter -> eval ((s,inter)::env) c
+                       end
+ 
 (* là pour traiter prInt et ref comme des fonctions, on leur associe une valeur de fonctions, où en realité seule importe le dernier argument, qui est Some "1" ou Some "2", car Some contient d'habitude un nom de variables, qui ne peut pas commencer par un chifre donc il n'y a pas d'ambigüité, et donc quand on tombe sur une fonction avec Some "1" ou Some "2" on sait que on a affaire à ce type de fonction.*)
   | Print -> Fun([], Varm("x"), Unite, Some "1")
   | Ref -> Fun ([], Varm("x"), Unite, Some "2")

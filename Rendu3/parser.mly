@@ -25,9 +25,9 @@ open Expr
 %right PTV 
 %left VIRGULE
 %nonassoc ASS
+%right CONS
 %left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left TIMES  DIV/* associativité gauche: a*b*c, c'est (a*b)*c */
-%right CONS
 %left LE GE AND OR EGAL GT NE LT
 
 %nonassoc FUNPRE REF SND FST
@@ -82,7 +82,7 @@ expression_init:
   | NOT expression                                 { Non($2) }
   | expression atomique %prec FUNPRE               { Appli($1, $2) }
   | LET REC motlist2 EGAL expression IN expression { Letrec(recupvar (List.hd $3), List.fold_right (fun x expr -> Fonction(x, expr)) (List.tl $3) $5, $7) }
-  | LET REC STR EGAL expression IN expression      { Letin(Varm $3,$5,$7) } 
+  | LET REC STR EGAL expression IN expression      { Letrec($3,$5,$7) } 
   | expression ASS expression                      { Changeref($1,$3) }
   | tuples %prec TUPLES                            { Tuple(List.rev($1)) }
   | expression CONS expression                     { Cons($1,$3)}

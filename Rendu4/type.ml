@@ -2,6 +2,20 @@ open expr
 
 exception ErreurdeTypage of types*types
 
+
+type Types =
+  |Inte
+  |Boole
+  |Unit
+  |Tout
+  |Fonc of types*types
+  |Liste of types
+  |Tuples of types list
+  |Reff of types
+  |Pasdef of int
+
+
+
 type cot = I of int | T of types
 
 let cota = ref 0 in
@@ -15,10 +29,10 @@ let rec find x = match tab.(x) with
 let rec addmotif2env m env =
 	match m with
 		|Varm m -> incr cota; (m,Pasdef(!cota))::env
-		|Tuplem of (motif list)
- 		| Consm of motif*motif
- 		| Videm
-  		| Constm of int
+		|Tuplem (t::q)-> incr cota; (t,Pasdef(!cota))::(addmotif2env (Tuplem(q)) env)
+ 		|Tuplem [] -> env
+ 		|Consm (m1,m2) -> ??????? 
+ 		| _ -> failwith "ce n'est pas une variable" 
 
 
 

@@ -44,19 +44,6 @@ type expr =
   | Fst
   | Snd
 
-type Types =
-  |Inte
-  |Boole
-  |Unit
-  |Tout
-  |Fonc of types*types
-  |Liste of types
-  |Tuples of types list
-  |Reff of types
-  |Pasdef of int
-
-
-
 
 
 (* fonction d'affichage *)

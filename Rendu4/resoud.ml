@@ -74,3 +74,4 @@ let resolution contr =
 					            | Reff(t1), _ -> raise Erreur
 					          
 					          end
+		in aux contr; encours 

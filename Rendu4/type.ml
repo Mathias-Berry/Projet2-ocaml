@@ -1,9 +1,9 @@
-open expr
+open Expr
 
 exception ErreurdeTypage of types*types
 
 
-type Types =
+type types =
   |Inte
   |Boole
   |Unit

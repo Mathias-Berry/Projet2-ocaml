@@ -7,6 +7,8 @@
 /usr/bin/ocamldep.opt -modules expr.ml > expr.ml.depends # cached
 # Target: expr.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:expr.cmo, file:expr.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc.opt -c -o expr.cmo expr.ml # cached
+# Target: eval.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:eval.cmo, file:eval.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc.opt -c -o eval.cmo eval.ml # cached
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
 /usr/bin/ocamllex.opt -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
@@ -20,35 +22,31 @@
 # Target: lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc.opt -c -o lexer.cmo lexer.ml # cached
 # Target: resoud.ml.depends, tags: { extension:ml, file:resoud.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep.opt -modules resoud.ml > resoud.ml.depends # cached
+/usr/bin/ocamldep.opt -modules resoud.ml > resoud.ml.depends
 # Target: type.ml.depends, tags: { extension:ml, file:type.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep.opt -modules type.ml > type.ml.depends
+/usr/bin/ocamldep.opt -modules type.ml > type.ml.depends # cached
 # Target: type.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:type.cmo, file:type.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc.opt -c -o type.cmo type.ml
-+ /usr/bin/ocamlc.opt -c -o type.cmo type.ml
-File "type.ml", line 56, characters 21-2953:
-56 | .....................function
-57 |   | Const k -> Inte
-58 |   | Unite -> Unit
-59 |   | Variable s -> recup env s
-60 |   | Tuple(l) -> Tuples (List.map (typage env) l)
-...
-93 |                           incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
-94 |   | Fonction(m,e) -> let temp1 = typage ((addmotenv m)@env) e in
-95 |                      let temp2 = recomposemot env m in
-96 |                      Fonc (temp2,temp1)
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-(Match (_, [])|Try _)
-# Target: eval.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:eval.cmo, file:eval.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc.opt -c -o eval.cmo eval.ml
+/usr/bin/ocamlc.opt -c -o type.cmo type.ml # cached
 # Target: resoud.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:resoud.cmo, file:resoud.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc.opt -c -o resoud.cmo resoud.ml
-+ /usr/bin/ocamlc.opt -c -o resoud.cmo resoud.ml
-File "resoud.ml", line 21, characters 38-39:
-21 |    | Pasdef(s) -> boucle n encours s1 s
-                                           ^
-Error: This expression has type int but an expression was expected of type
-         Type.types
-Command exited with code 2.
-# Compilation unsuccessful.
+# Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc.opt -c -o main.cmo main.ml # cached
+# Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt.opt -c -o expr.cmx expr.ml # cached
+# Target: eval.cmx, tags: { compile, extension:cmx, extension:ml, file:eval.cmx, file:eval.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt.opt -c -o eval.cmx eval.ml # cached
+# Target: parser.ml.depends, tags: { extension:ml, file:parser.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep.opt -modules parser.ml > parser.ml.depends # cached
+# Target: parser.cmx, tags: { compile, extension:cmx, extension:ml, file:parser.cmx, file:parser.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt.opt -c -o parser.cmx parser.ml # cached
+# Target: lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:lexer.cmx, file:lexer.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt.opt -c -o lexer.cmx lexer.ml # cached
+# Target: type.cmx, tags: { compile, extension:cmx, extension:ml, file:type.cmx, file:type.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt.opt -c -o type.cmx type.ml # cached
+# Target: resoud.cmx, tags: { compile, extension:cmx, extension:ml, file:resoud.cmx, file:resoud.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt.opt -c -o resoud.cmx resoud.ml
+# Target: main.cmx, tags: { compile, extension:cmx, extension:ml, file:main.cmx, file:main.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt.opt -c -o main.cmx main.ml # cached
+# Target: main.native, tags: { dont_link_with, extension:native, file:main.native, link, native, ocaml, program, quiet }
+/usr/bin/ocamlopt.opt unix.cmxa expr.cmx eval.cmx parser.cmx lexer.cmx type.cmx resoud.cmx main.cmx -o main.native
+# Compilation successful.

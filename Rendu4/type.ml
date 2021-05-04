@@ -1,7 +1,5 @@
 open Expr
 
-exception ErreurdeTypage of types*types
-
 
 type types =
   |Inte
@@ -14,63 +12,10 @@ type types =
   |Reff of types
   |Pasdef of int
 
+let cota = ref 0
+let contraintes = ref []
 
-
-type cot = I of int | T of types
-
-let cota = ref 0 in
-let tab = Array.make 1000 (T Tout)
-
-
-let rec find x = match tab.(x) with
-	|T k -> k,x
-	|I k -> find k
-
-let rec addmotif2env m env =
-	match m with
-		|Varm m -> incr cota; (m,Pasdef(!cota))::env
-		|Tuplem (t::q)-> incr cota; (t,Pasdef(!cota))::(addmotif2env (Tuplem(q)) env)
- 		|Tuplem [] -> env
- 		|Consm (m1,m2) -> ??????? 
- 		| _ -> failwith "ce n'est pas une variable" 
-
-
-
-let rec egal t1 t2 =
-	match t1,t2 with
-		|(t1,t2) when t1=t2 -> true
-		|(Pasdef t11, Pasdef t22)-> begin
-									let (temp1,t1f) = find t11 in 
-									let (temp2,t2f) = find t22 in
-									if temp1 = Tout then (tab.(t1f)<- I t2f; true)
-									else if temp2 = Tout then (tab.(t2f)<- I t1f; true)
-									else (egal temp1 temp2)
-									end
-		|(pasdef t11,t2)-> let (temp1,t1f) = find t11 in 
-						   if temp1 = Tout then (tab.(t1f)<- t2; true)
-						   else (egal temp1 t2)
-		|(t1,pasdef t22)-> let (temp2,t2f) = find t22 in 
-						   if temp2 = Tout then (tab.(t2f)<- t1; true)
-						   else (egal temp2 t1)
-		|(Fonc t11, Fonc t22) -> egal t11 t22
-		|(Liste t11, Liste t22) -> egal t11 t22
-		|(Tuples l1, Tuples l2) -> egallist l1 l2
-		|_->false
-
-and
-let egallist l1 l2 =
-	match l1,l2 with
-		|[],[] -> true
-		|t1::q1,t2::q2-> (egal t1 t2) && (egallist q1 q2)
-		|_ -> false 
-
-
-
-let rec tousidentique l =
-	match l with
-		|[]-> incr cota; Liste (Pasdef (!cota))
-		|t::[] -> t
-		|t1::t2::q -> if not (egal t1 t2) then raise ErreurdeTypage(t2,t1) else tousidentique t2::q
+let append x = contraintes:= x::(!contraintes)
 
 
 let rec recup e s = match e with
@@ -78,20 +23,30 @@ let rec recup e s = match e with
   | (a, b)::q when a <> s -> recup q s
   | (a, b)::q -> b
 
-let recupref t =
-  match t with 
-   | Reff a -> a
-   | _ -> incr cota; raise ErreurdeTypage (t,Reff (Pasdef(!cota)))
 
-let recuplist t =
-  match t with 
-   | List l -> l
-   | _ ->incr cota; raise ErreurdeTypage (t,Liste (Pasdef(!cota)))
+let rec addmotenv = function 
+    |Varm s-> incr coota; append (!cota,Tout);[(s,Pasdef(!cota))]
+    |Consm(m1,m2)-> (typamot m1)@(typamot m2)                         
+    |Videm,_-> []
+    |Tuplem m1::q1-> (typamot m1)@(typamot (Tuplem q1))
+    |Tuplem [],Tuples [] ->[]
+    |_ -> failwith"pas des indices de fonctions"
 
-let recupfonc t =
-  match t with 
-   | Fonc t1,t2 -> t1,t2
-   | _ -> incr cota; incr cota; raise ErreurdeTypage (t,Fonc(Pasdef((!cota)-1),Pasdef(!cota)))
+let rec recomposemot env = function
+    |Varm s-> recup env s 
+    |Consm(m1,m2)-> List (recomposemot env m1)
+    |Tuplem m1::q1->  Tuples (recomposemot m1)::(recomposemot (Tuplem q1))
+    |Tuplem [] -> Tuples []
+
+
+let rec typagemot m t =
+  match m,t with
+    |Varm s-> [(s,t)]
+    |Consm(m1,m2),Liste t1-> (typamot m1 t1)@(typamot m2 t)                         
+    |Videm,_-> []
+    |Tuplem m1::q1,Tuples t1::q2 -> (typamot m1 t1)@(typamot (Tuplem q1) (Tuples m2))
+    |Tuplem [],Tuples [] ->[]
+    |_,_ -> failwith"pas typable"
 
 
 let rec typage env = function
@@ -99,54 +54,39 @@ let rec typage env = function
   | Unite -> Unit
   | Variable s -> recup env s
   | Tuple(l) -> Tuples (List.map (typage env) l)
-  | Listvide -> incr cota; Liste(Pasdef (!cota))
+  | Listvide -> incr cota; append (!cota,Tout); Liste(Pasdef (!cota))
   | Cons(e1, e2) -> let temp1 = typage env e1 in 
-  					let temp2 = recuplist (typage env e2) in
-  					if not(egal temp1 temp2) then raise ErreurdeTypage (temp1,temp2)
-  						 else Liste temp1
-  | Arithop(op,e1,e2) -> let temp1 = typage env e1 in 
-						 let temp2 = typage env e2 in
-  						 if not (egal temp1 Inte) then raise ErreurdeTypage (temp1,Inte)
-  						 else if not (egal temp2 Inte) then raise ErreurdeTypage (temp2,Inte)
-  						 else Inte 
+            let temp2 = typage env e2 in
+            incr cota; append (!cota,temp1);
+            incr cota; append (!cota,temp2);append (!cota, Liste (Pasdef ((!cota)-1))); temp2
+  | Arithop(op,e1,e2) -> incr cota; append (!cota,typage env e1); append(!cota,Inte); incr cota; append (!cota,typage env e2); append(!cota,Inte); Inte 
   | Ifte(e1, e2, e3) -> let temp1 = typage env e1 in 
-  						let temp2 = typage env e2 in 
-  						let temp3 = typage env e3 in 
-  						if not (egal temp1 Boole) then raise ErreurdeTypage (temp1,Boole)
-  						else if not (egal temp2 temp3) then raise ErreurdeTypage (temp2,temp3)
-  						else temp2 
-  | Boolop1 (op, e1, e2) -> let temp1 = typage env e1 in 
-						 	let temp2 = typage env e2 in
-  							if not (egal temp1 Inte) then raise ErreurdeTypage (temp1,Inte)
-  							else if not (egal temp2 Inte) then raise ErreurdeTypage (temp2,Inte)
-  							else Boole 
-  | Boolop2 (op, e1, e2) -> let temp1 = typage env e1 in 
-						 	let temp2 = typage env e2 in
-  						 	if not (egal temp1 Boole) then raise ErreurdeTypage (temp1,Boole)
-  							else if not (egal temp2 Boole) then raise ErreurdeTypage (temp2,Boole)
-  							else Boole 
-  | Non(e) -> let temp = typage env e in 
-  			  if not (egal temp Boole) then raise ErreurdeTypage (temp,Boole)
-  			  else Boole 
-  | Valeurref(e) -> recupref (typage env e)
-  | Changeref(e1, e2) -> let temp1 = recupref (typage env e1) in 
-  						 let temp2 = typage env e2 in 
-  						 if not (egal temp1 temp2) then raise ErreurdeTypage (temp1,temp2)
-  						 else Unit 
+              let temp2 = typage env e2 in
+              let temp3 = typage env e3 in 
+              incr cota; append (!cota,temp1); append (!cota, Boole);incr cota; append (!cota,temp2); incr cota; append (!cota,temp3); append (!cota,Pasdef ((!cota)-1)); temp2
+  | Boolop1 (op, e1, e2) -> incr cota; append (!cota,typage env e1); append(!cota,Inte); incr cota; append (!cota,typage env e2); append(!cota,Inte); Boole
+  | Boolop2 (op, e1, e2) -> incr cota; append (!cota,typage env e1); append(!cota,Boole); incr cota; append (!cota,typage env e2); append(!cota,Boole); Boole
+  | Non(e) -> incr cota; append (!cota,typage env e1); append(!cota,Boole); Boole 
+  | Valeurref(e) -> incr cota; append (!cota, Tout);incr cota; append (!cota,typage env e); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
+  | Changeref(e1, e2) ->let temp2 = typage env e2 in
+              incr cota; append (!cota,typage env e2); incr cota; append (!cota,temp2); append (!cota, Reff (Pasdef ((!cota)-1))); Unit
   | Raise(e) -> let temp = typage env e in
-  				if not (egal temp Inte) then raise ErreurdeTypage (temp,Inte) else ???????
-  | Match(x, l) -> tousidentique (List.map (typage env) l)
-  | Letin(s, b, c) -> let temp1 = typage env b in 
-					  typage ((s,temp)::env) c
-  | Letrec(s, b, c) -> let temp1 = typage env b in 
-					   typage ((s,temp)::env) c
-  | Fonction(m,e) -> incr cota;
+          incr cota; append (!cota, temp); append (!cota, Inte);Tout
+  | Letin(s, b, c) -> let temp1 = typage env b in
+                      typage ((typagemot s temp1)@env) c
+  | Letrec(s, b, c) -> let temp1 = typage env b in
+                       typage ((typagemot s temp1)@env) c
   | Print -> Fonc (Inte,Inte)
   | Ref -> incr cota; Fonc (Pasdef (!cota),Pasdef (!cota))
   | Fst -> incr cota; Fonc (Pasdef (!cota),Pasdef (!cota))
   | Snd -> incr cota; Fonc (Pasdef (!cota),Pasdef (!cota))
-  | Appli (e1, e2) -> let temp11,temp12 = recupfonc (typage env e1) in 
-  					  let temp2 = typage env e2 in
-  					  if not (egal temp11 temp2) then raise ErreurdeTypage(temp2,temp11)
-  					  else temp12 
+  | Appli (e1, e2) ->let temp1 = typage env e1 in 
+                     let temp2 = typage env e2 in
+                     incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); incr cota; append (Pasdef ((!cota)-1),Fonc (Pasdef(!cota),Pasdef(!cota+1)));incr cota; Fonc (Pasdef(!cota),Pasdef(!cota+1))
+  | Match(x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
+                          let temp2 = typage env (Match (x,q)) in
+                          incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
+  | Fonction(m,e) -> let temp1 = typage ((addmotenv m)@env) e in
+                     let temp2 = recomposemot env m in
+                     Fonc temp2,temp1
 

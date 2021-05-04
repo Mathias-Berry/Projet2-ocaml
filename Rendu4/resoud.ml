@@ -2,6 +2,22 @@ open Type
 
 exception Erreur
 
+let affiche_type tab ti =  
+  let rec aux k = match k with
+    | Inte -> print_string "int"
+    | Boole -> print_string "bool"
+    | Unit -> print_string "Unit"
+    | Tout -> print_string "'a"
+    | Pasdef(i) -> begin match tab.(i) with
+                    | Tout -> print_string "'"; print_int i
+                    | x -> aux x
+                   end
+    | Tuples(a) -> print_string "( "; aux (List.hd a); List.map ( fun x -> print_string " * "; aux x) (List.tl a); print_string " )"
+    | Liste(t) -> print_string "( ";  aux t; print_string " ) list"
+    | Fonc(t1, t2) -> print_string "( "; aux t1; print_string ") -> ("; aux t2; print_string " )"
+    | Reff(t) -> print_string "( "; aux t; print_string " ) ref"
+  in aux ti
+
 let rec boucle n encours s1 s2 = match encours.(s2) with
    | Pasdef(s) when s = s1 -> true
    | Pasdef(s) -> boucle n encours s1 s

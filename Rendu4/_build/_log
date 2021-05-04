@@ -1,6 +1,6 @@
 ### Starting build.
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep.opt -modules main.ml > main.ml.depends # cached
+/usr/bin/ocamldep.opt -modules main.ml > main.ml.depends
 # Target: eval.ml.depends, tags: { extension:ml, file:eval.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep.opt -modules eval.ml > eval.ml.depends # cached
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
@@ -24,11 +24,11 @@
 # Target: resoud.ml.depends, tags: { extension:ml, file:resoud.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep.opt -modules resoud.ml > resoud.ml.depends # cached
 # Target: type.ml.depends, tags: { extension:ml, file:type.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep.opt -modules type.ml > type.ml.depends
+/usr/bin/ocamldep.opt -modules type.ml > type.ml.depends # cached
 # Target: type.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:type.cmo, file:type.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc.opt -c -o type.cmo type.ml
+/usr/bin/ocamlc.opt -c -o type.cmo type.ml # cached
 # Target: resoud.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:resoud.cmo, file:resoud.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc.opt -c -o resoud.cmo resoud.ml
+/usr/bin/ocamlc.opt -c -o resoud.cmo resoud.ml # cached
 # Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc.opt -c -o main.cmo main.ml
 # Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
@@ -45,6 +45,11 @@
 /usr/bin/ocamlopt.opt -c -o type.cmx type.ml
 # Target: resoud.cmx, tags: { compile, extension:cmx, extension:ml, file:resoud.cmx, file:resoud.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt.opt -c -o resoud.cmx resoud.ml
++ /usr/bin/ocamlopt.opt -c -o resoud.cmx resoud.ml
+File "resoud.ml", line 15, characters 55-113:
+15 |     | Tuples(a) -> print_string "( "; aux (List.hd a); List.map ( fun x -> print_string " * "; aux x) (List.tl a); print_string " )"
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Warning 10: this expression should have type unit.
 # Target: main.cmx, tags: { compile, extension:cmx, extension:ml, file:main.cmx, file:main.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt.opt -c -o main.cmx main.ml
 # Target: main.native, tags: { dont_link_with, extension:native, file:main.native, link, native, ocaml, program, quiet }

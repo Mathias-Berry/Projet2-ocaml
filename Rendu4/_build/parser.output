@@ -26,7 +26,7 @@
   22             | NOT expression
   23             | expression atomique
   24             | LET REC motlist2 EGAL expression IN expression
-  25             | LET REC motif EGAL expression IN expression
+  25             | LET REC STR EGAL expression IN expression
   26             | expression ASS expression
   27             | tuples
   28             | expression CONS expression
@@ -190,7 +190,7 @@ state 7
 	expression : LET . motlist2 EGAL expression IN expression  (6)
 	expression : LET . motif EGAL expression IN expression  (7)
 	expression : LET . REC motlist2 EGAL expression IN expression  (24)
-	expression : LET . REC motif EGAL expression IN expression  (25)
+	expression : LET . REC STR EGAL expression IN expression  (25)
 
 	INT  shift 29
 	STR  shift 30
@@ -602,7 +602,7 @@ state 27
 	expression : LET . motlist2 EGAL expression IN expression  (6)
 	expression : LET . motif EGAL expression IN expression  (7)
 	expression : LET . REC motlist2 EGAL expression IN expression  (24)
-	expression : LET . REC motif EGAL expression IN expression  (25)
+	expression : LET . REC STR EGAL expression IN expression  (25)
 
 	INT  shift 29
 	STR  shift 30
@@ -754,19 +754,12 @@ state 33
 
 state 34
 	expression : LET REC . motlist2 EGAL expression IN expression  (24)
-	expression : LET REC . motif EGAL expression IN expression  (25)
+	expression : LET REC . STR EGAL expression IN expression  (25)
 
-	INT  shift 29
-	STR  shift 30
-	LPAREN  shift 31
-	BEGIN  shift 32
-	LCROCH  shift 33
+	STR  shift 82
 	.  error
 
-	motif  goto 82
 	motlist2  goto 83
-	tuplem  goto 37
-	listem  goto 38
 
 
 state 35
@@ -1884,14 +1877,21 @@ state 81
 
 
 state 82
-	expression : LET REC motif . EGAL expression IN expression  (25)
-	motif : motif . CONS motif  (55)
-	tuplem : motif . VIRGULE motif  (60)
+	expression : LET REC STR . EGAL expression IN expression  (25)
+	motlist2 : STR . motif motlist  (48)
+	motlist2 : STR . motif  (49)
 
+	INT  shift 29
+	STR  shift 48
 	EGAL  shift 123
-	VIRGULE  shift 85
-	CONS  shift 86
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
 	.  error
+
+	motif  goto 76
+	tuplem  goto 37
+	listem  goto 38
 
 
 state 83
@@ -2241,7 +2241,6 @@ state 100
 	TIMES  shift 58
 	DIV  shift 59
 	EGAL  shift 61
-	CONS  shift 64
 	LT  shift 65
 	LE  shift 66
 	GT  shift 67
@@ -2264,6 +2263,7 @@ state 100
 	VIRGULE  reduce 9
 	THEN  reduce 9
 	ELSE  reduce 9
+	CONS  reduce 9
 	ASS  reduce 9
 	RPAREN  reduce 9
 	END  reduce 9
@@ -2300,7 +2300,6 @@ state 101
 	STR  shift 4
 	PRINT  shift 5
 	EGAL  shift 61
-	CONS  shift 64
 	LT  shift 65
 	LE  shift 66
 	GT  shift 67
@@ -2325,6 +2324,7 @@ state 101
 	VIRGULE  reduce 10
 	THEN  reduce 10
 	ELSE  reduce 10
+	CONS  reduce 10
 	ASS  reduce 10
 	RPAREN  reduce 10
 	END  reduce 10
@@ -2361,7 +2361,6 @@ state 102
 	STR  shift 4
 	PRINT  shift 5
 	EGAL  shift 61
-	CONS  shift 64
 	LT  shift 65
 	LE  shift 66
 	GT  shift 67
@@ -2386,6 +2385,7 @@ state 102
 	VIRGULE  reduce 11
 	THEN  reduce 11
 	ELSE  reduce 11
+	CONS  reduce 11
 	ASS  reduce 11
 	RPAREN  reduce 11
 	END  reduce 11
@@ -2424,7 +2424,6 @@ state 103
 	TIMES  shift 58
 	DIV  shift 59
 	EGAL  shift 61
-	CONS  shift 64
 	LT  shift 65
 	LE  shift 66
 	GT  shift 67
@@ -2447,6 +2446,7 @@ state 103
 	VIRGULE  reduce 12
 	THEN  reduce 12
 	ELSE  reduce 12
+	CONS  reduce 12
 	ASS  reduce 12
 	RPAREN  reduce 12
 	END  reduce 12
@@ -2665,6 +2665,10 @@ state 107
 	INT  shift 3
 	STR  shift 4
 	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
 	EGAL  shift 61
 	CONS  shift 64
 	LT  shift 65
@@ -2681,10 +2685,6 @@ state 107
 	LCROCH  shift 14
 	FST  shift 19
 	SND  shift 20
-	PLUS  reduce 28
-	TIMES  reduce 28
-	DIV  reduce 28
-	MINUS  reduce 28
 	IN  reduce 28
 	PVDOUBLE  reduce 28
 	PTV  reduce 28
@@ -3321,7 +3321,7 @@ state 122
 
 
 state 123
-	expression : LET REC motif EGAL . expression IN expression  (25)
+	expression : LET REC STR EGAL . expression IN expression  (25)
 
 	INT  shift 3
 	STR  shift 4
@@ -3865,7 +3865,7 @@ state 143
 	expression : expression . GT expression  (20)
 	expression : expression . LT expression  (21)
 	expression : expression . atomique  (23)
-	expression : LET REC motif EGAL expression . IN expression  (25)
+	expression : LET REC STR EGAL expression . IN expression  (25)
 	expression : expression . ASS expression  (26)
 	expression : expression . CONS expression  (28)
 	expression : expression . PTV expression  (29)
@@ -4129,7 +4129,7 @@ state 152
 
 
 state 153
-	expression : LET REC motif EGAL expression IN . expression  (25)
+	expression : LET REC STR EGAL expression IN . expression  (25)
 
 	INT  shift 3
 	STR  shift 4
@@ -4481,7 +4481,7 @@ state 161
 	expression : expression . GT expression  (20)
 	expression : expression . LT expression  (21)
 	expression : expression . atomique  (23)
-	expression : LET REC motif EGAL expression IN expression .  (25)
+	expression : LET REC STR EGAL expression IN expression .  (25)
 	expression : expression . ASS expression  (26)
 	expression : expression . CONS expression  (28)
 	expression : expression . PTV expression  (29)

@@ -1,5 +1,7 @@
 let source = ref false
 let debug = ref false
+let notypes = ref false
+let showtypes = ref false
 
 type arithop = 
   Add | Mul |Div |Min

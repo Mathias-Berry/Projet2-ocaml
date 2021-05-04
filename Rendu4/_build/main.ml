@@ -1,5 +1,7 @@
 open Expr
 open Eval
+open Type
+open Resoud
 
 let compile e =
     begin if !source || !debug then (affiche_expr e; print_newline()) end;
@@ -13,7 +15,9 @@ let nom_fichier = ref ""
 let calc () =
   let usage  ="" in
   let optlist = [("-showsrc", Arg.Set source, "Affiche le programme et enlève les sorties");
-                 ("-debug", Arg.Set debug, "Affiche le programme et affiche les sorties")] in
+                 ("-debug", Arg.Set debug, "Affiche le programme et affiche les sorties");
+                 ("-notypes", Arg.Set notypes, "Desative l'inference de types");
+                 ("-showtypes", Arg.Set showtypes, "Affiche les types de toutes les variables qui entre en jeu")] in
    
   Arg.parse optlist (fun s -> nom_fichier := s) usage;
   

@@ -98,7 +98,8 @@ let rec typage env = function
   | Try (x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
                          let temp2 = typage env (Try (x,q)) in
                          incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
-  |Try(x,[])-> incr cota; append (!cota,Tout); Liste(Pasdef (!cota))
+  |Try(x,[])-> let temp = typage env x in
+               incr cota; append (!cota,temp); Liste(temp)
 
 
 

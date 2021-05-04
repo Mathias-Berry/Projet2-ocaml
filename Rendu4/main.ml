@@ -26,16 +26,16 @@ let calc () =
       let parse () = Parser.main Lexer.token lexbuf in
       let result = parse () in
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
-    (try if not !notypes then begin
+      if not !notypes then begin
     			let a, b = chybraltar result in 
+    			let _ = List.map (fun (x,y) -> print_int x; print_string " ---- "; affiche_ty y; print_newline ()) a in
     			let a = resolution a in
     				if !showtypes then
     				let rec parcours l = match l with
     					| [] -> ()
     					| (x,y)::q -> parcours l; print_string x; print_string " : "; affiche_type a y; print_newline ()
     					in parcours b
-    				end
-    with Erreur -> print_string " Le typage est pas le bon.");
+    				end;
 	compile result; flush stdout
 
 ;;

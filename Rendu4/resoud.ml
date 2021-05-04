@@ -2,6 +2,21 @@ open Type
 
 exception Erreur
 
+let affiche_ty ty =  
+  let rec aux k = match k with
+    | Inte -> print_string "int"
+    | Boole -> print_string "bool"
+    | Unit -> print_string "Unit"
+    | Tout -> print_string "Tout"
+    | Pasdef(i) -> print_string "Pasdef("; print_int i; print_string ")"
+    | Tuples(a) -> print_string "( "; aux (List.hd a); let _ = List.map ( fun x -> print_string " * "; aux x) (List.tl a) in print_string " )"
+    | Liste(t) -> print_string "( ";  aux t; print_string " ) list"
+    | Fonc(t1, t2) -> print_string "( "; aux t1; print_string ") -> ("; aux t2; print_string " )"
+    | Reff(t) -> print_string "( "; aux t; print_string " ) ref"
+  in aux ty
+
+
+
 let affiche_type tab ti =  
   let rec aux k = match k with
     | Inte -> print_string "int"
@@ -12,7 +27,7 @@ let affiche_type tab ti =
                     | Tout -> print_string "'"; print_int i
                     | x -> aux x
                    end
-    | Tuples(a) -> print_string "( "; aux (List.hd a); List.map ( fun x -> print_string " * "; aux x) (List.tl a); print_string " )"
+    | Tuples(a) -> print_string "( "; aux (List.hd a); let _ = List.map ( fun x -> print_string " * "; aux x) (List.tl a) in print_string " )"
     | Liste(t) -> print_string "( ";  aux t; print_string " ) list"
     | Fonc(t1, t2) -> print_string "( "; aux t1; print_string ") -> ("; aux t2; print_string " )"
     | Reff(t) -> print_string "( "; aux t; print_string " ) ref"
@@ -24,14 +39,6 @@ let rec boucle n encours s1 s2 = match encours.(s2) with
    | _ -> false
 
 
-(* Cette fonction sert à prevoir la taille du tableau supplémentaires que l'on va devoir avoir pour pouvoir générer de nouvelles contraintes *)
-let rec compte l = match l with
-  | [] -> 0
-  | Tuples(a) :: q -> List.length a + compte (a @ q)
-  | Liste(t1)::q -> 1 + compte (t1 :: q)
-  | Fonc(t1, t2) ::q -> 2 + compte (t1 :: t2 :: q)
-  | Reff(t1) :: q -> 1 + compte (t1 :: q)
-  | t::q -> compte q
 
 let resolution contr =
   let n = List.length contr in
@@ -44,7 +51,7 @@ let resolution contr =
 					            | _, Pasdef(s) -> aux ( (s,b)::q)
 					            | Pasdef(s), t1 -> aux ( (s,t1) :: q) 
 					            
-					            | _, Tout -> encours.(i) <- b
+					            | _, Tout -> encours.(i) <- b; aux q
 					            
 					            | Inte, Inte -> aux q
 					            | Inte, _ -> raise Erreur
@@ -70,7 +77,7 @@ let resolution contr =
 					            | Reff(t1), Reff(t2) -> incr bout; aux ( (!bout, t1) :: (!bout, t2) :: q)
 					            | Reff(t1), _ -> raise Erreur
 					            
-                      | Tout, _ -> ()
+                      | Tout, _ -> aux q
 					          
 					          end
 		in aux contr; encours 

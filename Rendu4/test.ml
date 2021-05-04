@@ -1,12 +1,4 @@
-let tab = Array.make 1000 (0, None);;
-
-let recupsome x =
-	match x with 
-	|(_,Some k)-> k
-	|(_,None)-> failwith"C'est une None";;
-
-let rec find x = if snd(tab.(x)) != None then find (tab.(x)) else fst(tab.(x));;
-let union k n = t.(k)<- (0,Some n);;
-
-if (find 0) = Tout then print_int 1 else print_int 0;;
-
+let a = 2::[3] in let rec longueur l = match l with 
+	| [] -> 0 
+	| t::q -> 1 + longueur q 
+in prInt (longueur a)

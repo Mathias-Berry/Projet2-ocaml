@@ -7,8 +7,6 @@
 /usr/bin/ocamldep.opt -modules expr.ml > expr.ml.depends # cached
 # Target: expr.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:expr.cmo, file:expr.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc.opt -c -o expr.cmo expr.ml # cached
-# Target: eval.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:eval.cmo, file:eval.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc.opt -c -o eval.cmo eval.ml # cached
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
 /usr/bin/ocamllex.opt -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
@@ -28,10 +26,29 @@
 # Target: type.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:type.cmo, file:type.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc.opt -c -o type.cmo type.ml
 + /usr/bin/ocamlc.opt -c -o type.cmo type.ml
-File "type.ml", line 32, characters 5-24:
-32 |     |Tuplem [],Tuples [] ->[]
-          ^^^^^^^^^^^^^^^^^^^
-Error: This pattern matches values of type 'a * 'b
-       but a pattern was expected which matches values of type Expr.motif
+File "type.ml", line 56, characters 21-2953:
+56 | .....................function
+57 |   | Const k -> Inte
+58 |   | Unite -> Unit
+59 |   | Variable s -> recup env s
+60 |   | Tuple(l) -> Tuples (List.map (typage env) l)
+...
+93 |                           incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
+94 |   | Fonction(m,e) -> let temp1 = typage ((addmotenv m)@env) e in
+95 |                      let temp2 = recomposemot env m in
+96 |                      Fonc (temp2,temp1)
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(Match (_, [])|Try _)
+# Target: eval.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:eval.cmo, file:eval.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc.opt -c -o eval.cmo eval.ml
+# Target: resoud.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:resoud.cmo, file:resoud.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc.opt -c -o resoud.cmo resoud.ml
++ /usr/bin/ocamlc.opt -c -o resoud.cmo resoud.ml
+File "resoud.ml", line 21, characters 38-39:
+21 |    | Pasdef(s) -> boucle n encours s1 s
+                                           ^
+Error: This expression has type int but an expression was expected of type
+         Type.types
 Command exited with code 2.
 # Compilation unsuccessful.

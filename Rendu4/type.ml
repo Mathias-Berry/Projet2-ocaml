@@ -23,28 +23,32 @@ let rec recup e s = match e with
   | (a, b)::q when a <> s -> recup q s
   | (a, b)::q -> b
 
+let recuptuple = function
+  |Tuples l -> l
+  |_ -> failwith"pas possible"
 
 let rec addmotenv = function 
-    |Varm s-> incr coota; append (!cota,Tout);[(s,Pasdef(!cota))]
-    |Consm(m1,m2)-> (typamot m1)@(typamot m2)                         
-    |Videm,_-> []
-    |Tuplem m1::q1-> (typamot m1)@(typamot (Tuplem q1))
-    |Tuplem [],Tuples [] ->[]
+    |Varm s-> incr cota; append (!cota,Tout);[(s,Pasdef(!cota))]
+    |Consm(m1,m2)-> (addmotenv m1)@(addmotenv m2)                         
+    |Videm-> []
+    |Tuplem (m1::q1)-> (addmotenv m1)@(addmotenv (Tuplem q1))
+    |Tuplem []->[]
     |_ -> failwith"pas des indices de fonctions"
 
 let rec recomposemot env = function
     |Varm s-> recup env s 
-    |Consm(m1,m2)-> List (recomposemot env m1)
-    |Tuplem m1::q1->  Tuples (recomposemot m1)::(recomposemot (Tuplem q1))
+    |Consm(m1,m2)-> Liste (recomposemot env m1)
+    |Tuplem (m1::q1)->  Tuples ((recomposemot env m1)::(recuptuple (recomposemot env (Tuplem q1))))
     |Tuplem [] -> Tuples []
+    |_ -> failwith"pas possible"
 
 
 let rec typagemot m t =
   match m,t with
-    |Varm s-> [(s,t)]
-    |Consm(m1,m2),Liste t1-> (typamot m1 t1)@(typamot m2 t)                         
+    |Varm s,_-> [(s,t)]
+    |Consm(m1,m2),Liste t1-> (typagemot m1 t1)@(typagemot m2 t)                         
     |Videm,_-> []
-    |Tuplem m1::q1,Tuples t1::q2 -> (typamot m1 t1)@(typamot (Tuplem q1) (Tuples m2))
+    |Tuplem (m1::q1),Tuples (t1::q2) -> (typagemot m1 t1)@(typagemot (Tuplem q1) (Tuples q2))
     |Tuplem [],Tuples [] ->[]
     |_,_ -> failwith"pas typable"
 
@@ -66,7 +70,7 @@ let rec typage env = function
               incr cota; append (!cota,temp1); append (!cota, Boole);incr cota; append (!cota,temp2); incr cota; append (!cota,temp3); append (!cota,Pasdef ((!cota)-1)); temp2
   | Boolop1 (op, e1, e2) -> incr cota; append (!cota,typage env e1); append(!cota,Inte); incr cota; append (!cota,typage env e2); append(!cota,Inte); Boole
   | Boolop2 (op, e1, e2) -> incr cota; append (!cota,typage env e1); append(!cota,Boole); incr cota; append (!cota,typage env e2); append(!cota,Boole); Boole
-  | Non(e) -> incr cota; append (!cota,typage env e1); append(!cota,Boole); Boole 
+  | Non(e) -> incr cota; append (!cota,typage env e); append(!cota,Boole); Boole 
   | Valeurref(e) -> incr cota; append (!cota, Tout);incr cota; append (!cota,typage env e); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
   | Changeref(e1, e2) ->let temp2 = typage env e2 in
               incr cota; append (!cota,typage env e2); incr cota; append (!cota,temp2); append (!cota, Reff (Pasdef ((!cota)-1))); Unit
@@ -75,18 +79,19 @@ let rec typage env = function
   | Letin(s, b, c) -> let temp1 = typage env b in
                       typage ((typagemot s temp1)@env) c
   | Letrec(s, b, c) -> let temp1 = typage env b in
-                       typage ((typagemot s temp1)@env) c
+                       typage ((typagemot (Varm s) temp1)@env) c
   | Print -> Fonc (Inte,Inte)
   | Ref -> incr cota; Fonc (Pasdef (!cota),Pasdef (!cota))
   | Fst -> incr cota; Fonc (Pasdef (!cota),Pasdef (!cota))
   | Snd -> incr cota; Fonc (Pasdef (!cota),Pasdef (!cota))
   | Appli (e1, e2) ->let temp1 = typage env e1 in 
                      let temp2 = typage env e2 in
-                     incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); incr cota; append (Pasdef ((!cota)-1),Fonc (Pasdef(!cota),Pasdef(!cota+1)));incr cota; Fonc (Pasdef(!cota),Pasdef(!cota+1))
+                     incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); incr cota;append ((!cota)-1,Fonc (Pasdef(!cota),Pasdef(!cota+1))); incr cota;
+                        Fonc (Pasdef(!cota-1),Pasdef(!cota))
   | Match(x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
                           let temp2 = typage env (Match (x,q)) in
                           incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
   | Fonction(m,e) -> let temp1 = typage ((addmotenv m)@env) e in
                      let temp2 = recomposemot env m in
-                     Fonc temp2,temp1
+                     Fonc (temp2,temp1)
 

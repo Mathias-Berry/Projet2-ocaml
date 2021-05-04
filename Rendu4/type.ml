@@ -98,4 +98,4 @@ let rec typage env = function
 
 let chybraltar e =
   let t = typage [] e in
-  !cota 
+  !contraintes 

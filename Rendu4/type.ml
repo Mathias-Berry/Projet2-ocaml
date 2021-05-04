@@ -14,9 +14,10 @@ type types =
 
 let cota = ref 0
 let contraintes = ref []
+let var = ref []
 
 let append x = contraintes:= x::(!contraintes)
-
+let appendv x = var:= x::(!var)
 
 let rec recup e s = match e with
   | [] -> failwith "La variable n'est pas définie"
@@ -28,12 +29,12 @@ let recuptuple = function
   |_ -> failwith"pas possible"
 
 let rec addmotenv = function 
-    |Varm s-> incr cota; append (!cota,Tout);[(s,Pasdef(!cota))]
+    |Varm s-> incr cota; appendv (s,Pasdef(!cota)); append (!cota,Tout);[(s,Pasdef(!cota))]
     |Consm(m1,m2)-> (addmotenv m1)@(addmotenv m2)                         
     |Videm-> []
     |Tuplem (m1::q1)-> (addmotenv m1)@(addmotenv (Tuplem q1))
     |Tuplem []->[]
-    |_ -> failwith"pas des indices de fonctions"
+    |Constm k -> []
 
 let rec recomposemot env = function
     |Varm s-> recup env s 
@@ -45,7 +46,7 @@ let rec recomposemot env = function
 
 let rec typagemot m t =
   match m,t with
-    |Varm s,_-> [(s,t)]
+    |Varm s,_-> appendv (s,t); [(s,t)]
     |Consm(m1,m2),Liste t1-> (typagemot m1 t1)@(typagemot m2 t)                         
     |Videm,_-> []
     |Tuplem (m1::q1),Tuples (t1::q2) -> (typagemot m1 t1)@(typagemot (Tuplem q1) (Tuples q2))
@@ -90,12 +91,17 @@ let rec typage env = function
   | Match(x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
                           let temp2 = typage env (Match (x,q)) in
                           incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
+  | Match(x,[])-> incr cota; append (!cota,Tout); Liste(Pasdef (!cota))
   | Fonction(m,e) -> let temp1 = typage ((addmotenv m)@env) e in
                      let temp2 = recomposemot env m in
                      Fonc (temp2,temp1)
+  | Try (x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
+                         let temp2 = typage env (Try (x,q)) in
+                         incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
+  |Try(x,[])-> incr cota; append (!cota,Tout); Liste(Pasdef (!cota))
 
 
 
 let chybraltar e =
-  let t = typage [] e in
-  !contraintes 
+  let _ = typage [] e in
+  !contraintes,!var

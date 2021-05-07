@@ -61,6 +61,10 @@ let rec recomposemot env = function
     | x ->affiche_motif x; failwith"pas possible"
 
 
+
+
+
+
 let rec typagemot m t =
   match m,t with
   	|Varm("_") , _ -> []
@@ -69,7 +73,16 @@ let rec typagemot m t =
     |Videm,_-> []
     |Tuplem (m1::q1),Tuples (t1::q2) -> (typagemot m1 t1)@(typagemot (Tuplem q1) (Tuples q2))
     |Tuplem [],Tuples [] ->[]
+    |Consm(m1,m2), Pasdef(i) -> incr cota; append (i,Liste (Pasdef(!cota))); (typagemot m1 (Pasdef(!cota)))@(typagemot m2 (Liste(Pasdef(!cota))))
+    |Tuplem l, Pasdef(i) -> let l1,l2 = typagemot_tuple_pasdef l in
+                            append (i,Tuples l1);l2
     |_,_ -> failwith"pas typable"
+
+
+ and  typagemot_tuple_pasdef = function (*permt de traiter le cas de tuples et pasdef dans la fonction suivante. Cette fonction renvoit une liste de typas pasdef et l'unification de chaque pasdef et motif*)
+  |t::q-> let (l1,l2)= typagemot_tuple_pasdef q in
+          incr cota; ((Pasdef(!cota))::l1, (typagemot t (Pasdef(!cota)))@l2)
+  |[] -> [],[]
 
 
 let rec typage env = function

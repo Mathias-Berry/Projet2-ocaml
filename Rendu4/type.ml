@@ -65,13 +65,19 @@ let rec typage env = function
             let temp2 = typage env e2 in
             incr cota; append (!cota,temp1);
             incr cota; append (!cota,temp2);append (!cota, Liste (Pasdef ((!cota)-1))); temp2
-  | Arithop(op,e1,e2) -> incr cota; append (!cota,typage env e1); append(!cota,Inte); incr cota; append (!cota,typage env e2); append(!cota,Inte); Inte 
+  | Arithop(op,e1,e2) ->let temp1 = typage env e1 in 
+                        let temp2 = typage env e2 in
+                        incr cota; append (!cota,temp1); append(!cota,Inte); incr cota; append (!cota,temp2); append(!cota,Inte); Inte 
   | Ifte(e1, e2, e3) -> let temp1 = typage env e1 in 
               let temp2 = typage env e2 in
               let temp3 = typage env e3 in 
               incr cota; append (!cota,temp1); append (!cota, Boole);incr cota; append (!cota,temp2); incr cota; append (!cota,temp3); append (!cota,Pasdef ((!cota)-1)); temp2
-  | Boolop1 (op, e1, e2) -> incr cota; append (!cota,typage env e1); append(!cota,Inte); incr cota; append (!cota,typage env e2); append(!cota,Inte); Boole
-  | Boolop2 (op, e1, e2) -> incr cota; append (!cota,typage env e1); append(!cota,Boole); incr cota; append (!cota,typage env e2); append(!cota,Boole); Boole
+  | Boolop1 (op, e1, e2) -> let temp1 = typage env e1 in 
+                            let temp2 = typage env e2 in
+                            incr cota; append (!cota,temp1); append(!cota,Inte); incr cota; append (!cota,temp2); append(!cota,Inte); Boole
+  | Boolop2 (op, e1, e2) -> let temp1 = typage env e1 in 
+                            let temp2 = typage env e2 in
+                            incr cota; append (!cota,temp1); append(!cota,Boole); incr cota; append (!cota,temp2); append(!cota,Boole); Boole
   | Non(e) -> incr cota; append (!cota,typage env e); append(!cota,Boole); Boole 
   | Valeurref(e) -> incr cota; append (!cota, Tout);incr cota; append (!cota,typage env e); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
   | Changeref(e1, e2) ->let temp2 = typage env e2 in
@@ -103,7 +109,7 @@ let rec typage env = function
   | Try (x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
                          let temp2 = typage env (Try (x,q)) in
                          incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
-  |Try(x,[])-> let temp = typage env x in
+  | Try(x,[])-> let temp = typage env x in
                incr cota; append (!cota,temp); Liste(temp)
 
 

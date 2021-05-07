@@ -53,7 +53,7 @@ let rec addmotenv = function
     |Constm k -> []
 
 let rec recomposemot env = function
-	|Varm ("_") -> Tout
+	  |Varm ("_") -> Tout
     |Varm s-> recup env s 
     |Consm(m1,m2)-> Liste (recomposemot env m1)
     |Tuplem (m1::q1)->  Tuples ((recomposemot env m1)::(recuptuple (recomposemot env (Tuplem q1))))
@@ -136,7 +136,7 @@ let rec typage env = function
                           let temp4 = typage env x in
                           incr cota; append (!cota,temp3); incr cota; append (!cota,temp4); append (!cota,Pasdef ((!cota)-1));
                           incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
-  | Match(x,[])-> Tout
+  | Match(x,[])-> incr cota; Pasdef(!cota)
   | Fonction(m,e) -> let envt = (addmotenv m)@env in
                      let temp1 = typage envt e in
                      let temp2 = recomposemot envt m in

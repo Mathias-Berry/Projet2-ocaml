@@ -2,18 +2,21 @@ open Type
 
 exception Erreur
 
-let affiche_type tab ti =  
+  let indexindef = Array.make (100000) '-'
+  let indef = ref 97
+
+let affiche_type tab ti =
   let rec aux k = match k with
     | Inte -> print_string "int"
     | Boole -> print_string "bool"
     | Unit -> print_string "Unit"
-    | Tout -> print_string "'a"
+    | Tout -> print_string "'a" (* Ce cas n'est pas censé arriver *)
     | Pasdef(i) -> begin match tab.(i) with
-                    | Tout -> print_string "'"; print_int i
+                    | Tout -> print_string "'"; (if indexindef.(i) = '-' then (indexindef.(i) <- char_of_int !indef; incr indef)); print_char indexindef.(i)
                     | x -> aux x
                    end
     | Tuples(a) -> print_string "( "; aux (List.hd a); let _ = List.map ( fun x -> print_string " * "; aux x) (List.tl a) in print_string " )"
-    | Liste(t) -> print_string "( ";  aux t; print_string " ) list"
+    | Liste(t) -> print_string "( "; aux t; print_string " ) list"
     | Fonc(t1, t2) -> print_string "( "; aux t1; print_string ") -> ("; aux t2; print_string " )"
     | Reff(t) -> print_string "( "; aux t; print_string " ) ref"
   in aux ti

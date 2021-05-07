@@ -29,6 +29,7 @@ let recuptuple = function
   |_ -> failwith"pas possible"
 
 let rec addmotenv = function 
+	|Varm("_") -> []
     |Varm s-> incr cota; appendv (s,Pasdef(!cota)); append (!cota,Tout);[(s,Pasdef(!cota))]
     |Consm(m1,m2)-> (addmotenv m1)@(addmotenv m2)                         
     |Videm-> []
@@ -47,6 +48,7 @@ let rec recomposemot env = function
 
 let rec typagemot m t =
   match m,t with
+  	|Varm("_") , _ -> []
     |Varm s,_-> appendv (s,t); [(s,t)]
     |Consm(m1,m2),Liste t1-> (typagemot m1 t1)@(typagemot m2 t)                         
     |Videm,_-> []

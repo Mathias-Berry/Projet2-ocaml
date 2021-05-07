@@ -1,1 +1,2 @@
-if (2<1) && (1=2) then prInt(0) else prInt(1)
+let f = fun x -> x in 1
+

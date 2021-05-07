@@ -1,6 +1,6 @@
 ### Starting build.
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep.opt -modules main.ml > main.ml.depends
+/usr/bin/ocamldep.opt -modules main.ml > main.ml.depends # cached
 # Target: eval.ml.depends, tags: { extension:ml, file:eval.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep.opt -modules eval.ml > eval.ml.depends # cached
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
@@ -30,7 +30,7 @@
 # Target: resoud.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:resoud.cmo, file:resoud.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc.opt -c -o resoud.cmo resoud.ml # cached
 # Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc.opt -c -o main.cmo main.ml
+/usr/bin/ocamlc.opt -c -o main.cmo main.ml # cached
 # Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt.opt -c -o expr.cmx expr.ml # cached
 # Target: eval.cmx, tags: { compile, extension:cmx, extension:ml, file:eval.cmx, file:eval.ml, implem, native, ocaml, quiet }
@@ -46,7 +46,7 @@
 # Target: resoud.cmx, tags: { compile, extension:cmx, extension:ml, file:resoud.cmx, file:resoud.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt.opt -c -o resoud.cmx resoud.ml # cached
 # Target: main.cmx, tags: { compile, extension:cmx, extension:ml, file:main.cmx, file:main.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt.opt -c -o main.cmx main.ml
+/usr/bin/ocamlopt.opt -c -o main.cmx main.ml # cached
 # Target: main.native, tags: { dont_link_with, extension:native, file:main.native, link, native, ocaml, program, quiet }
-/usr/bin/ocamlopt.opt unix.cmxa expr.cmx eval.cmx parser.cmx lexer.cmx type.cmx resoud.cmx main.cmx -o main.native
+/usr/bin/ocamlopt.opt unix.cmxa expr.cmx eval.cmx parser.cmx lexer.cmx type.cmx resoud.cmx main.cmx -o main.native # cached
 # Compilation successful.

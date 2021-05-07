@@ -81,9 +81,11 @@ let rec typage env = function
                             let temp2 = typage env e2 in
                             incr cota; append (!cota,temp1); append(!cota,Boole); incr cota; append (!cota,temp2); append(!cota,Boole); Boole
   | Non(e) -> incr cota; append (!cota,typage env e); append(!cota,Boole); Boole 
-  | Valeurref(e) -> incr cota; append (!cota, Tout);incr cota; append (!cota,typage env e); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
-  | Changeref(e1, e2) ->let temp2 = typage env e2 in
-              incr cota; append (!cota,typage env e2); incr cota; append (!cota,temp2); append (!cota, Reff (Pasdef ((!cota)-1))); Unit
+  | Valeurref(e) -> let temp = typage env e in
+                    incr cota; append (!cota, Tout);incr cota; append (!cota,temp); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
+  | Changeref(e1, e2) -> let temp1 = typage env e1 in
+                         let temp2 = typage env e2 in
+                        incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota, Reff (Pasdef ((!cota)-1))); Unit
   | Raise(e) -> let temp = typage env e in
           incr cota; append (!cota, temp); append (!cota, Inte);Tout
   | Letin(s, b, c) -> let temp1 = typage env b in

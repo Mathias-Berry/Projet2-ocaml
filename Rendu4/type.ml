@@ -120,7 +120,9 @@ let rec typage env = function
   | Letin(s, b, c) -> let temp1 = typage env b in
                       typage ((typagemot s temp1)@env) c
   | Letrec(s, b, c) -> incr cota;
+                       let i = !cota in
                        let temp1 = typage ((s,Pasdef(!cota))::env) b in
+                       incr cota; append (!cota,temp1); append (!cota,Pasdef(i));
                        typage ((typagemot (Varm s) temp1)@env) c
   | Print -> Fonc (Inte,Inte)
   | Ref -> incr cota; Fonc (Pasdef (!cota),Reff(Pasdef (!cota)))

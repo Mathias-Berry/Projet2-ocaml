@@ -163,9 +163,9 @@ let rec eval env = function
                                   | t::q -> let inter = eval env t in if estexcept inter then [inter] else let inter2 = aux q in begin match inter2 with [Except(k)] -> [Except(k)] | _ -> inter::inter2 end
                 in let inter3 = aux l in begin match inter3 with | [Except(k)] -> Except(k) | li -> Tuplev(li) end
 
-  | Cons(a, b) -> let inter2 = eval env b in if estexcept inter2 then inter2 else begin let inter1 = eval env a in if estexcept inter1 then inter1 else begin match b with 
-    | Listvide -> Consv( inter1, inter2) 
-    | Cons(_,_) -> Consv( inter1, inter2) 
+  | Cons(a, b) -> let inter2 = eval env b in if estexcept inter2 then inter2 else begin let inter1 = eval env a in if estexcept inter1 then inter1 else begin match inter2 with 
+    | Vide -> Consv( inter1, inter2) 
+    | Consv(_,_) -> Consv( inter1, inter2) 
     | _ -> failwith "Une liste doit finir par la liste vide" end end
 (* L'intérêt de la ligne d'au dessus et de ne regarder que des listes qui ont des têtes de listes, à savoir qu'on fait cons des trucs jusqu'à arriver à cons la liste vide.*)
   | Listvide -> Vide

@@ -34,27 +34,27 @@ let affiche_type tab ti =
   in aux ti
 
 
-
-let rec boucle n encours s1 s2 = match encours.(s2) with
-   | Pasdef(s) when s = s1 -> true
-   | Pasdef(s) -> boucle n encours s1 s
-   | _ -> false
+let rec find tab i = match tab.(i) with
+  | Pasdef(j) -> find tab j
+  | Tout -> Pasdef(i)
+  | x -> x
 
 
 
 let resolution contr =
   let n = List.length contr in
-  let encours = Array.make (10000) Tout in (* Ce tableau sert a stocker ce qu'on doit déjà savoir du type qui correspond à chaque numéro, avec la taile qu'il faut pour qu'on ait au moins assez de place ( on fait + 5 pour avoir de la marge pour pas s'embêter avec des problèmes de est ce que on commence à 1 ou 0 etc ... *)
+  let encours = Array.make (100000) Tout in (* Ce tableau sert a stocker ce qu'on doit déjà savoir du type qui correspond à chaque numéro, avec la taile qu'il faut pour qu'on ait au moins assez de place ( on fait + 5 pour avoir de la marge pour pas s'embêter avec des problèmes de est ce que on commence à 1 ou 0 etc ... *)
 	let bout = ref n in
 	let rec aux l = match l with
 	  | [] -> ()
-	  | (i,b) :: q -> begin match b, encours.(i) with
-					            | Pasdef(s1), Pasdef(s2) -> if boucle n encours s1 s2 then aux q else encours.(i) <- Pasdef(s1); aux q
-					            | _, Pasdef(s) -> aux ( (s,b)::q)
-					            | Pasdef(s), t1 -> aux ( (s,t1) :: q) 
-					            
-					            | _, Tout -> encours.(i) <- b; aux q
-					            
+	  | (i,b) :: q -> begin match b, find encours i with
+					            | _, Pasdef(j) -> encours.(j) <- b; aux q
+					            | Pasdef(s), t1 -> let t = find encours s in begin match t with
+					                                                                        | Pasdef(j) -> encours.(j) <- t1; aux q
+					                                                                        | _ -> incr bout; aux ( (!bout, t1) :: (!bout, t) :: q)
+					            					                                                end
+                      | _, Tout -> failwith "C'est la fete du slip !"
+                      
 					            | Inte, Inte -> aux q
 					            | Inte, _ -> raise Erreur
 					            

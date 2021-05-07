@@ -20,7 +20,7 @@ let append x = contraintes:= x::(!contraintes)
 let appendv x = var:= x::(!var)
 
 let rec recup e s = match e with
-  | [] -> failwith "La variable n'est pas définie"
+  | [] -> print_string s; failwith "La variable n'est pas définie"
   | (a, b)::q when a <> s -> recup q s
   | (a, b)::q -> b
 
@@ -41,7 +41,8 @@ let rec recomposemot env = function
     |Consm(m1,m2)-> Liste (recomposemot env m1)
     |Tuplem (m1::q1)->  Tuples ((recomposemot env m1)::(recuptuple (recomposemot env (Tuplem q1))))
     |Tuplem [] -> Tuples []
-    |_ -> failwith"pas possible"
+    |Videm ->Liste Tout
+    | x ->affiche_motif x; failwith"pas possible"
 
 
 let rec typagemot m t =
@@ -79,7 +80,8 @@ let rec typage env = function
           incr cota; append (!cota, temp); append (!cota, Inte);Tout
   | Letin(s, b, c) -> let temp1 = typage env b in
                       typage ((typagemot s temp1)@env) c
-  | Letrec(s, b, c) -> let temp1 = typage env b in
+  | Letrec(s, b, c) -> incr cota;
+                       let temp1 = typage ((s,Pasdef(!cota))::env) b in
                        typage ((typagemot (Varm s) temp1)@env) c
   | Print -> Fonc (Inte,Inte)
   | Ref -> incr cota; Fonc (Pasdef (!cota),Pasdef (!cota))
@@ -90,10 +92,13 @@ let rec typage env = function
                      incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); incr cota;append ((!cota)-2,Fonc ((Pasdef(!cota - 1)),Pasdef(!cota)));Pasdef(!cota)
   | Match(x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
                           let temp2 = typage env (Match (x,q)) in
+                          let temp3 = recomposemot ((addmotenv m)@env) m in
+                          let temp4 = typage env x in
+                          incr cota; append (!cota,temp3); incr cota; append (!cota,temp4); append (!cota,Pasdef ((!cota)-1));
                           incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2
   | Match(x,[])-> incr cota; append (!cota,Tout); Liste(Pasdef (!cota))
   | Fonction(m,e) -> let temp1 = typage ((addmotenv m)@env) e in
-                     let temp2 = recomposemot env m in
+                     let temp2 = recomposemot ((addmotenv m)@env) m in
                      Fonc (temp2,temp1)
   | Try (x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
                          let temp2 = typage env (Try (x,q)) in

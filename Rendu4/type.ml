@@ -98,9 +98,10 @@ let rec typage env = function
   | Appli (e1, e2) ->let temp1 = typage env e1 in 
                      let temp2 = typage env e2 in
                      incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); incr cota;append ((!cota)-2,Fonc ((Pasdef(!cota - 1)),Pasdef(!cota)));Pasdef(!cota)
-  | Match(x, (m,e)::q) -> let temp1 = typage ((addmotenv m)@env) e in
+  | Match(x, (m,e)::q) -> let envt = (addmotenv m)@env in
+                          let temp1 = typage envt e in
                           let temp2 = typage env (Match (x,q)) in
-                          let temp3 = recomposemot ((addmotenv m)@env) m in
+                          let temp3 = recomposemot envt m in
                           let temp4 = typage env x in
                           incr cota; append (!cota,temp3); incr cota; append (!cota,temp4); append (!cota,Pasdef ((!cota)-1));
                           incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota,Pasdef ((!cota)-1)); temp2

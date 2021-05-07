@@ -1,6 +1,7 @@
 open Expr
 
 
+
 type types =
   |Inte
   |Boole
@@ -15,6 +16,20 @@ type types =
 let cota = ref 0
 let contraintes = ref []
 let var = ref []
+
+let affiche_ty ty =  
+  let rec aux k = match k with
+    | Inte -> print_string "int"
+    | Boole -> print_string "bool"
+    | Unit -> print_string "Unit"
+    | Tout -> print_string "Tout"
+    | Pasdef(i) -> print_string "Pasdef("; print_int i; print_string ")"
+    | Tuples(a) -> print_string "( "; aux (List.hd a); let _ = List.map ( fun x -> print_string " * "; aux x) (List.tl a) in print_string " )"
+    | Liste(t) -> print_string "( ";  aux t; print_string " ) list"
+    | Fonc(t1, t2) -> print_string "( "; aux t1; print_string ") -> ("; aux t2; print_string " )"
+    | Reff(t) -> print_string "( "; aux t; print_string " ) ref"
+  in aux ty
+
 
 let append x = contraintes:= x::(!contraintes)
 let appendv x = var:= x::(!var)
@@ -85,7 +100,7 @@ let rec typage env = function
                     incr cota; append (!cota, Tout);incr cota; append (!cota,temp); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
   | Changeref(e1, e2) -> let temp1 = typage env e1 in
                          let temp2 = typage env e2 in
-                        incr cota; append (!cota,temp1); incr cota; append (!cota,temp2); append (!cota, Reff (Pasdef ((!cota)-1))); Unit
+                        incr cota; append (!cota,temp2); incr cota; append (!cota,temp1); append (!cota, Reff (Pasdef ((!cota)-1))); Unit
   | Raise(e) -> let temp = typage env e in
           incr cota; append (!cota, temp); append (!cota, Inte);Tout
   | Letin(s, b, c) -> let temp1 = typage env b in

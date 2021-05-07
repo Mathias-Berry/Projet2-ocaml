@@ -1,4 +1,2 @@
-let f x = match x with 
-	|0 -> 0 
-	| _ -> 1 in 
-prInt (f 2)
+match [1] with 
+	| t::q -> q

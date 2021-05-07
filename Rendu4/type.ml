@@ -45,7 +45,7 @@ let recuptuple = function
 
 let rec addmotenv = function 
 	  |Varm("_") -> []
-    |Varm s-> incr cota; append (!cota,Tout);[(s,Pasdef(!cota))]
+    |Varm s-> incr cota;[(s,Pasdef(!cota))]
     |Consm(m1,m2)-> (addmotenv m1)@(addmotenv m2)                         
     |Videm-> []
     |Tuplem (m1::q1)-> (addmotenv m1)@(addmotenv (Tuplem q1))
@@ -58,7 +58,7 @@ let rec recomposemot env = function
     |Consm(m1,m2)-> Liste (recomposemot env m1)
     |Tuplem (m1::q1)->  Tuples ((recomposemot env m1)::(recuptuple (recomposemot env (Tuplem q1))))
     |Tuplem [] -> Tuples []
-    |Videm ->Liste Tout
+    |Videm ->incr cota; Liste (Pasdef(!cota))
     |Constm k -> Inte
 
 
@@ -91,7 +91,7 @@ let rec typage env = function
   | Unite -> Unit
   | Variable s -> recup env s
   | Tuple(l) -> Tuples (List.map (typage env) l)
-  | Listvide -> incr cota; append (!cota,Tout); Liste(Pasdef (!cota))
+  | Listvide -> incr cota; Liste(Pasdef (!cota))
   | Cons(e1, e2) -> let temp1 = typage env e1 in 
             let temp2 = typage env e2 in
             incr cota; append (!cota,temp1);
@@ -111,7 +111,7 @@ let rec typage env = function
                             incr cota; append (!cota,temp1); append(!cota,Boole); incr cota; append (!cota,temp2); append(!cota,Boole); Boole
   | Non(e) -> incr cota; append (!cota,typage env e); append(!cota,Boole); Boole 
   | Valeurref(e) -> let temp = typage env e in
-                    incr cota; append (!cota, Tout);incr cota; append (!cota,temp); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
+                    incr cota;incr cota; append (!cota,temp); append (!cota, Reff (Pasdef((!cota) -1)));Pasdef((!cota) -1) 
   | Changeref(e1, e2) -> let temp1 = typage env e1 in
                          let temp2 = typage env e2 in
                         incr cota; append (!cota,temp2); incr cota; append (!cota,temp1); append (!cota, Reff (Pasdef ((!cota)-1))); Unit

@@ -33,6 +33,8 @@ let affiche_type tab ti =
     | Reff(t) -> print_string "( "; aux t; print_string " ) ref"
   in aux ti
 
+
+
 let rec boucle n encours s1 s2 = match encours.(s2) with
    | Pasdef(s) when s = s1 -> true
    | Pasdef(s) -> boucle n encours s1 s

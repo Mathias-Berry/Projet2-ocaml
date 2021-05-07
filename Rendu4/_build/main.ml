@@ -33,7 +33,7 @@ let calc () =
     				if !showtypes then
     				let rec parcours l = match l with
     					| [] -> ()
-    					| (x,y)::q -> parcours l; print_string x; print_string " : "; affiche_type a y; print_newline ()
+    					| (x,y)::q -> parcours q; print_string x; print_string " : "; affiche_type a y; print_newline ()
     					in parcours b
     				end;
 	compile result; flush stdout

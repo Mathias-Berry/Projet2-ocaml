@@ -44,8 +44,8 @@ let recuptuple = function
   |_ -> failwith"pas possible"
 
 let rec addmotenv = function 
-	|Varm("_") -> []
-    |Varm s-> incr cota; appendv (s,Pasdef(!cota)); append (!cota,Tout);[(s,Pasdef(!cota))]
+	  |Varm("_") -> []
+    |Varm s-> incr cota; append (!cota,Tout);[(s,Pasdef(!cota))]
     |Consm(m1,m2)-> (addmotenv m1)@(addmotenv m2)                         
     |Videm-> []
     |Tuplem (m1::q1)-> (addmotenv m1)@(addmotenv (Tuplem q1))
@@ -150,6 +150,6 @@ let rec typage env = function
 
 
 let chybraltar e =
-  let _ = typage [] e in
-  !contraintes,!var
+  let t = typage [] e in
+  !contraintes,("-",t)::(!var)
 

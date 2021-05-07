@@ -28,7 +28,7 @@ let calc () =
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
       if not !notypes then begin
     			let a, b = chybraltar result in let a = List.rev a in
-    			(*let _ = List.map (fun (x,y) -> print_int x; print_string " ---- "; affiche_ty y; print_newline ()) a in*)
+    			let _ = List.map (fun (x,y) -> print_int x; print_string " ---- "; affiche_ty y; print_newline ()) a in
     			let a = resolution a in
     				if !showtypes then
     				let rec parcours l = match l with

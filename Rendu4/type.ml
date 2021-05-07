@@ -53,12 +53,13 @@ let rec addmotenv = function
     |Constm k -> []
 
 let rec recomposemot env = function
+	|Varm ("_") -> Tout
     |Varm s-> recup env s 
     |Consm(m1,m2)-> Liste (recomposemot env m1)
     |Tuplem (m1::q1)->  Tuples ((recomposemot env m1)::(recuptuple (recomposemot env (Tuplem q1))))
     |Tuplem [] -> Tuples []
     |Videm ->Liste Tout
-    | x ->affiche_motif x; failwith"pas possible"
+    |Constm k -> Inte
 
 
 

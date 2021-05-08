@@ -160,7 +160,7 @@ let rec eval env = function
   | Unite -> Unitv
   | Tuple(l) -> let rec aux l = match l with (* Aux sert à parcourir la liste en arrêtant dès que l'on rencontre une exception. *)
                                   | [] -> [] 
-                                  | t::q -> let inter = eval env t in if estexcept inter then [inter] else let inter2 = aux q in begin match inter2 with [Except(k)] -> [Except(k)] | _ -> inter::inter2 end
+                                  | t::q -> let inter2 = aux q in begin match inter2 with [Except(k)] -> [Except(k)] | _ -> ( let inter = eval env t in if estexcept inter then [inter] else inter::inter2 ) end 
                 in let inter3 = aux l in begin match inter3 with | [Except(k)] -> Except(k) | li -> Tuplev(li) end
 
   | Cons(a, b) -> let inter2 = eval env b in if estexcept inter2 then inter2 else begin let inter1 = eval env a in if estexcept inter1 then inter1 else begin match inter2 with 

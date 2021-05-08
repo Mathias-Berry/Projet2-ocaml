@@ -2,8 +2,8 @@ open Type
 
 exception Erreur
 
-  let indexindef = Array.make (100000) '-'
-  let indef = ref 97
+let indexindef = Array.make (100000) '-'
+let indef = ref 97
 
 let affiche_type tab ti =
   let rec aux k = match k with
@@ -29,45 +29,48 @@ let rec find tab i = match tab.(i) with
 
 
 
-let resolution contr =
-  let n = List.length contr in
+let resolution contr n =
   let encours = Array.make (100000) Tout in (* Ce tableau sert a stocker ce qu'on doit déjà savoir du type qui correspond à chaque numéro, avec la taile qu'il faut pour qu'on ait au moins assez de place ( on fait + 5 pour avoir de la marge pour pas s'embêter avec des problèmes de est ce que on commence à 1 ou 0 etc ... *)
-	let bout = ref n in
+	let bout = ref (n + 2) in
 	let rec aux l = match l with
 	  | [] -> ()
 	  | (i,b) :: q -> begin match b, find encours i with
-					            | _, Pasdef(j) -> encours.(j) <- b; aux q
-					            | Pasdef(s), t1 -> let t = find encours s in begin match t with
-					                                                                        | Pasdef(j) -> encours.(j) <- t1; aux q
-					                                                                        | _ -> incr bout; aux ( (!bout, t1) :: (!bout, t) :: q)
-					            					                                                end
-                      | _, Tout -> failwith "C'est la fete du slip !"
-                      
-					            | Inte, Inte -> aux q
-					            | Inte, _ -> raise Erreur
-					            
-                      | Boole, Boole -> aux q
-					            | Boole, _ -> raise Erreur
-					                          
-					            | Unit, Unit -> aux q
-                      | Unit, _ -> raise Erreur
-					                         
-					            | Fonc(t1, t2), Fonc(t3, t4) -> incr bout; incr bout; aux ( (!bout - 1, t1) :: (!bout - 1, t3) :: (!bout, t2) :: (!bout, t4) :: q)
-					            | Fonc(t1, t2), _ -> raise Erreur
-					            
-					            | Liste(t1), Liste(t2) -> incr bout; aux ( (!bout, t1) :: (!bout, t2) :: q )
-					            | Liste(t1), _ -> raise Erreur
-					            
-					            | Tuples([]), Tuples([]) -> aux q
-					            | Tuples(t1::q1), Tuples([]) -> raise Erreur
-					            | Tuples([]), Tuples(t2::q2) -> raise Erreur
-					            | Tuples(t1::q1), Tuples(t2::q2) -> incr bout; incr bout; aux ( (!bout-1, t1) :: (!bout-1, t2) :: (!bout, Tuples(q1)) :: (!bout, Tuples(q2)) :: q)
-					            | Tuples(li), _ -> raise Erreur
-					            
-					            | Reff(t1), Reff(t2) -> incr bout; aux ( (!bout, t1) :: (!bout, t2) :: q)
-					            | Reff(t1), _ -> raise Erreur
-					            
-                      | Tout, _ -> aux q
-					          
-					          end
+	        | Pasdef(s), Pasdef(j) -> let t = find encours s in begin match t with
+	                                    | Pasdef(u) when u = j -> aux q
+	                                    | _ -> encours.(j) <- b; aux q (*Ici on pourrait faire plus de filtrage pour raccourcir les chaînes de l'union find mais au point ou on en est. *)
+	                                  end
+          | _, Pasdef(j) -> encours.(j) <- b; aux q
+          | Pasdef(s), t1 -> let t = find encours s in begin match t with
+                  | Pasdef(j) -> encours.(j) <- t1; aux q
+                  | _ -> incr bout; aux ( (!bout, t1) :: (!bout, t) :: q)
+                end
+          | _, Tout -> failwith "C'est la fete du slip !"
+          
+          | Inte, Inte -> aux q
+          | Inte, _ -> raise Erreur
+          
+          | Boole, Boole -> aux q
+          | Boole, _ -> raise Erreur
+                        
+          | Unit, Unit -> aux q
+          | Unit, x -> raise Erreur
+                       
+          | Fonc(t1, t2), Fonc(t3, t4) -> incr bout; incr bout; aux ( (!bout - 1, t1) :: (!bout - 1, t3) :: (!bout, t2) :: (!bout, t4) :: q)
+          | Fonc(t1, t2), _ -> raise Erreur
+          
+          | Liste(t1), Liste(t2) -> incr bout; aux ( (!bout, t1) :: (!bout, t2) :: q )
+          | Liste(t1), _ -> raise Erreur
+          
+          | Tuples([]), Tuples([]) -> aux q
+          | Tuples(t1::q1), Tuples([]) -> raise Erreur
+          | Tuples([]), Tuples(t2::q2) -> raise Erreur
+          | Tuples(t1::q1), Tuples(t2::q2) -> incr bout; incr bout; aux ( (!bout-1, t1) :: (!bout-1, t2) :: (!bout, Tuples(q1)) :: (!bout, Tuples(q2)) :: q)
+          | Tuples(li), _ -> raise Erreur
+          
+          | Reff(t1), Reff(t2) -> incr bout; aux ( (!bout, t1) :: (!bout, t2) :: q)
+          | Reff(t1), _ -> raise Erreur
+          
+          | Tout, _ -> aux q
+        
+        end
 		in aux contr; encours 

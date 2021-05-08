@@ -151,5 +151,5 @@ let rec typage env = function
 
 let genere e =
   let t = typage [] e in
-  !contraintes,("-",t)::(!var)
+  !contraintes,("-",t)::(!var),!cota
 

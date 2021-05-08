@@ -12,4 +12,4 @@ Ensuite le prochain problème est l'application d'une fonction. Pour on ajoute l
 Ensuite le problème est le Match avec temp3 et temp4, on ajoute la contrainte que ce que l'on match puisse s'unifier avec les différent sous-cas et avec temp1 et temp2 on ajoute la contrainte que tout les matchs soit bien du même type. On utilise la même méthode que dans les fonctions pour garder connu le type des variable uniquement dans le "body" du match.
 Et la dernière chose de cette fonction est le try que l'on règle comme un match pour unifier les retour au détail près du cas d'attêt. Lors du cas d'arrêt le try doit renvoyer quelque chose du même type que ce que l'on essaye de faire et non un 'a classique.
 
-L'utilisation de la partie se résume a utiliser la fonction "génère" qui appelle typage et renvoit les contraintes ainsi que les variables utilisées
+L'utilisation de la partie se résume a utiliser la fonction "génère" qui appelle typage et renvoit les contraintes ainsi que les variables utilisées et le numéro de la dernière contrainte engendrée.

@@ -1,0 +1,4692 @@
+   0  $accept : %entry% $end
+
+   1  main : expression_init EOF
+
+   2  expression_init : expression
+   3                  | LET motif EGAL expression PVDOUBLE expression_init
+
+   4  expression : atomique
+   5             | IF expression THEN expression ELSE expression
+   6             | LET motlist2 EGAL expression IN expression
+   7             | LET motif EGAL expression IN expression
+   8             | FUN motlist TO expression
+   9             | expression PLUS expression
+  10             | expression TIMES expression
+  11             | expression DIV expression
+  12             | expression MINUS expression
+  13             | MINUS expression
+  14             | expression LE expression
+  15             | expression GE expression
+  16             | expression AND expression
+  17             | expression OR expression
+  18             | expression EGAL expression
+  19             | expression NE expression
+  20             | expression GT expression
+  21             | expression LT expression
+  22             | NOT expression
+  23             | expression atomique
+  24             | LET REC motlist2 EGAL expression IN expression
+  25             | LET REC STR EGAL expression IN expression
+  26             | expression ASS expression
+  27             | tuples
+  28             | expression CONS expression
+  29             | expression PTV expression
+  30             | MATCH expression WITH matching
+  31             | MATCH expression WITH ORMATCH matching
+  32             | RAISE exceptio
+  33             | TRY expression WITH matchex
+  34             | TRY expression WITH ORMATCH matchex
+
+  35  atomique : BEGIN expression END
+  36           | LPAREN expression RPAREN
+  37           | INT
+  38           | STR
+  39           | LPAREN RPAREN
+  40           | EVALREF atomique
+  41           | liste
+  42           | SND
+  43           | FST
+  44           | PRINT
+  45           | REF
+
+  46  exceptio : LPAREN exceptio RPAREN
+  47           | EXCEPTION expression
+
+  48  motlist2 : STR motif motlist
+  49           | STR motif
+
+  50  motlist : motif
+  51          | motif motlist
+
+  52  motif : INT
+  53        | STR
+  54        | tuplem
+  55        | motif CONS motif
+  56        | LPAREN motif RPAREN
+  57        | BEGIN motif END
+  58        | listem
+
+  59  tuplem : tuplem VIRGULE motif
+  60         | motif VIRGULE motif
+
+  61  tuples : tuples VIRGULE expression
+  62         | expression VIRGULE expression
+
+  63  matching : motif TO expression ORMATCH matching
+  64           | motif TO expression
+
+  65  matchex : EXCEPTION motif TO expression ORMATCH matchex
+  66          | EXCEPTION motif TO expression
+
+  67  liste : LCROCH RCROCH
+  68        | LCROCH elts
+
+  69  elts : expression RCROCH
+  70       | expression PTV elts
+
+  71  listem : LCROCH RCROCH
+  72         | LCROCH eltsm
+
+  73  eltsm : motif PTV eltsm
+  74        | motif RCROCH
+
+  75  %entry% : '\001' main
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . main  (75)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	main  goto 21
+	expression_init  goto 22
+	expression  goto 23
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	atomique : INT .  (37)
+
+	.  reduce 37
+
+
+state 4
+	atomique : STR .  (38)
+
+	.  reduce 38
+
+
+state 5
+	atomique : PRINT .  (44)
+
+	.  reduce 44
+
+
+state 6
+	expression : MINUS . expression  (13)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 28
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 7
+	expression_init : LET . motif EGAL expression PVDOUBLE expression_init  (3)
+	expression : LET . motlist2 EGAL expression IN expression  (6)
+	expression : LET . motif EGAL expression IN expression  (7)
+	expression : LET . REC motlist2 EGAL expression IN expression  (24)
+	expression : LET . REC STR EGAL expression IN expression  (25)
+
+	INT  shift 29
+	STR  shift 30
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	REC  shift 34
+	.  error
+
+	motif  goto 35
+	motlist2  goto 36
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 8
+	expression : IF . expression THEN expression ELSE expression  (5)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 39
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 9
+	expression : NOT . expression  (22)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 40
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 10
+	atomique : EVALREF . atomique  (40)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 41
+	liste  goto 26
+
+
+state 11
+	atomique : REF .  (45)
+
+	.  reduce 45
+
+
+state 12
+	atomique : LPAREN . expression RPAREN  (36)
+	atomique : LPAREN . RPAREN  (39)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	RPAREN  shift 42
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 43
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 13
+	atomique : BEGIN . expression END  (35)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 44
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 14
+	liste : LCROCH . RCROCH  (67)
+	liste : LCROCH . elts  (68)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	RCROCH  shift 45
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 46
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+	elts  goto 47
+
+
+state 15
+	expression : FUN . motlist TO expression  (8)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 49
+	motlist  goto 50
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 16
+	expression : TRY . expression WITH matchex  (33)
+	expression : TRY . expression WITH ORMATCH matchex  (34)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 51
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 17
+	expression : RAISE . exceptio  (32)
+
+	LPAREN  shift 52
+	EXCEPTION  shift 53
+	.  error
+
+	exceptio  goto 54
+
+
+state 18
+	expression : MATCH . expression WITH matching  (30)
+	expression : MATCH . expression WITH ORMATCH matching  (31)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 55
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 19
+	atomique : FST .  (43)
+
+	.  reduce 43
+
+
+state 20
+	atomique : SND .  (42)
+
+	.  reduce 42
+
+
+state 21
+	%entry% : '\001' main .  (75)
+
+	.  reduce 75
+
+
+state 22
+	main : expression_init . EOF  (1)
+
+	EOF  shift 56
+	.  error
+
+
+state 23
+	expression_init : expression .  (2)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	EOF  reduce 2
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 24
+	expression : atomique .  (4)
+
+	.  reduce 4
+
+
+state 25
+	expression : tuples .  (27)
+	tuples : tuples . VIRGULE expression  (61)
+
+	VIRGULE  shift 74
+	INT  reduce 27
+	STR  reduce 27
+	PRINT  reduce 27
+	PLUS  reduce 27
+	TIMES  reduce 27
+	DIV  reduce 27
+	MINUS  reduce 27
+	IN  reduce 27
+	EGAL  reduce 27
+	PVDOUBLE  reduce 27
+	PTV  reduce 27
+	THEN  reduce 27
+	ELSE  reduce 27
+	CONS  reduce 27
+	LT  reduce 27
+	LE  reduce 27
+	GT  reduce 27
+	GE  reduce 27
+	AND  reduce 27
+	OR  reduce 27
+	NE  reduce 27
+	EVALREF  reduce 27
+	REF  reduce 27
+	ASS  reduce 27
+	LPAREN  reduce 27
+	RPAREN  reduce 27
+	BEGIN  reduce 27
+	END  reduce 27
+	RCROCH  reduce 27
+	LCROCH  reduce 27
+	ORMATCH  reduce 27
+	WITH  reduce 27
+	FST  reduce 27
+	SND  reduce 27
+	EOF  reduce 27
+
+
+state 26
+	atomique : liste .  (41)
+
+	.  reduce 41
+
+
+state 27
+	expression : LET . motlist2 EGAL expression IN expression  (6)
+	expression : LET . motif EGAL expression IN expression  (7)
+	expression : LET . REC motlist2 EGAL expression IN expression  (24)
+	expression : LET . REC STR EGAL expression IN expression  (25)
+
+	INT  shift 29
+	STR  shift 30
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	REC  shift 34
+	.  error
+
+	motif  goto 75
+	motlist2  goto 36
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 28
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : MINUS expression .  (13)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	PLUS  reduce 13
+	TIMES  reduce 13
+	DIV  reduce 13
+	MINUS  reduce 13
+	IN  reduce 13
+	EGAL  reduce 13
+	PVDOUBLE  reduce 13
+	PTV  reduce 13
+	VIRGULE  reduce 13
+	THEN  reduce 13
+	ELSE  reduce 13
+	CONS  reduce 13
+	LT  reduce 13
+	LE  reduce 13
+	GT  reduce 13
+	GE  reduce 13
+	AND  reduce 13
+	OR  reduce 13
+	NE  reduce 13
+	REF  reduce 13
+	ASS  reduce 13
+	RPAREN  reduce 13
+	END  reduce 13
+	RCROCH  reduce 13
+	ORMATCH  reduce 13
+	WITH  reduce 13
+	FST  reduce 13
+	SND  reduce 13
+	EOF  reduce 13
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 29
+	motif : INT .  (52)
+
+	.  reduce 52
+
+
+state 30
+	motlist2 : STR . motif motlist  (48)
+	motlist2 : STR . motif  (49)
+	motif : STR .  (53)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	EGAL  reduce 53
+	VIRGULE  reduce 53
+	CONS  reduce 53
+
+	motif  goto 76
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 31
+	motif : LPAREN . motif RPAREN  (56)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 77
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 32
+	motif : BEGIN . motif END  (57)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 78
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 33
+	listem : LCROCH . RCROCH  (71)
+	listem : LCROCH . eltsm  (72)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	RCROCH  shift 79
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 80
+	tuplem  goto 37
+	listem  goto 38
+	eltsm  goto 81
+
+
+state 34
+	expression : LET REC . motlist2 EGAL expression IN expression  (24)
+	expression : LET REC . STR EGAL expression IN expression  (25)
+
+	STR  shift 82
+	.  error
+
+	motlist2  goto 83
+
+
+state 35
+	expression_init : LET motif . EGAL expression PVDOUBLE expression_init  (3)
+	expression : LET motif . EGAL expression IN expression  (7)
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+
+	EGAL  shift 84
+	VIRGULE  shift 85
+	CONS  shift 86
+	.  error
+
+
+state 36
+	expression : LET motlist2 . EGAL expression IN expression  (6)
+
+	EGAL  shift 87
+	.  error
+
+
+state 37
+	motif : tuplem .  (54)
+	tuplem : tuplem . VIRGULE motif  (59)
+
+	VIRGULE  shift 88
+	INT  reduce 54
+	STR  reduce 54
+	EGAL  reduce 54
+	PTV  reduce 54
+	CONS  reduce 54
+	LPAREN  reduce 54
+	RPAREN  reduce 54
+	BEGIN  reduce 54
+	END  reduce 54
+	RCROCH  reduce 54
+	LCROCH  reduce 54
+	TO  reduce 54
+
+
+state 38
+	motif : listem .  (58)
+
+	.  reduce 58
+
+
+state 39
+	expression : IF expression . THEN expression ELSE expression  (5)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	THEN  shift 89
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 40
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : NOT expression .  (22)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	PRINT  reduce 22
+	PLUS  reduce 22
+	TIMES  reduce 22
+	DIV  reduce 22
+	MINUS  reduce 22
+	IN  reduce 22
+	EGAL  reduce 22
+	PVDOUBLE  reduce 22
+	PTV  reduce 22
+	VIRGULE  reduce 22
+	THEN  reduce 22
+	ELSE  reduce 22
+	CONS  reduce 22
+	LT  reduce 22
+	LE  reduce 22
+	GT  reduce 22
+	GE  reduce 22
+	AND  reduce 22
+	OR  reduce 22
+	NE  reduce 22
+	EVALREF  reduce 22
+	REF  reduce 22
+	ASS  reduce 22
+	RPAREN  reduce 22
+	END  reduce 22
+	RCROCH  reduce 22
+	ORMATCH  reduce 22
+	WITH  reduce 22
+	FST  reduce 22
+	SND  reduce 22
+	EOF  reduce 22
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 41
+	atomique : EVALREF atomique .  (40)
+
+	.  reduce 40
+
+
+state 42
+	atomique : LPAREN RPAREN .  (39)
+
+	.  reduce 39
+
+
+state 43
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	atomique : LPAREN expression . RPAREN  (36)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	RPAREN  shift 90
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 44
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	atomique : BEGIN expression . END  (35)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	END  shift 91
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 45
+	liste : LCROCH RCROCH .  (67)
+
+	.  reduce 67
+
+
+state 46
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+	elts : expression . RCROCH  (69)
+	elts : expression . PTV elts  (70)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 92
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	RCROCH  shift 93
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 47
+	liste : LCROCH elts .  (68)
+
+	.  reduce 68
+
+
+state 48
+	motif : STR .  (53)
+
+	.  reduce 53
+
+
+state 49
+	motlist : motif .  (50)
+	motlist : motif . motlist  (51)
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+
+	INT  shift 29
+	STR  shift 48
+	VIRGULE  shift 85
+	CONS  shift 86
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	EGAL  reduce 50
+	TO  reduce 50
+
+	motif  goto 49
+	motlist  goto 94
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 50
+	expression : FUN motlist . TO expression  (8)
+
+	TO  shift 95
+	.  error
+
+
+state 51
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	expression : TRY expression . WITH matchex  (33)
+	expression : TRY expression . WITH ORMATCH matchex  (34)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	WITH  shift 96
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 52
+	exceptio : LPAREN . exceptio RPAREN  (46)
+
+	LPAREN  shift 52
+	EXCEPTION  shift 53
+	.  error
+
+	exceptio  goto 97
+
+
+state 53
+	exceptio : EXCEPTION . expression  (47)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 98
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 54
+	expression : RAISE exceptio .  (32)
+
+	.  reduce 32
+
+
+state 55
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	expression : MATCH expression . WITH matching  (30)
+	expression : MATCH expression . WITH ORMATCH matching  (31)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	WITH  shift 99
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 56
+	main : expression_init EOF .  (1)
+
+	.  reduce 1
+
+
+state 57
+	expression : expression PLUS . expression  (9)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 100
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 58
+	expression : expression TIMES . expression  (10)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 101
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 59
+	expression : expression DIV . expression  (11)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 102
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 60
+	expression : expression MINUS . expression  (12)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 103
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 61
+	expression : expression EGAL . expression  (18)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 104
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 62
+	expression : expression PTV . expression  (29)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 105
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 63
+	tuples : expression VIRGULE . expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 106
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 64
+	expression : expression CONS . expression  (28)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 107
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 65
+	expression : expression LT . expression  (21)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 108
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 66
+	expression : expression LE . expression  (14)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 109
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 67
+	expression : expression GT . expression  (20)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 110
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 68
+	expression : expression GE . expression  (15)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 111
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 69
+	expression : expression AND . expression  (16)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 112
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 70
+	expression : expression OR . expression  (17)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 113
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 71
+	expression : expression NE . expression  (19)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 114
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 72
+	expression : expression ASS . expression  (26)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 115
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 73
+	expression : expression atomique .  (23)
+
+	.  reduce 23
+
+
+state 74
+	tuples : tuples VIRGULE . expression  (61)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 116
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 75
+	expression : LET motif . EGAL expression IN expression  (7)
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+
+	EGAL  shift 117
+	VIRGULE  shift 85
+	CONS  shift 86
+	.  error
+
+
+state 76
+	motlist2 : STR motif . motlist  (48)
+	motlist2 : STR motif .  (49)
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+
+	INT  shift 29
+	STR  shift 48
+	VIRGULE  shift 85
+	CONS  shift 86
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	EGAL  reduce 49
+
+	motif  goto 49
+	motlist  goto 118
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 77
+	motif : motif . CONS motif  (55)
+	motif : LPAREN motif . RPAREN  (56)
+	tuplem : motif . VIRGULE motif  (60)
+
+	VIRGULE  shift 85
+	CONS  shift 86
+	RPAREN  shift 119
+	.  error
+
+
+state 78
+	motif : motif . CONS motif  (55)
+	motif : BEGIN motif . END  (57)
+	tuplem : motif . VIRGULE motif  (60)
+
+	VIRGULE  shift 85
+	CONS  shift 86
+	END  shift 120
+	.  error
+
+
+state 79
+	listem : LCROCH RCROCH .  (71)
+
+	.  reduce 71
+
+
+state 80
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+	eltsm : motif . PTV eltsm  (73)
+	eltsm : motif . RCROCH  (74)
+
+	PTV  shift 121
+	VIRGULE  shift 85
+	CONS  shift 86
+	RCROCH  shift 122
+	.  error
+
+
+state 81
+	listem : LCROCH eltsm .  (72)
+
+	.  reduce 72
+
+
+state 82
+	expression : LET REC STR . EGAL expression IN expression  (25)
+	motlist2 : STR . motif motlist  (48)
+	motlist2 : STR . motif  (49)
+
+	INT  shift 29
+	STR  shift 48
+	EGAL  shift 123
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 76
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 83
+	expression : LET REC motlist2 . EGAL expression IN expression  (24)
+
+	EGAL  shift 124
+	.  error
+
+
+state 84
+	expression_init : LET motif EGAL . expression PVDOUBLE expression_init  (3)
+	expression : LET motif EGAL . expression IN expression  (7)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 125
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 85
+	tuplem : motif VIRGULE . motif  (60)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 126
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 86
+	motif : motif CONS . motif  (55)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 127
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 87
+	expression : LET motlist2 EGAL . expression IN expression  (6)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 128
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 88
+	tuplem : tuplem VIRGULE . motif  (59)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 129
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 89
+	expression : IF expression THEN . expression ELSE expression  (5)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 130
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 90
+	atomique : LPAREN expression RPAREN .  (36)
+
+	.  reduce 36
+
+
+state 91
+	atomique : BEGIN expression END .  (35)
+
+	.  reduce 35
+
+
+state 92
+	expression : expression PTV . expression  (29)
+	elts : expression PTV . elts  (70)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 131
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+	elts  goto 132
+
+
+state 93
+	elts : expression RCROCH .  (69)
+
+	.  reduce 69
+
+
+state 94
+	motlist : motif motlist .  (51)
+
+	.  reduce 51
+
+
+state 95
+	expression : FUN motlist TO . expression  (8)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 133
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 96
+	expression : TRY expression WITH . matchex  (33)
+	expression : TRY expression WITH . ORMATCH matchex  (34)
+
+	EXCEPTION  shift 134
+	ORMATCH  shift 135
+	.  error
+
+	matchex  goto 136
+
+
+state 97
+	exceptio : LPAREN exceptio . RPAREN  (46)
+
+	RPAREN  shift 137
+	.  error
+
+
+state 98
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	exceptio : EXCEPTION expression .  (47)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	PRINT  reduce 47
+	PLUS  reduce 47
+	TIMES  reduce 47
+	DIV  reduce 47
+	MINUS  reduce 47
+	IN  reduce 47
+	EGAL  reduce 47
+	PVDOUBLE  reduce 47
+	PTV  reduce 47
+	VIRGULE  reduce 47
+	THEN  reduce 47
+	ELSE  reduce 47
+	CONS  reduce 47
+	LT  reduce 47
+	LE  reduce 47
+	GT  reduce 47
+	GE  reduce 47
+	AND  reduce 47
+	OR  reduce 47
+	NE  reduce 47
+	EVALREF  reduce 47
+	REF  reduce 47
+	ASS  reduce 47
+	RPAREN  reduce 47
+	END  reduce 47
+	RCROCH  reduce 47
+	ORMATCH  reduce 47
+	WITH  reduce 47
+	FST  reduce 47
+	SND  reduce 47
+	EOF  reduce 47
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 99
+	expression : MATCH expression WITH . matching  (30)
+	expression : MATCH expression WITH . ORMATCH matching  (31)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	ORMATCH  shift 138
+	.  error
+
+	motif  goto 139
+	matching  goto 140
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 100
+	expression : expression . PLUS expression  (9)
+	expression : expression PLUS expression .  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	TIMES  shift 58
+	DIV  shift 59
+	EGAL  shift 61
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 9
+	MINUS  reduce 9
+	IN  reduce 9
+	PVDOUBLE  reduce 9
+	PTV  reduce 9
+	VIRGULE  reduce 9
+	THEN  reduce 9
+	ELSE  reduce 9
+	CONS  reduce 9
+	ASS  reduce 9
+	RPAREN  reduce 9
+	END  reduce 9
+	RCROCH  reduce 9
+	ORMATCH  reduce 9
+	WITH  reduce 9
+	EOF  reduce 9
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 101
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression TIMES expression .  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EGAL  shift 61
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 10
+	TIMES  reduce 10
+	DIV  reduce 10
+	MINUS  reduce 10
+	IN  reduce 10
+	PVDOUBLE  reduce 10
+	PTV  reduce 10
+	VIRGULE  reduce 10
+	THEN  reduce 10
+	ELSE  reduce 10
+	CONS  reduce 10
+	ASS  reduce 10
+	RPAREN  reduce 10
+	END  reduce 10
+	RCROCH  reduce 10
+	ORMATCH  reduce 10
+	WITH  reduce 10
+	EOF  reduce 10
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 102
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression DIV expression .  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EGAL  shift 61
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 11
+	TIMES  reduce 11
+	DIV  reduce 11
+	MINUS  reduce 11
+	IN  reduce 11
+	PVDOUBLE  reduce 11
+	PTV  reduce 11
+	VIRGULE  reduce 11
+	THEN  reduce 11
+	ELSE  reduce 11
+	CONS  reduce 11
+	ASS  reduce 11
+	RPAREN  reduce 11
+	END  reduce 11
+	RCROCH  reduce 11
+	ORMATCH  reduce 11
+	WITH  reduce 11
+	EOF  reduce 11
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 103
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression MINUS expression .  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	TIMES  shift 58
+	DIV  shift 59
+	EGAL  shift 61
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 12
+	MINUS  reduce 12
+	IN  reduce 12
+	PVDOUBLE  reduce 12
+	PTV  reduce 12
+	VIRGULE  reduce 12
+	THEN  reduce 12
+	ELSE  reduce 12
+	CONS  reduce 12
+	ASS  reduce 12
+	RPAREN  reduce 12
+	END  reduce 12
+	RCROCH  reduce 12
+	ORMATCH  reduce 12
+	WITH  reduce 12
+	EOF  reduce 12
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 104
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression EGAL expression .  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 18
+	TIMES  reduce 18
+	DIV  reduce 18
+	MINUS  reduce 18
+	IN  reduce 18
+	EGAL  reduce 18
+	PVDOUBLE  reduce 18
+	PTV  reduce 18
+	VIRGULE  reduce 18
+	THEN  reduce 18
+	ELSE  reduce 18
+	CONS  reduce 18
+	LT  reduce 18
+	LE  reduce 18
+	GT  reduce 18
+	GE  reduce 18
+	AND  reduce 18
+	OR  reduce 18
+	NE  reduce 18
+	ASS  reduce 18
+	RPAREN  reduce 18
+	END  reduce 18
+	RCROCH  reduce 18
+	ORMATCH  reduce 18
+	WITH  reduce 18
+	EOF  reduce 18
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 105
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	expression : expression PTV expression .  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 29
+	PVDOUBLE  reduce 29
+	THEN  reduce 29
+	ELSE  reduce 29
+	RPAREN  reduce 29
+	END  reduce 29
+	RCROCH  reduce 29
+	ORMATCH  reduce 29
+	WITH  reduce 29
+	EOF  reduce 29
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 106
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+	tuples : expression VIRGULE expression .  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 62
+	PVDOUBLE  reduce 62
+	PTV  reduce 62
+	VIRGULE  reduce 62
+	THEN  reduce 62
+	ELSE  reduce 62
+	RPAREN  reduce 62
+	END  reduce 62
+	RCROCH  reduce 62
+	ORMATCH  reduce 62
+	WITH  reduce 62
+	EOF  reduce 62
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 107
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression CONS expression .  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 28
+	PVDOUBLE  reduce 28
+	PTV  reduce 28
+	VIRGULE  reduce 28
+	THEN  reduce 28
+	ELSE  reduce 28
+	ASS  reduce 28
+	RPAREN  reduce 28
+	END  reduce 28
+	RCROCH  reduce 28
+	ORMATCH  reduce 28
+	WITH  reduce 28
+	EOF  reduce 28
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 108
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression LT expression .  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 21
+	TIMES  reduce 21
+	DIV  reduce 21
+	MINUS  reduce 21
+	IN  reduce 21
+	EGAL  reduce 21
+	PVDOUBLE  reduce 21
+	PTV  reduce 21
+	VIRGULE  reduce 21
+	THEN  reduce 21
+	ELSE  reduce 21
+	CONS  reduce 21
+	LT  reduce 21
+	LE  reduce 21
+	GT  reduce 21
+	GE  reduce 21
+	AND  reduce 21
+	OR  reduce 21
+	NE  reduce 21
+	ASS  reduce 21
+	RPAREN  reduce 21
+	END  reduce 21
+	RCROCH  reduce 21
+	ORMATCH  reduce 21
+	WITH  reduce 21
+	EOF  reduce 21
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 109
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression LE expression .  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 14
+	TIMES  reduce 14
+	DIV  reduce 14
+	MINUS  reduce 14
+	IN  reduce 14
+	EGAL  reduce 14
+	PVDOUBLE  reduce 14
+	PTV  reduce 14
+	VIRGULE  reduce 14
+	THEN  reduce 14
+	ELSE  reduce 14
+	CONS  reduce 14
+	LT  reduce 14
+	LE  reduce 14
+	GT  reduce 14
+	GE  reduce 14
+	AND  reduce 14
+	OR  reduce 14
+	NE  reduce 14
+	ASS  reduce 14
+	RPAREN  reduce 14
+	END  reduce 14
+	RCROCH  reduce 14
+	ORMATCH  reduce 14
+	WITH  reduce 14
+	EOF  reduce 14
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 110
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression GT expression .  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 20
+	TIMES  reduce 20
+	DIV  reduce 20
+	MINUS  reduce 20
+	IN  reduce 20
+	EGAL  reduce 20
+	PVDOUBLE  reduce 20
+	PTV  reduce 20
+	VIRGULE  reduce 20
+	THEN  reduce 20
+	ELSE  reduce 20
+	CONS  reduce 20
+	LT  reduce 20
+	LE  reduce 20
+	GT  reduce 20
+	GE  reduce 20
+	AND  reduce 20
+	OR  reduce 20
+	NE  reduce 20
+	ASS  reduce 20
+	RPAREN  reduce 20
+	END  reduce 20
+	RCROCH  reduce 20
+	ORMATCH  reduce 20
+	WITH  reduce 20
+	EOF  reduce 20
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 111
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression GE expression .  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 15
+	TIMES  reduce 15
+	DIV  reduce 15
+	MINUS  reduce 15
+	IN  reduce 15
+	EGAL  reduce 15
+	PVDOUBLE  reduce 15
+	PTV  reduce 15
+	VIRGULE  reduce 15
+	THEN  reduce 15
+	ELSE  reduce 15
+	CONS  reduce 15
+	LT  reduce 15
+	LE  reduce 15
+	GT  reduce 15
+	GE  reduce 15
+	AND  reduce 15
+	OR  reduce 15
+	NE  reduce 15
+	ASS  reduce 15
+	RPAREN  reduce 15
+	END  reduce 15
+	RCROCH  reduce 15
+	ORMATCH  reduce 15
+	WITH  reduce 15
+	EOF  reduce 15
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 112
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression AND expression .  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 16
+	TIMES  reduce 16
+	DIV  reduce 16
+	MINUS  reduce 16
+	IN  reduce 16
+	EGAL  reduce 16
+	PVDOUBLE  reduce 16
+	PTV  reduce 16
+	VIRGULE  reduce 16
+	THEN  reduce 16
+	ELSE  reduce 16
+	CONS  reduce 16
+	LT  reduce 16
+	LE  reduce 16
+	GT  reduce 16
+	GE  reduce 16
+	AND  reduce 16
+	OR  reduce 16
+	NE  reduce 16
+	ASS  reduce 16
+	RPAREN  reduce 16
+	END  reduce 16
+	RCROCH  reduce 16
+	ORMATCH  reduce 16
+	WITH  reduce 16
+	EOF  reduce 16
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 113
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression OR expression .  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 17
+	TIMES  reduce 17
+	DIV  reduce 17
+	MINUS  reduce 17
+	IN  reduce 17
+	EGAL  reduce 17
+	PVDOUBLE  reduce 17
+	PTV  reduce 17
+	VIRGULE  reduce 17
+	THEN  reduce 17
+	ELSE  reduce 17
+	CONS  reduce 17
+	LT  reduce 17
+	LE  reduce 17
+	GT  reduce 17
+	GE  reduce 17
+	AND  reduce 17
+	OR  reduce 17
+	NE  reduce 17
+	ASS  reduce 17
+	RPAREN  reduce 17
+	END  reduce 17
+	RCROCH  reduce 17
+	ORMATCH  reduce 17
+	WITH  reduce 17
+	EOF  reduce 17
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 114
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression NE expression .  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	PLUS  reduce 19
+	TIMES  reduce 19
+	DIV  reduce 19
+	MINUS  reduce 19
+	IN  reduce 19
+	EGAL  reduce 19
+	PVDOUBLE  reduce 19
+	PTV  reduce 19
+	VIRGULE  reduce 19
+	THEN  reduce 19
+	ELSE  reduce 19
+	CONS  reduce 19
+	LT  reduce 19
+	LE  reduce 19
+	GT  reduce 19
+	GE  reduce 19
+	AND  reduce 19
+	OR  reduce 19
+	NE  reduce 19
+	ASS  reduce 19
+	RPAREN  reduce 19
+	END  reduce 19
+	RCROCH  reduce 19
+	ORMATCH  reduce 19
+	WITH  reduce 19
+	EOF  reduce 19
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 115
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression ASS expression .  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 26
+	PVDOUBLE  reduce 26
+	PTV  reduce 26
+	VIRGULE  reduce 26
+	THEN  reduce 26
+	ELSE  reduce 26
+	RPAREN  reduce 26
+	END  reduce 26
+	RCROCH  reduce 26
+	ORMATCH  reduce 26
+	WITH  reduce 26
+	EOF  reduce 26
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 116
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : tuples VIRGULE expression .  (61)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 61
+	PVDOUBLE  reduce 61
+	PTV  reduce 61
+	VIRGULE  reduce 61
+	THEN  reduce 61
+	ELSE  reduce 61
+	RPAREN  reduce 61
+	END  reduce 61
+	RCROCH  reduce 61
+	ORMATCH  reduce 61
+	WITH  reduce 61
+	EOF  reduce 61
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 117
+	expression : LET motif EGAL . expression IN expression  (7)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 141
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 118
+	motlist2 : STR motif motlist .  (48)
+
+	.  reduce 48
+
+
+state 119
+	motif : LPAREN motif RPAREN .  (56)
+
+	.  reduce 56
+
+
+state 120
+	motif : BEGIN motif END .  (57)
+
+	.  reduce 57
+
+
+state 121
+	eltsm : motif PTV . eltsm  (73)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 80
+	tuplem  goto 37
+	listem  goto 38
+	eltsm  goto 142
+
+
+state 122
+	eltsm : motif RCROCH .  (74)
+
+	.  reduce 74
+
+
+state 123
+	expression : LET REC STR EGAL . expression IN expression  (25)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 143
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 124
+	expression : LET REC motlist2 EGAL . expression IN expression  (24)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 144
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 125
+	expression_init : LET motif EGAL expression . PVDOUBLE expression_init  (3)
+	expression : LET motif EGAL expression . IN expression  (7)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	IN  shift 145
+	EGAL  shift 61
+	PVDOUBLE  shift 146
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 126
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+	tuplem : motif VIRGULE motif .  (60)
+
+	CONS  shift 86
+	INT  reduce 60
+	STR  reduce 60
+	EGAL  reduce 60
+	PTV  reduce 60
+	VIRGULE  reduce 60
+	LPAREN  reduce 60
+	RPAREN  reduce 60
+	BEGIN  reduce 60
+	END  reduce 60
+	RCROCH  reduce 60
+	LCROCH  reduce 60
+	TO  reduce 60
+
+
+state 127
+	motif : motif . CONS motif  (55)
+	motif : motif CONS motif .  (55)
+	tuplem : motif . VIRGULE motif  (60)
+
+	CONS  shift 86
+	INT  reduce 55
+	STR  reduce 55
+	EGAL  reduce 55
+	PTV  reduce 55
+	VIRGULE  reduce 55
+	LPAREN  reduce 55
+	RPAREN  reduce 55
+	BEGIN  reduce 55
+	END  reduce 55
+	RCROCH  reduce 55
+	LCROCH  reduce 55
+	TO  reduce 55
+
+
+state 128
+	expression : LET motlist2 EGAL expression . IN expression  (6)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	IN  shift 147
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 129
+	motif : motif . CONS motif  (55)
+	tuplem : tuplem VIRGULE motif .  (59)
+	tuplem : motif . VIRGULE motif  (60)
+
+	CONS  shift 86
+	INT  reduce 59
+	STR  reduce 59
+	EGAL  reduce 59
+	PTV  reduce 59
+	VIRGULE  reduce 59
+	LPAREN  reduce 59
+	RPAREN  reduce 59
+	BEGIN  reduce 59
+	END  reduce 59
+	RCROCH  reduce 59
+	LCROCH  reduce 59
+	TO  reduce 59
+
+
+state 130
+	expression : IF expression THEN expression . ELSE expression  (5)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	ELSE  shift 148
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 131
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	expression : expression PTV expression .  (29)
+	tuples : expression . VIRGULE expression  (62)
+	elts : expression . RCROCH  (69)
+	elts : expression . PTV elts  (70)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 92
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	RCROCH  shift 93
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 132
+	elts : expression PTV elts .  (70)
+
+	.  reduce 70
+
+
+state 133
+	expression : FUN motlist TO expression .  (8)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 8
+	PVDOUBLE  reduce 8
+	THEN  reduce 8
+	ELSE  reduce 8
+	RPAREN  reduce 8
+	END  reduce 8
+	RCROCH  reduce 8
+	ORMATCH  reduce 8
+	WITH  reduce 8
+	EOF  reduce 8
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 134
+	matchex : EXCEPTION . motif TO expression ORMATCH matchex  (65)
+	matchex : EXCEPTION . motif TO expression  (66)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 149
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 135
+	expression : TRY expression WITH ORMATCH . matchex  (34)
+
+	EXCEPTION  shift 134
+	.  error
+
+	matchex  goto 150
+
+
+state 136
+	expression : TRY expression WITH matchex .  (33)
+
+	.  reduce 33
+
+
+state 137
+	exceptio : LPAREN exceptio RPAREN .  (46)
+
+	.  reduce 46
+
+
+state 138
+	expression : MATCH expression WITH ORMATCH . matching  (31)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 139
+	matching  goto 151
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 139
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+	matching : motif . TO expression ORMATCH matching  (63)
+	matching : motif . TO expression  (64)
+
+	VIRGULE  shift 85
+	CONS  shift 86
+	TO  shift 152
+	.  error
+
+
+state 140
+	expression : MATCH expression WITH matching .  (30)
+
+	.  reduce 30
+
+
+state 141
+	expression : LET motif EGAL expression . IN expression  (7)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	IN  shift 145
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 142
+	eltsm : motif PTV eltsm .  (73)
+
+	.  reduce 73
+
+
+state 143
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : LET REC STR EGAL expression . IN expression  (25)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	IN  shift 153
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 144
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : LET REC motlist2 EGAL expression . IN expression  (24)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	IN  shift 154
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 145
+	expression : LET motif EGAL expression IN . expression  (7)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 155
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 146
+	expression_init : LET motif EGAL expression PVDOUBLE . expression_init  (3)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 7
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression_init  goto 156
+	expression  goto 23
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 147
+	expression : LET motlist2 EGAL expression IN . expression  (6)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 157
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 148
+	expression : IF expression THEN expression ELSE . expression  (5)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 158
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 149
+	motif : motif . CONS motif  (55)
+	tuplem : motif . VIRGULE motif  (60)
+	matchex : EXCEPTION motif . TO expression ORMATCH matchex  (65)
+	matchex : EXCEPTION motif . TO expression  (66)
+
+	VIRGULE  shift 85
+	CONS  shift 86
+	TO  shift 159
+	.  error
+
+
+state 150
+	expression : TRY expression WITH ORMATCH matchex .  (34)
+
+	.  reduce 34
+
+
+state 151
+	expression : MATCH expression WITH ORMATCH matching .  (31)
+
+	.  reduce 31
+
+
+state 152
+	matching : motif TO . expression ORMATCH matching  (63)
+	matching : motif TO . expression  (64)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 160
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 153
+	expression : LET REC STR EGAL expression IN . expression  (25)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 161
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 154
+	expression : LET REC motlist2 EGAL expression IN . expression  (24)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 162
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 155
+	expression : LET motif EGAL expression IN expression .  (7)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 7
+	PVDOUBLE  reduce 7
+	THEN  reduce 7
+	ELSE  reduce 7
+	RPAREN  reduce 7
+	END  reduce 7
+	RCROCH  reduce 7
+	ORMATCH  reduce 7
+	WITH  reduce 7
+	EOF  reduce 7
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 156
+	expression_init : LET motif EGAL expression PVDOUBLE expression_init .  (3)
+
+	.  reduce 3
+
+
+state 157
+	expression : LET motlist2 EGAL expression IN expression .  (6)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 6
+	PVDOUBLE  reduce 6
+	THEN  reduce 6
+	ELSE  reduce 6
+	RPAREN  reduce 6
+	END  reduce 6
+	RCROCH  reduce 6
+	ORMATCH  reduce 6
+	WITH  reduce 6
+	EOF  reduce 6
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 158
+	expression : IF expression THEN expression ELSE expression .  (5)
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 5
+	PVDOUBLE  reduce 5
+	THEN  reduce 5
+	ELSE  reduce 5
+	RPAREN  reduce 5
+	END  reduce 5
+	RCROCH  reduce 5
+	ORMATCH  reduce 5
+	WITH  reduce 5
+	EOF  reduce 5
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 159
+	matchex : EXCEPTION motif TO . expression ORMATCH matchex  (65)
+	matchex : EXCEPTION motif TO . expression  (66)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	MINUS  shift 6
+	LET  shift 27
+	IF  shift 8
+	NOT  shift 9
+	EVALREF  shift 10
+	REF  shift 11
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FUN  shift 15
+	TRY  shift 16
+	RAISE  shift 17
+	MATCH  shift 18
+	FST  shift 19
+	SND  shift 20
+	.  error
+
+	expression  goto 163
+	atomique  goto 24
+	tuples  goto 25
+	liste  goto 26
+
+
+state 160
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+	matching : motif TO expression . ORMATCH matching  (63)
+	matching : motif TO expression .  (64)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	ORMATCH  shift 164
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 64
+	PVDOUBLE  reduce 64
+	THEN  reduce 64
+	ELSE  reduce 64
+	RPAREN  reduce 64
+	END  reduce 64
+	RCROCH  reduce 64
+	WITH  reduce 64
+	EOF  reduce 64
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 161
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : LET REC STR EGAL expression IN expression .  (25)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 25
+	PVDOUBLE  reduce 25
+	THEN  reduce 25
+	ELSE  reduce 25
+	RPAREN  reduce 25
+	END  reduce 25
+	RCROCH  reduce 25
+	ORMATCH  reduce 25
+	WITH  reduce 25
+	EOF  reduce 25
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 162
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : LET REC motlist2 EGAL expression IN expression .  (24)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 24
+	PVDOUBLE  reduce 24
+	THEN  reduce 24
+	ELSE  reduce 24
+	RPAREN  reduce 24
+	END  reduce 24
+	RCROCH  reduce 24
+	ORMATCH  reduce 24
+	WITH  reduce 24
+	EOF  reduce 24
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 163
+	expression : expression . PLUS expression  (9)
+	expression : expression . TIMES expression  (10)
+	expression : expression . DIV expression  (11)
+	expression : expression . MINUS expression  (12)
+	expression : expression . LE expression  (14)
+	expression : expression . GE expression  (15)
+	expression : expression . AND expression  (16)
+	expression : expression . OR expression  (17)
+	expression : expression . EGAL expression  (18)
+	expression : expression . NE expression  (19)
+	expression : expression . GT expression  (20)
+	expression : expression . LT expression  (21)
+	expression : expression . atomique  (23)
+	expression : expression . ASS expression  (26)
+	expression : expression . CONS expression  (28)
+	expression : expression . PTV expression  (29)
+	tuples : expression . VIRGULE expression  (62)
+	matchex : EXCEPTION motif TO expression . ORMATCH matchex  (65)
+	matchex : EXCEPTION motif TO expression .  (66)
+
+	INT  shift 3
+	STR  shift 4
+	PRINT  shift 5
+	PLUS  shift 57
+	TIMES  shift 58
+	DIV  shift 59
+	MINUS  shift 60
+	EGAL  shift 61
+	PTV  shift 62
+	VIRGULE  shift 63
+	CONS  shift 64
+	LT  shift 65
+	LE  shift 66
+	GT  shift 67
+	GE  shift 68
+	AND  shift 69
+	OR  shift 70
+	NE  shift 71
+	EVALREF  shift 10
+	REF  shift 11
+	ASS  shift 72
+	LPAREN  shift 12
+	BEGIN  shift 13
+	LCROCH  shift 14
+	ORMATCH  shift 165
+	FST  shift 19
+	SND  shift 20
+	IN  reduce 66
+	PVDOUBLE  reduce 66
+	THEN  reduce 66
+	ELSE  reduce 66
+	RPAREN  reduce 66
+	END  reduce 66
+	RCROCH  reduce 66
+	WITH  reduce 66
+	EOF  reduce 66
+
+	atomique  goto 73
+	liste  goto 26
+
+
+state 164
+	matching : motif TO expression ORMATCH . matching  (63)
+
+	INT  shift 29
+	STR  shift 48
+	LPAREN  shift 31
+	BEGIN  shift 32
+	LCROCH  shift 33
+	.  error
+
+	motif  goto 139
+	matching  goto 166
+	tuplem  goto 37
+	listem  goto 38
+
+
+state 165
+	matchex : EXCEPTION motif TO expression ORMATCH . matchex  (65)
+
+	EXCEPTION  shift 134
+	.  error
+
+	matchex  goto 167
+
+
+state 166
+	matching : motif TO expression ORMATCH matching .  (63)
+
+	.  reduce 63
+
+
+state 167
+	matchex : EXCEPTION motif TO expression ORMATCH matchex .  (65)
+
+	.  reduce 65
+
+
+57 terminals, 18 nonterminals
+76 grammar rules, 168 states

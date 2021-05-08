@@ -28,7 +28,7 @@ let calc () =
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
       if not !notypes then begin
     			let a, b, n = genere result in let a = List.rev a in
-    			(*let _ = List.map (fun (x,y) -> print_int x; print_string " ---- "; affiche_ty y; print_newline ()) a in*)
+    			(*let _ = List.map (fun (x,y) -> print_int x; print_string " ---- "; affiche_ty y; print_newline ()) a in*)(* Cette mogne sert à débeuguer, en affichant les contraintes que type.ml renvoie, et donc à savoir que fait quel programme, lequel a merdé, et où il peut merder *)
     			let a = resolution a n in
     				if !showtypes then
     				let rec parcours l = match l with

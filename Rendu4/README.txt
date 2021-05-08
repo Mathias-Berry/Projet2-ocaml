@@ -1,5 +1,5 @@
 Nonjour bonjour, cette fois-ci, Le grand Emile a résout les conflits alors que Mathias les a générés.
-
+Si l'on devait résumer, le fichier type.ml a été fait par Mathias, le main, resoud.ml et les tests par Emile ( même si on s'est aidé mutuellement dans chaque )
 
 
 Pour la génération des conflits Mathias a utiliser une variable global contraintes étant une ref (int*type) list. Si (i,t) est dans !contraintes alors le type i dois pouvoir s'unifier avec le type t. Pour ajouter les conflits a cette référence Mathias utilise une fonction récursive "typage" qui prend en argument un environnement contenant les variables ainsi que leurs type et une expression. on reviendrai sur le fonctionnement de typage après. Comme d'habitude on utilise quelque fonction "recup". Ensuite Mathias utilise trois fonctions liées au motif. La première est "addmotenv" qui étant donné un motif renvoit une suite contenant le fait que chaque variable du motif soit attribué a un nouveau type. ensuite, Mathias utilises "typagemot" qui étant donné un motif renvoit le type du motif (si on a que x est de type int et y bool typagemot (Tuplem [x,y]) renvoit Tuples [int,bool]). Et enfin typagemot qui prend en argument un motif est un type, et qui renvoit une liste qui contient chaque variable associé au type qu'elle doit avoir. Cette drenière fonction ajoute aussi les variables du motif à la variable global var (qui contient ce que le -showtypes doit renvoyer).
@@ -13,3 +13,22 @@ Ensuite le problème est le Match avec temp3 et temp4, on ajoute la contrainte q
 Et la dernière chose de cette fonction est le try que l'on règle comme un match pour unifier les retour au détail près du cas d'attêt. Lors du cas d'arrêt le try doit renvoyer quelque chose du même type que ce que l'on essaye de faire et non un 'a classique.
 
 L'utilisation de la partie se résume a utiliser la fonction "génère" qui appelle typage et renvoit les contraintes ainsi que les variables utilisées et le numéro de la dernière contrainte engendrée.
+
+
+
+
+A partir de là c'est Emile qui parle.
+
+
+Dans le main, pas grand chose à dire, hormis eventuellement pour l'affichage qui utilise simplement la liste des variables et leur types pour que je les affiche.
+Dans resoud.ml, la strucure n'est pas très compliquer. Dans la fonction resolution, le tableau encours stocke des types, qui initialement sont à Tout, c'est à dire l'équivalent de 'a. Grace au Pasdef qui peut pointer vers d'autre case, on a en quelques sortes une structure d'union find où le représentant et le premier type qui n'est pas un pointeur vers autre chose (aka un Pasdef). Puis on parcoure les contraintes une par une ( à travers la fonction aux ). Dès le début, on prend le représentant dans la structure union find de l'élément du tableau dans lequel on est, puis on regarde si on peut l'unifier, sinon on soulève l'exception erreur. Si on doit pour unifier, tester l'égalité entre deux types, on va prendre la première case non utilisée (grace au pointeur bout), puis recommencer en rajoutant la contrainte que cette case ( qui contient Tout aka 'a ) doit pouvoir être unifier avec les types. Cela fait qu'on peut avoir besoin d'utiliser un nombre exponentiel de case, sans connaitre ce nombre avant, ce qui est problématique mais c'est la vie.
+
+Quand il y a une erreur de type, je laisse l'exception Resoud.erreur, car pour la moulinette, les programmes mal typé je les mets dans Shouldfail, et par conséquent il me faut une erreur en sortie.
+
+Pour afficher proprement les types, j'ai une référence qui me sert à me demander quelles lettres j'ai déjà utilisées, pour passer à la suivante.
+
+Le programme let rec f x = x in f f ne plante pas, mais si on met l'option showtypes, la il va pas y arrivé car il va vouloir tout parcourir récursvement, et donc tourné en boucle et donc afficher n'importe quoi.
+
+
+
+

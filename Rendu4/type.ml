@@ -6,12 +6,12 @@ type types =
   |Inte
   |Boole
   |Unit
-  |Tout
+  |Tout (* Cela représente le type 'a *)
   |Fonc of types*types
   |Liste of types
   |Tuples of types list
   |Reff of types
-  |Pasdef of int
+  |Pasdef of int (* Pasdef(i) est pour dire que ca doit être le même type que celui contenu à la case i*)
 
 let cota = ref 0
 let contraintes = ref []

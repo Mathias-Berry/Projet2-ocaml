@@ -1,0 +1,105 @@
+\documentclass{article}
+
+\usepackage{enumitem}
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel} %% installer texlive-lang-french pour cela
+
+% ci-dessous: commenté car non offert sur les machines libre-service.
+% décommentez si vous le souhaitez.
+%\usepackage[french]{babel}
+
+% pour compiler: 
+
+% faire    pdflatex ex-rapport
+% (si les references aux numeros de parties apparaissent comme des
+% "?", recompiler une fois)
+
+% la compilation de la bibliographie est davantage une "incantation":
+% faire     bibtex ex-biblio
+% puis      pdflatex ex-rapport (un nombre premier de fois)
+
+
+% vous pouvez ensuite ouvrir le fichier ex-rapport.pdf
+
+
+
+
+% elements du titre
+\title{Rapport projet 2, où l'on parle de rongeurs, ou De la difficulté de travailler avec des personnes moins compétente que soit}
+\author{Emile Martinez et accessoirement Mathias Berry}
+\date{}
+
+
+% definition de quelques macros, pour les maths
+\newcommand{\litt}{\alpha}
+\newcommand{\non}[1]{\overline{#1}}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+Flexion, liée, jeu, et paf on introduit mais ce rapport et non le ballon.
+\newline
+Ce rapport est donc à propos du projet fouine effectué par \underline{Emile Martinez} et Mathias Berry dans le carde de l'UE de la L3 de l'ENS de Lyon \textit{Projet de Programmation} qui a pour but de nous faire coder en CamL une sous partie du langage associé  CamL. Nous commencerons au paragraphe \ref{relation} par détailler les ontéractions à l'intérieur du binôme avant de détailler très succintement parce que ce n'est pas intéressant (étant la même pour tout le monde) au paragraphe \ref{s:orga} la structure de notre projet, suivi au paragraphe \ref{parti} des particularités de notre code et enfin au paragraphe \ref{bilan} nous ferons, comme son nom l'indique, et en toute originalité, un bilan.
+
+\section{Mathias ou De l'éducation}
+\label{relation}
+
+Le binôme était constitué de Mathias Berry et de \underline{Emile Martinez}.
+\newline
+Ce binome composé de deux personnnes extrêmement sympathique était quelque peu hétérogène. En effet, la notable différence de QI mena à biens des conflits. Néanmoins, Emile a commencer à inculquer à Mathias quelques rudiments de bon comportements informatique, comme le fait de mettre des commentaires dans ses programmes, de git pull avant de commencer à écire, de ne pas modifier frénétiquement les fichiers sur lesquels sont censé travailler les autres, etc ... avec cependant des succès modérés.
+\newline
+
+De plus, l'aride communication entre nous a pu parfois, notamment pour le rendu 3 occasionner un peu de précipitation à rendre notre travail et donc entraîner des imprécisions, Mathias Berry ayant échoué à faire une programmation propre.
+
+\section{Structure du code}
+\label{s:orga}
+
+Le code est structuré de la manière suivante~:
+	
+\begin{itemize}[label = $\star$]	
+	\item \texttt{main.ml} faisant le lien entre les fichiers
+	\newline
+	\item \texttt{lexer.ml} et \texttt{parser.ml} ayant pour but de traduire en un type Caml une chaine de caractère issue d'un fichier texte représentant le programme à exécuter. 
+	\newline
+	\item \texttt{expr.ml} définissant le type représentant un programme et la fonction pour l'afficher
+	\newline
+	\item \texttt{eval.ml} pour évaluer les expressions.
+	\newline
+	\item \texttt{type.ml} qui génére les contraintes sur les types
+	\newline
+	\item \texttt{resoud.ml} qui unifie les types monomorphement et participe à gérer l'affichage des types
+\end{itemize}
+
+\section{Particularités de notre code}
+\label{parti}
+
+\subsection{Gros point positif}
+La première chose qui est un gros atout de ce projet, et qui lui est propre, est qu' \underline{Emile Martinez} a participer à son élaboration, et cela, peu peuvent s'en vanter. Quand il sera président du monde, les lignes du code source de ce projet pourront se revendrent à prix d'or.
+
+\subsection{Autre point positif, négligeable par rapport au premier}
+Déjà, il a une tête à marcher, et ça c'est super. Ensuite, quelques détails ont était poffinées, comme par exemple le traitement de la commande \begin{verbatim}
+	let rec f = 
+	    let rec a = fun x -> 
+	    if x = 0 then 1 
+	             else a(x-1) + f(x-1) 
+	    in a 
+	in prInt (f 10)
+\end{verbatim}
+
+\subsection{Ce qui ne va pas vraiment}
+Ce qui ne va pas c'est que Mathias Berry est mauvais, ce qui est quand même dommage. Emile Martinez a bien essayé de rattraper cela mais ca a était vain. Et plus sérieusement, il y a notamment un problème, qui concerne le typage. En effet, comme on ne teste pas l'égalité entre des types mais qu'on unifie le type référencer par un entier avec un autre type, quand on veut en comparer deux, il faut utiliser un nouvel entier. Comme on stocke tous dans un tableau, il faudrait connaitre à l'avance le nombre de telle comparaison, ce qui n'est pas aiser ( voire même très dur ). Par conséquent, on a juste mis un tableau très grand, en espérant ne voir aucun gugus essayer de faire tourner un vrai programme long sur notre fouine.
+
+\section{Bilan}
+\label{bilan}
+
+On est vraiment très fort, surtout si l'on compare à ce que peut produire le milieu académique \cite{DBLP:journals/cacm/Landin66} même si en l'occurence je n'ai pas lu ce document, mais je le sais car je suis omniscient.
+
+\bibliographystyle{plain}
+\bibliography{ex-biblio}
+
+\end{document}
